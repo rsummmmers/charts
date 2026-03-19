@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Land Leverage — Where Does Your Authority Live?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f0;--bg2:#eeeae2;--bg3:#e3dfd5;
+  --t1:#1c1b17;--t2:#5a5649;--t3:#9a9488;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
+  --green:#1a5c3a;--green2:#2d9e6b;--green-bg:#eaf4ee;
+  --amber:#8a6020;--amber-bg:#faf3e0;
+  --rust:#8a3a1a;--rust-bg:#faeee8;
+  --slate:#2a3d52;--slate-bg:#e8eef4;
+  --plum:#3d2a52;--plum-bg:#eeebf4;
+  --serif:'Lora',Georgia,serif;
+  --mono:'DM Mono','SFMono-Regular',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --radius:10px;--radius-lg:16px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1a1916;--bg2:#222018;--bg3:#2a2820;
+  --t1:#f0ece2;--t2:#a09a8e;--t3:#6a6459;
+  --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);
+  --green-bg:rgba(26,92,58,0.2);--amber-bg:rgba(138,96,32,0.2);
+  --rust-bg:rgba(138,58,26,0.2);--slate-bg:rgba(42,61,82,0.2);--plum-bg:rgba(61,42,82,0.2);
+}}
+body{font-family:var(--sans);background:var(--bg);color:var(--t1);min-height:100vh;padding:0 0 5rem}
+.wrap{max-width:860px;margin:0 auto;padding:0 1.5rem}
+
+.hero{padding:3rem 0 2rem}
+.hero-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--t3);margin-bottom:12px}
+.hero-title{font-family:var(--serif);font-size:32px;font-weight:400;color:var(--t1);line-height:1.25;margin-bottom:12px}
+.hero-title em{font-style:italic;color:var(--green)}
+.hero-sub{font-size:14px;color:var(--t2);line-height:1.7;max-width:600px;margin-bottom:2rem}
+.hero-metric{display:inline-flex;align-items:center;gap:10px;background:var(--green-bg);border:0.5px solid rgba(26,92,58,0.25);border-radius:var(--radius);padding:10px 16px;font-size:13px;color:var(--green);font-family:var(--mono)}
+.metric-icon{width:8px;height:8px;background:var(--green);border-radius:50%}
+
+.entry-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+.authority-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:3rem}
+.auth-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:18px 16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;transition:opacity .18s}
+.auth-card:hover{transform:translateY(-2px);border-color:var(--border2)}
+.auth-card.plate::before{background:var(--amber)}
+.auth-card.yard::before{background:var(--green)}
+.auth-card.vote::before{background:var(--slate)}
+.auth-card.dollar::before{background:var(--t2)}
+.auth-card.voice::before{background:var(--plum)}
+.auth-card.plate:hover{background:var(--amber-bg)}
+.auth-card.yard:hover{background:var(--green-bg)}
+.auth-card.vote:hover{background:var(--slate-bg)}
+.auth-card.dollar:hover{background:var(--bg3)}
+.auth-card.voice:hover{background:var(--plum-bg)}
+.auth-card.done::after{content:'';position:absolute;top:10px;right:10px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.auth-icon{font-size:22px;margin-bottom:10px;display:block}
+.auth-name{font-family:var(--serif);font-size:15px;font-weight:500;color:var(--t1);margin-bottom:4px}
+.auth-hint{font-size:11px;color:var(--t3);line-height:1.5}
+
+.branch{display:none;animation:fadeIn .25s ease}
+.branch.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.branch-header{display:flex;align-items:center;gap:12px;margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:0.5px solid var(--border)}
+.back-btn{font-family:var(--mono);font-size:11px;color:var(--t3);background:none;border:0.5px solid var(--border2);border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .15s}
+.back-btn:hover{color:var(--t1);border-color:var(--border2)}
+.branch-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--t1)}
+.branch-accent{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+
+.step{display:none}
+.step.active{display:block;animation:fadeIn .2s ease}
+.step-q{font-family:var(--serif);font-size:17px;font-weight:400;color:var(--t1);line-height:1.45;margin-bottom:1.25rem}
+.step-q em{font-style:italic;color:var(--t2)}
+.choices{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.choice{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer;font-size:14px;color:var(--t1);text-align:left;transition:all .15s;line-height:1.4}
+.choice:hover{background:var(--bg3);border-color:var(--border2);transform:translateX(3px)}
+
+.result{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.result-tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.result-action{font-family:var(--serif);font-size:18px;font-weight:500;color:var(--t1);line-height:1.4;margin-bottom:14px}
+.result-body{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:1.25rem}
+.result-metrics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem}
+.metric-pill{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:20px;font-size:12px;font-family:var(--mono)}
+.metric-pill.land{background:var(--green-bg);color:var(--green);border:0.5px solid rgba(26,92,58,0.2)}
+.metric-pill.carbon{background:var(--slate-bg);color:var(--slate);border:0.5px solid rgba(42,61,82,0.2)}
+.metric-pill.social{background:var(--plum-bg);color:var(--plum);border:0.5px solid rgba(61,42,82,0.2)}
+.breadth-box{background:var(--bg);border-left:2px solid var(--green2);border-radius:0 var(--radius) var(--radius) 0;padding:11px 14px;font-size:12px;color:var(--t2);line-height:1.65}
+.breadth-box strong{font-weight:500;color:var(--t1)}
+
+.result-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.25rem}
+.result-btn{font-size:12px;padding:7px 16px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;font-family:var(--sans);transition:all .15s}
+.result-btn:hover{background:var(--bg3);color:var(--t1)}
+.result-btn.primary{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.result-btn.primary:hover{background:rgba(26,92,58,0.2)}
+
+.depth-breadth{background:var(--amber-bg);border:0.5px solid rgba(138,96,32,0.2);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin:1.5rem 0}
+.db-title{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+.db-row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:8px}
+.db-cell{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.5;text-align:center}
+.db-cell strong{display:block;font-size:15px;font-weight:500;color:var(--t1);font-family:var(--mono);margin-bottom:2px}
+.db-eq{font-family:var(--mono);font-size:16px;color:var(--amber);font-weight:500;text-align:center}
+.db-note{font-size:12px;color:var(--amber);line-height:1.6;margin-top:8px}
+
+.map-section{margin-top:3rem;padding-top:2rem;border-top:0.5px solid var(--border)}
+.map-title{font-family:var(--serif);font-size:16px;font-weight:500;color:var(--t1);margin-bottom:4px}
+.map-sub{font-size:12px;color:var(--t3);margin-bottom:1rem}
+.map-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px}
+.map-cell{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;min-height:70px}
+.map-cell.filled{border-color:var(--green);background:var(--green-bg)}
+.map-cell-name{font-size:11px;font-weight:500;color:var(--t2);margin-bottom:6px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.map-cell.filled .map-cell-name{color:var(--green)}
+.map-cell-action{font-size:12px;color:var(--t1);line-height:1.45;display:none}
+.map-cell.filled .map-cell-action{display:block}
+.map-empty{font-size:11px;color:var(--t3);font-style:italic}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--border);font-size:11px;color:var(--t3);line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <div class="hero-eyebrow">Individual land leverage &mdash; a decision tool</div>
+  <h1 class="hero-title">Where does your<br><em>authority</em> live?</h1>
+  <p class="hero-sub">The path back to 50% functional ecosystem isn't one big action — it's millions of people using whatever authority they actually have. Five types of leverage. One unifying metric: habitat acres.</p>
+  <div class="hero-metric"><span class="metric-icon"></span>All actions measured in acres of functional habitat, lifetime estimate</div>
+</div>
+
+<div id="home-view">
+  <div class="entry-label">Choose your entry point &mdash; explore as many as you like</div>
+  <div class="authority-grid">
+    <div class="auth-card plate" onclick="enterBranch('plate')">
+      <span class="auth-icon">&#9679;</span>
+      <div class="auth-name">A plate</div>
+      <div class="auth-hint">What and how much you eat</div>
+    </div>
+    <div class="auth-card yard" onclick="enterBranch('yard')">
+      <span class="auth-icon">&#9679;</span>
+      <div class="auth-name">A yard</div>
+      <div class="auth-hint">Land you influence directly</div>
+    </div>
+    <div class="auth-card vote" onclick="enterBranch('vote')">
+      <span class="auth-icon">&#9679;</span>
+      <div class="auth-name">A vote</div>
+      <div class="auth-hint">Political & civic engagement</div>
+    </div>
+    <div class="auth-card dollar" onclick="enterBranch('dollar')">
+      <span class="auth-icon">&#9679;</span>
+      <div class="auth-name">A dollar</div>
+      <div class="auth-hint">Where money goes</div>
+    </div>
+    <div class="auth-card voice" onclick="enterBranch('voice')">
+      <span class="auth-icon">&#9679;</span>
+      <div class="auth-name">A voice</div>
+      <div class="auth-hint">Who you influence</div>
+    </div>
+  </div>
+
+  <div id="map-section" class="map-section" style="display:none">
+    <div class="map-title">Your leverage map</div>
+    <div class="map-sub">Fills in as you explore each branch</div>
+    <div class="map-grid" id="map-grid"></div>
+  </div>
+</div>
+
+<!-- PLATE BRANCH -->
+<div class="branch" id="branch-plate">
+  <div class="branch-header">
+    <button class="back-btn" onclick="goHome()">&#8592; back</button>
+    <div class="branch-title"><span class="branch-accent" style="background:var(--amber)"></span>A plate</div>
+  </div>
+  <div class="step active" id="plate-1">
+    <div class="step-q">How often do you eat beef right now?<br><em>Be honest — this is just for routing.</em></div>
+    <div class="choices">
+      <button class="choice" onclick="plateStep('high')">Most days — it's a regular part of meals</button>
+      <button class="choice" onclick="plateStep('mid')">A few times a week</button>
+      <button class="choice" onclick="plateStep('low')">Once a week or less</button>
+      <button class="choice" onclick="plateStep('none')">Rarely or never</button>
+    </div>
+  </div>
+  <div class="step" id="plate-high">
+    <div class="result">
+      <div class="result-tag" style="color:var(--amber)">Your highest-leverage action</div>
+      <div class="result-action">Cut to beef twice a week. Not zero — twice.</div>
+      <div class="result-body">Eliminating beef entirely is a hard ask. Halving it is not. And the math almost always favors the easier ask made to more people over the harder ask made to fewer. Going from daily to twice a week is roughly equivalent in land impact to going fully vegetarian — and it's a behavior others can actually copy.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; ~35 acres saved, lifetime</span>
+        <span class="metric-pill carbon">&#9632; carbon overlap: high</span>
+        <span class="metric-pill social">&#9632; social multiplier: high</span>
+      </div>
+      <div class="breadth-box"><strong>The depth vs. breadth math:</strong> Getting 2 people to halve their beef = the same land impact as getting 1 person to go fully vegetarian. If you can recruit 5 people to go halftime, you've tripled the impact of a single full conversion. The language matters: "I eat beef on weekends now" is something people can copy. "I'm vegetarian" is a category most people put themselves outside of immediately.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('plate-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('plate','Cut to beef twice a week. Recruit 2 people to do the same.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="plate-mid">
+    <div class="result">
+      <div class="result-tag" style="color:var(--amber)">Your highest-leverage action</div>
+      <div class="result-action">Your personal acreage is lower than average. Your leverage has shifted to the conversation.</div>
+      <div class="result-body">You're already below the US average. Further personal reduction has diminishing returns compared to the impact of helping two or three other people make the move you've already made. The "halftime" framing — eating beef on weekends, or just at restaurants — is easy to share and easy to copy.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; personal floor nearly reached</span>
+        <span class="metric-pill social">&#9632; social leverage: now dominant</span>
+      </div>
+      <div class="breadth-box"><strong>What this means practically:</strong> Don't optimize further on your own plate. Spend that energy on the voice branch. Every person you move from daily to twice-a-week is equivalent to your personal lifetime reduction. That math compounds fast.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('plate-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('plate','Personal floor reached — leverage shifts to voice.')">save &amp; explore voice branch</button>
+    </div>
+  </div>
+  <div class="step" id="plate-low">
+    <div class="result">
+      <div class="result-tag" style="color:var(--amber)">Your highest-leverage action</div>
+      <div class="result-action">You're at the personal floor. Your plate is no longer the lever.</div>
+      <div class="result-body">Eating beef once a week or less puts you in roughly the bottom 15% of US beef consumers by land footprint. The marginal gain from eliminating it entirely is real but small relative to the impact of moving others. Your diet is not where your highest leverage lives.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; personal footprint: near minimum</span>
+        <span class="metric-pill social">&#9632; go to voice branch</span>
+      </div>
+      <div class="breadth-box"><strong>Where to redirect this energy:</strong> The yard, vote, dollar, and voice branches are all likely higher-leverage for you than further personal diet changes.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('plate-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('plate','Personal floor reached — redirect to other branches.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="plate-none">
+    <div class="result">
+      <div class="result-tag" style="color:var(--amber)">Already there</div>
+      <div class="result-action">This branch is closed for you. Your food choices are not where your leverage lives.</div>
+      <div class="result-body">You've already made the single highest-impact dietary choice available. The remaining branches — yard, vote, dollar, voice — are where your energy goes.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; personal floor: reached</span>
+      </div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('plate-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('plate','Beef eliminated — redirect to other branches.')">save &amp; explore another</button>
+    </div>
+  </div>
+</div>
+
+<!-- YARD BRANCH -->
+<div class="branch" id="branch-yard">
+  <div class="branch-header">
+    <button class="back-btn" onclick="goHome()">&#8592; back</button>
+    <div class="branch-title"><span class="branch-accent" style="background:var(--green)"></span>A yard</div>
+  </div>
+  <div class="step active" id="yard-1">
+    <div class="step-q">What outdoor space do you make decisions about?</div>
+    <div class="choices">
+      <button class="choice" onclick="yardStep('own')">A yard, garden, or outdoor area I own or rent</button>
+      <button class="choice" onclick="yardStep('shared')">Shared space — community garden, HOA, workplace, roadsides</button>
+      <button class="choice" onclick="yardStep('none')">No private outdoor space right now</button>
+    </div>
+  </div>
+  <div class="step" id="yard-own">
+    <div class="step-q">What's the current state of that space?</div>
+    <div class="choices">
+      <button class="choice" onclick="showResult('yard-lawn')">Mostly lawn — mowed grass dominates</button>
+      <button class="choice" onclick="showResult('yard-mixed')">Mixed — some lawn, some planted beds or garden</button>
+      <button class="choice" onclick="showResult('yard-native')">Already mostly native plants or natural cover</button>
+    </div>
+  </div>
+  <div class="step" id="yard-lawn">
+    <div class="result">
+      <div class="result-tag" style="color:var(--green)">Your highest-leverage action</div>
+      <div class="result-action">Convert 25–50% to native plantings this season. Pick a visible section.</div>
+      <div class="result-body">Lawn is America's most irrigated crop and provides near-zero ecological function. Native plants restore food webs, support pollinators, sequester carbon, and — critically — they're visible. A front-yard conversion is the most powerful social contagion mechanism in residential ecology. Neighbors ask. Then they do it.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; 500–2,500 sq ft restored habitat</span>
+        <span class="metric-pill carbon">&#9632; carbon overlap: moderate-high</span>
+        <span class="metric-pill social">&#9632; neighbor multiplier: very high</span>
+      </div>
+      <div class="breadth-box"><strong>The leverage isn't the acreage — it's the decision-making authority and the visibility.</strong> A 1,500 sq ft front yard conversion that inspires three neighbors to follow has the same footprint as a 6,000 sq ft single conversion, plus it changes the social norm for the block. Native plant communities spread by example more reliably than by argument.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('yard-own')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('yard','Convert 25–50% of lawn to native plantings. Prioritize visible areas.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="yard-mixed">
+    <div class="result">
+      <div class="result-tag" style="color:var(--green)">Your highest-leverage action</div>
+      <div class="result-action">Eliminate the lawn edges. Reframe the whole space as habitat, not garden.</div>
+      <div class="result-body">The shift from "I have a garden" to "I have a habitat patch" changes what decisions you make about the remaining lawn. Lawn edges are the easiest to convert, the most visible to neighbors, and the most effective at creating connected corridor habitat. Connectivity multiplies value non-linearly — a patch connected to adjacent habitat is worth significantly more than the same area isolated.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; incremental acreage + connectivity premium</span>
+        <span class="metric-pill carbon">&#9632; carbon overlap: moderate</span>
+        <span class="metric-pill social">&#9632; framing shift has high multiplier</span>
+      </div>
+      <div class="breadth-box"><strong>Connected patches multiply.</strong> Work with neighbors, your town's conservation commission, or a local land trust to identify adjacencies. A 500 sq ft patch connected to 2 acres of conservation land is ecologically more valuable than a 500 sq ft isolated patch by a large margin.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('yard-own')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('yard','Eliminate lawn edges, reframe as habitat patch. Connect to adjacent conservation land.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="yard-native">
+    <div class="result">
+      <div class="result-tag" style="color:var(--green)">Already there — now multiply it</div>
+      <div class="result-action">Document it. Talk about it. Help a neighbor start.</div>
+      <div class="result-body">Your personal yard work is done. The next-highest leverage is activating the neighbor effect — which is where most of the potential acreage in residential ecology actually lives. Photography, signage, open garden events, and direct offers of plants are all documented to increase neighbor conversion rates.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; personal: maximized</span>
+        <span class="metric-pill social">&#9632; neighbor multiplier: primary lever now</span>
+      </div>
+      <div class="breadth-box"><strong>The social contagion math:</strong> If you've converted your yard and can get 3 neighbors to convert half of theirs, you've roughly quadrupled your personal impact without adding a square foot to your own land. This is the voice branch applied to yard work.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('yard-own')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('yard','Personal yard maximized — focus on neighbor activation.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="yard-shared">
+    <div class="result">
+      <div class="result-tag" style="color:var(--green)">Your highest-leverage action</div>
+      <div class="result-action">Propose one native planting area in shared space. One. The foot in the door.</div>
+      <div class="result-body">Institutional and community spaces are harder to change than private yards — but the scale multiplier is larger. A native planting in a corporate campus, school grounds, or town right-of-way reaches more people daily than any private yard. The entry strategy is always small and concrete: one bed, one corner, one demonstration plot.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; acreage varies — multiplier effect large</span>
+        <span class="metric-pill social">&#9632; visibility: very high</span>
+      </div>
+      <div class="breadth-box"><strong>HOA and municipal spaces are underrated leverage points.</strong> Getting native plantings adopted as acceptable in HOA bylaws, or convincing a town DPW to stop mowing roadsides in July, has more square footage impact than most private yard work in your lifetime.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('yard-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('yard','Propose one native area in shared space. Target HOA bylaws or municipal roadsides.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="yard-none">
+    <div class="result">
+      <div class="result-tag" style="color:var(--green)">No yard — but still a lever</div>
+      <div class="result-action">Your authority here lives in community and political space, not private land.</div>
+      <div class="result-body">No private outdoor space means the yard branch routes you to the vote branch (zoning, roadside management, public land policy) and the voice branch (advocating for neighbors and institutions to make different choices). The lever exists — it's just accessed differently.</div>
+      <div class="result-metrics">
+        <span class="metric-pill social">&#9632; route to vote + voice branches</span>
+      </div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('yard-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('yard','No private space — leverage lives in vote and voice branches.')">save &amp; explore another</button>
+    </div>
+  </div>
+</div>
+
+<!-- VOTE BRANCH -->
+<div class="branch" id="branch-vote">
+  <div class="branch-header">
+    <button class="back-btn" onclick="goHome()">&#8592; back</button>
+    <div class="branch-title"><span class="branch-accent" style="background:var(--slate)"></span>A vote</div>
+  </div>
+  <div class="step active" id="vote-1">
+    <div class="step-q">Where is most of your current civic engagement on land and environment?</div>
+    <div class="choices">
+      <button class="choice" onclick="showResult('vote-local')">Local — town meetings, conservation commission, planning board</button>
+      <button class="choice" onclick="showResult('vote-state')">State — legislators, ballot measures, state agencies</button>
+      <button class="choice" onclick="showResult('vote-federal')">Federal — farm bill, 30x30, congressional advocacy</button>
+      <button class="choice" onclick="showResult('vote-none')">Not currently engaged at any level</button>
+    </div>
+  </div>
+  <div class="step" id="vote-local">
+    <div class="result">
+      <div class="result-tag" style="color:var(--slate)">Your highest-leverage action</div>
+      <div class="result-action">Connect local decisions upward. Zoning without agricultural policy is incomplete.</div>
+      <div class="result-body">Local engagement is highly effective for what it can reach. But local conservation stops at the town line. The farm bill, state agricultural subsidies, and 30x30 implementation determine what happens to the land that dwarfs everything decided at a planning board meeting. Local plus state plus federal is the full stack — and most conservation advocates only operate on one level.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; farm bill: affects ~900M US acres</span>
+        <span class="metric-pill land">&#9632; 30x30: ~400M additional protected acres if achieved</span>
+      </div>
+      <div class="breadth-box"><strong>The local/state connection is underbuilt.</strong> Your local conservation commission relationships are a real asset for state-level advocacy — you have credibility and specificity. Most state-level land advocates lack both.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('vote-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('vote','Connect local engagement upward to state agricultural policy and 30x30 advocacy.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="vote-state">
+    <div class="result">
+      <div class="result-tag" style="color:var(--slate)">Your highest-leverage action</div>
+      <div class="result-action">Push agricultural subsidy reform and connect to federal farm bill cycles.</div>
+      <div class="result-body">State agricultural policy determines what crops get planted on millions of acres. Crop insurance, state conservation programs, and right-to-farm laws all shape land use decisions more than most conservation programs. The farm bill is reauthorized roughly every 5 years — state-level advocacy during that cycle has disproportionate impact.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; state ag subsidies affect millions of acres</span>
+        <span class="metric-pill carbon">&#9632; carbon overlap: very high</span>
+      </div>
+      <div class="breadth-box"><strong>The Conservation Reserve Program</strong> — a federal program paying farmers to keep marginal cropland out of production — is one of the most cost-effective land conservation tools ever created. It's chronically underfunded and underadvocated. This is a place where state-to-federal connection matters.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('vote-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('vote','Push ag subsidy reform. Engage farm bill cycles at state-to-federal connection.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="vote-federal">
+    <div class="result">
+      <div class="result-tag" style="color:var(--slate)">Already operating at scale</div>
+      <div class="result-action">30x30 implementation quality is the current critical fight — not the pledge, the definition.</div>
+      <div class="result-body">The US has committed to protecting 30% of land by 2030. Currently at ~13%. The critical advocacy is not the target number — it's preventing greenwashing of the definition. A cattle grazing allotment on federal land does not count as protected habitat. Advocacy that specifies what "protected" means is where federal-level engagement has the most bite right now.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; 30x30: ~400M additional US acres if implemented with integrity</span>
+        <span class="metric-pill carbon">&#9632; carbon overlap: very high</span>
+      </div>
+      <div class="breadth-box"><strong>The greenwashing risk is real.</strong> Official "protection" counts can include land that is actively grazed, logged, or mined under various legal arrangements. Pushing for definitional integrity — what counts as protected, measured how — is the specific advocacy fight that determines whether 30x30 means something.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('vote-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('vote','30x30 definition quality — prevent greenwashing of protected land counts.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="vote-none">
+    <div class="result">
+      <div class="result-tag" style="color:var(--slate)">Highest-ROI entry point</div>
+      <div class="result-action">Join your local conservation commission or planning board. These seats are often unfilled.</div>
+      <div class="result-body">Local planning and conservation boards make decisions that determine land use for 20–30 year horizons — and most of these seats in most towns are hard to fill. One person on a planning board changes more acres than almost any individual consumption choice over a lifetime. The barrier to entry is showing up.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; local zoning: decades-long land use effects</span>
+        <span class="metric-pill social">&#9632; multiplier: high — decisions affect whole communities</span>
+      </div>
+      <div class="breadth-box"><strong>This is not a crowded arena.</strong> Conservation-minded people systematically underestimate their ability to get on local boards, and overestimate how contested those seats are. Call your town hall. Ask what boards have openings. The answer is usually several.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('vote-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('vote','Join local conservation commission or planning board. Call town hall this week.')">save &amp; explore another</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOLLAR BRANCH -->
+<div class="branch" id="branch-dollar">
+  <div class="branch-header">
+    <button class="back-btn" onclick="goHome()">&#8592; back</button>
+    <div class="branch-title"><span class="branch-accent" style="background:var(--t2)"></span>A dollar</div>
+  </div>
+  <div class="step active" id="dollar-1">
+    <div class="step-q">What kind of financial authority do you have right now?</div>
+    <div class="choices">
+      <button class="choice" onclick="showResult('dollar-donate')">Some discretionary income I could redirect</button>
+      <button class="choice" onclick="showResult('dollar-invest')">Investment or retirement accounts I make decisions about</button>
+      <button class="choice" onclick="showResult('dollar-spend')">Primarily through everyday spending choices</button>
+    </div>
+  </div>
+  <div class="step" id="dollar-donate">
+    <div class="result">
+      <div class="result-tag" style="color:var(--t2)">Your highest-leverage action</div>
+      <div class="result-action">Land trust donations. You're buying land off the conversion market permanently.</div>
+      <div class="result-body">Land trusts acquire conservation easements — legal agreements that prevent land from ever being developed or converted, permanently. Unlike most conservation spending, this is irreversible. The land is gone from the conversion market forever, regardless of future political changes. This is pooled purchasing power applied to permanent protection.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; New England: roughly $1,500–5,000 per protected acre</span>
+        <span class="metric-pill land">&#9632; $500/yr over 10 years = fraction of an acre, permanently</span>
+        <span class="metric-pill carbon">&#9632; carbon overlap: high (intact land = carbon storage)</span>
+      </div>
+      <div class="breadth-box"><strong>Permanence is the differentiating factor.</strong> A political win for a conservation program can be reversed. A conservation easement recorded at the registry of deeds cannot. For land-specific giving, local and regional land trusts operating in active conversion frontiers are more efficient than large national organizations.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('dollar-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('dollar','Donate to local land trust. Permanent easements = land off conversion market forever.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="dollar-invest">
+    <div class="result">
+      <div class="result-tag" style="color:var(--t2)">Your highest-leverage action</div>
+      <div class="result-action">Screen out deforestation financing. Move money from banks that fund conversion.</div>
+      <div class="result-body">Major US banks — Chase, Bank of America, Wells Fargo, Citi — are among the largest global financiers of deforestation through commodity agriculture loans and project finance. Moving retirement accounts and banking to institutions with credible deforestation policies is a direct reduction in capital available for Amazon and Congo Basin conversion. This is underrated relative to personal consumption choices.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; systemic — reduces capital available for conversion</span>
+        <span class="metric-pill carbon">&#9632; carbon overlap: very high</span>
+      </div>
+      <div class="breadth-box"><strong>The Forest 500 ranking</strong> tracks which financial institutions have credible deforestation commitments. Most major US banks score poorly. Credit unions and some regional banks have cleaner records. This is not a hairshirt choice — the returns are comparable.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('dollar-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('dollar','Screen investments for deforestation financing. Move away from major commodity ag lenders.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="dollar-spend">
+    <div class="result">
+      <div class="result-tag" style="color:var(--t2)">Your highest-leverage action</div>
+      <div class="result-action">Reduce beef spending. The demand signal is real even if the per-dollar math is imperfect.</div>
+      <div class="result-body">The direct spending-to-acres math is blurry but the aggregate demand signal is not. Every dollar not spent on beef reduces production signal marginally. More tangible: redirecting beef spending toward local land trust donations has a more calculable land impact per dollar than the beef reduction itself.</div>
+      <div class="result-metrics">
+        <span class="metric-pill land">&#9632; demand signal: real but diffuse</span>
+        <span class="metric-pill carbon">&#9632; redirect savings to land trust: high leverage</span>
+      </div>
+      <div class="breadth-box"><strong>Reframe the calculus:</strong> "I spent $15 less on beef this month. That $15 to a land trust is a fraction of an acre protected permanently." Over years that math adds up, and it connects the personal behavior change to a systemic outcome.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('dollar-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('dollar','Reduce beef spending. Redirect savings to local land trust donations.')">save &amp; explore another</button>
+    </div>
+  </div>
+</div>
+
+<!-- VOICE BRANCH -->
+<div class="branch" id="branch-voice">
+  <div class="branch-header">
+    <button class="back-btn" onclick="goHome()">&#8592; back</button>
+    <div class="branch-title"><span class="branch-accent" style="background:var(--plum)"></span>A voice</div>
+  </div>
+  <div class="step active" id="voice-1">
+    <div class="step-q">Who do you primarily talk to about climate and land?</div>
+    <div class="choices">
+      <button class="choice" onclick="showResult('voice-choir')">Mostly other conservation or climate people — we already agree</button>
+      <button class="choice" onclick="showResult('voice-mixed')">Mixed — family, neighbors, colleagues who aren't all on the same page</button>
+      <button class="choice" onclick="showResult('voice-skeptic')">People who are skeptical or indifferent to this framing</button>
+    </div>
+  </div>
+  <div class="step" id="voice-choir">
+    <div class="result">
+      <div class="result-tag" style="color:var(--plum)">Your highest-leverage action</div>
+      <div class="result-action">Change what you say, not who you say it to. Introduce the land frame to climate people.</div>
+      <div class="result-body">Climate advocates fluent in carbon often don't think in habitat acres. Land use is the second-largest driver of biodiversity loss and a massive carbon story, and it's underleveraged in mainstream climate circles that fixate on the energy system. You're not adding a new burden — you're showing the same problem through a different door. "You're already doing the carbon work. Here's the land column you might be missing."</div>
+      <div class="result-metrics">
+        <span class="metric-pill social">&#9632; audience: already mobilized, missing this frame</span>
+        <span class="metric-pill carbon">&#9632; land = carbon: makes the connection</span>
+      </div>
+      <div class="breadth-box"><strong>The specific bridge:</strong> Intact ecosystem is carbon sequestration. Rewilding a lawn sequesters carbon. Reducing beef reduces both land conversion and methane. These aren't competing frames — land use is the carbon frame, told through a different door. Climate people respond to this when it's framed as addition, not correction.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('voice-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('voice','Introduce land frame to climate audiences. Rewilding = carbon. Same problem, different door.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="voice-mixed">
+    <div class="result">
+      <div class="result-tag" style="color:var(--plum)">Your highest-leverage action</div>
+      <div class="result-action">Use the halftime frame. Make it replicable, not aspirational.</div>
+      <div class="result-body">The single most important thing about the ask is whether people can copy it. "I'm a vegetarian" puts the listener outside a category. "I eat beef on weekends now" is a sentence they can repeat to someone else tomorrow. The goal is a behavior that spreads — and that requires that the behavior be specific, modest, and framed as normal rather than as sacrifice.</div>
+      <div class="result-metrics">
+        <span class="metric-pill social">&#9632; replicable framing: highest multiplier</span>
+        <span class="metric-pill land">&#9632; 2 halftime converts = 1 full convert</span>
+      </div>
+
+      <div class="depth-breadth">
+        <div class="db-title">The depth vs. breadth math</div>
+        <div class="db-row">
+          <div class="db-cell"><strong>1 person</strong>goes fully vegetarian on beef</div>
+          <div class="db-eq">=</div>
+          <div class="db-cell"><strong>2 people</strong>cut beef in half</div>
+        </div>
+        <div class="db-row">
+          <div class="db-cell"><strong>harder ask</strong>fewer takers</div>
+          <div class="db-eq">vs</div>
+          <div class="db-cell"><strong>easier ask</strong>more takers</div>
+        </div>
+        <div class="db-note">If you can recruit 5 people to halftime, you've moved 2.5x the land of a single full conversion. Breadth wins at the margins.</div>
+      </div>
+
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('voice-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('voice','Use halftime framing. "I eat beef twice a week" is replicable. Replicable beats aspirational.')">save &amp; explore another</button>
+    </div>
+  </div>
+  <div class="step" id="voice-skeptic">
+    <div class="result">
+      <div class="result-tag" style="color:var(--plum)">Your highest-leverage action</div>
+      <div class="result-action">Lead with land, not carbon. It's harder to argue with than emissions.</div>
+      <div class="result-body">Land use is more concrete and less politically loaded than carbon for many audiences. "Beef requires 20x more land per calorie than plants — that's the land that used to be forest" is a factual statement about physical space, not a political position. Connecting it to things people already care about — hunting, fishing, water quality, local wildlife — works better than connecting it to climate.</div>
+      <div class="result-metrics">
+        <span class="metric-pill social">&#9632; land frame: less charged than carbon for skeptical audiences</span>
+      </div>
+      <div class="breadth-box"><strong>The hunting and fishing bridge:</strong> Loss of native grassland and wetland is the primary driver of waterfowl and upland bird declines. Hunters and anglers are often the most practical conservationists in a room and respond to land use arguments that most environmentalists don't know how to make. This is an underused coalition.</div>
+    </div>
+    <div class="result-nav">
+      <button class="result-btn" onclick="showStep('voice-1')">&#8592; different answer</button>
+      <button class="result-btn primary" onclick="saveAndContinue('voice','Lead with land not carbon. Use hunting/fishing/water quality bridges for skeptical audiences.')">save &amp; explore another</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  The unifying metric throughout is habitat acres — which maps imperfectly but usefully onto both carbon sequestration and biodiversity. Acre estimates are lifetime approximations based on Poore &amp; Nemecek (2018), USDA land use data, and New England land trust cost averages. All numbers are order-of-magnitude guides, not precision claims. &mdash; summersgardening.com
+</footer>
+</div>
+
+<script>
+const leverageMap={plate:null,yard:null,vote:null,dollar:null,voice:null};
+
+function enterBranch(id){
+  document.getElementById('home-view').style.display='none';
+  document.querySelectorAll('.branch').forEach(b=>b.classList.remove('active'));
+  document.getElementById('branch-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goHome(){
+  document.querySelectorAll('.branch').forEach(b=>b.classList.remove('active'));
+  document.getElementById('home-view').style.display='';
+  window.scrollTo(0,0);
+  updateMap();
+}
+
+function showStep(id){
+  const branch=document.getElementById(id).closest('.branch');
+  branch.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showResult(id){
+  showStep(id);
+}
+
+function plateStep(level){
+  showResult('plate-'+level);
+}
+function yardStep(type){
+  if(type==='own')showStep('yard-own');
+  else if(type==='shared')showResult('yard-shared');
+  else showResult('yard-none');
+}
+
+function saveAndContinue(branch, action){
+  leverageMap[branch]=action;
+  document.querySelector('.auth-card.'+branch).classList.add('done');
+  goHome();
+  document.getElementById('map-section').style.display='';
+  updateMap();
+}
+
+function updateMap(){
+  const grid=document.getElementById('map-grid');
+  grid.innerHTML='';
+  const labels={plate:'Plate',yard:'Yard',vote:'Vote',dollar:'Dollar',voice:'Voice'};
+  for(const[key,val]of Object.entries(leverageMap)){
+    const cell=document.createElement('div');
+    cell.className='map-cell'+(val?' filled':'');
+    if(val){
+      cell.innerHTML=`<div class="map-cell-name">${labels[key]}</div><div class="map-cell-action">${val}</div>`;
+    } else {
+      cell.innerHTML=`<div class="map-cell-name">${labels[key]}</div><div class="map-empty">not yet explored</div>`;
+    }
+    grid.appendChild(cell);
+  }
+}
+</script>
+</body>
+</html>
