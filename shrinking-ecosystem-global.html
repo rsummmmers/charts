@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shrinking Ecosystem — Global Land Use 1800–2023</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f4f3ef;--bg3:#ececea;
+  --t1:#1a1a18;--t2:#5a5a56;--t3:#8a8a84;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.2);
+  --radius:8px;--radius-lg:12px;
+  --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'SFMono-Regular','Menlo','Consolas',monospace;
+  --font-serif:Georgia,'Times New Roman',serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;
+    --t1:#f0efe8;--t2:#a8a89e;--t3:#6a6a62;
+    --border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.22);
+  }
+}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--t1);min-height:100vh;padding:2rem 1.5rem 4rem}
+.wrap{max-width:900px;margin:0 auto}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-family:var(--font-mono);margin-bottom:8px}
+h1{font-size:28px;font-weight:500;color:var(--t1);margin-bottom:6px;font-family:var(--font-serif)}
+.sub-line{font-size:15px;color:var(--t2);line-height:1.65;max-width:680px;margin-bottom:2rem}
+.callout{background:var(--bg2);border-left:3px solid #b85c38;border-radius:0 var(--radius) var(--radius) 0;padding:12px 16px;margin-bottom:2rem;max-width:680px}
+.callout-text{font-size:13px;color:var(--t2);line-height:1.65}
+.callout-text strong{font-weight:500;color:var(--t1)}
+.stat-row{display:flex;gap:0;align-items:stretch;margin-bottom:1.75rem;border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.stat-cell{flex:1;padding:16px 22px;display:flex;flex-direction:column;gap:4px}
+.stat-cell+.stat-cell{border-left:0.5px solid var(--border)}
+.stat-num{font-size:44px;font-weight:500;font-family:var(--font-mono);line-height:1;transition:color .5s}
+.stat-num.eco{color:#1d7a52}
+.stat-num.human{color:#b85c38}
+.stat-lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);font-family:var(--font-mono)}
+.stat-acres{font-size:12px;color:var(--t3);font-family:var(--font-mono);margin-top:2px}
+.bar-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);font-family:var(--font-mono);margin-bottom:8px}
+.land-bar{width:100%;height:76px;display:flex;border-radius:6px;overflow:hidden;cursor:default}
+.seg{height:100%;transition:width .75s cubic-bezier(.4,0,.2,1),filter .12s;flex-shrink:0;cursor:pointer}
+.seg:hover,.seg.hi{filter:brightness(1.2)}
+.info-zone{min-height:76px;padding:14px 0 10px;margin-bottom:4px;border-bottom:0.5px solid var(--border)}
+.info-name{font-size:14px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.info-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.info-stat{font-size:12px;color:var(--t2);font-family:var(--font-mono);margin-bottom:6px}
+.info-desc{font-size:13px;color:var(--t2);line-height:1.6;max-width:700px}
+.info-hint{font-size:13px;color:var(--t3);font-style:italic;padding-top:4px}
+.year-row{display:flex;align-items:center;gap:16px;margin:1.25rem 0 4px}
+.year-big{font-size:42px;font-weight:500;color:var(--t1);font-family:var(--font-serif);min-width:100px}
+.slider-flex{flex:1}
+input[type=range]{width:100%;accent-color:#1d7a52;cursor:pointer}
+.tick-row{display:flex;justify-content:space-between;padding:0 2px;margin-bottom:14px}
+.tick{font-size:11px;color:var(--t3);cursor:pointer;font-family:var(--font-mono)}
+.tick:hover{color:var(--t1)}
+.quick-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2rem}
+.qbtn{font-size:12px;padding:6px 16px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;font-family:var(--font-sans);transition:all .15s}
+.qbtn:hover{background:var(--bg2);color:var(--t1)}
+.qbtn.on{border-color:#1d7a52;color:#1d7a52;background:rgba(29,122,82,.09)}
+.grid-lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);font-family:var(--font-mono);margin-bottom:12px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(162px,1fr));gap:10px;margin-bottom:2rem}
+.cat-card{background:var(--bg2);border-radius:var(--radius);padding:13px;cursor:pointer;border:0.5px solid var(--border);border-left-width:3px;transition:border-color .15s}
+.cat-card:hover{border-color:var(--border2)}
+.cat-n{font-size:12px;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:8px}
+.cat-p{font-size:24px;font-weight:500;font-family:var(--font-mono);color:var(--t1);line-height:1;margin-bottom:3px}
+.cat-a{font-size:11px;color:var(--t2);font-family:var(--font-mono)}
+.cat-x{font-size:12px;color:var(--t2);line-height:1.6;display:none;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)}
+.cat-card.open .cat-x{display:block}
+.loss-track{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;border:0.5px solid var(--border);margin-top:8px}
+.loss-fill{height:100%;background:#1d7a52;border-radius:4px;transition:width .75s cubic-bezier(.4,0,.2,1)}
+.note{font-size:11px;color:var(--t3);line-height:1.75;border-top:0.5px solid var(--border);padding-top:1.25rem;margin-bottom:1.5rem}
+.nav-bar{display:flex;gap:12px;padding:1.25rem 0;border-top:0.5px solid var(--border);margin-top:1rem}
+.nav-link{font-size:13px;color:var(--t2);text-decoration:none;padding:6px 14px;border-radius:20px;border:0.5px solid var(--border2)}
+.nav-link:hover{background:var(--bg2);color:var(--t1)}
+footer{margin-top:1rem;font-size:12px;color:var(--t3);line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Global land use &mdash; 1800 to 2023</div>
+  <h1>The shrinking ecosystem — worldwide</h1>
+  <p class="sub-line">All 33 billion acres of ice-free land on Earth, from pre-industrial baseline to today. The story is the same as the US, at larger scale — and with a crucial difference: the active deforestation frontiers are in the tropics, driven largely by export demand from wealthy countries.</p>
+
+  <div class="callout">
+    <div class="callout-text"><strong>The ratio that matters:</strong> Livestock uses 77% of all agricultural land globally but produces only 18% of global calories. Beef and dairy occupy more land than all crops combined — yet feed far fewer people.</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-cell">
+      <div class="stat-lbl">Functional ecosystem</div>
+      <div class="stat-num eco" id="eco-n">79%</div>
+      <div class="stat-acres" id="eco-a">~26.1B acres</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-lbl">Human-dominated land</div>
+      <div class="stat-num human" id="hum-n">21%</div>
+      <div class="stat-acres" id="hum-a">~6.9B acres</div>
+    </div>
+    <div class="stat-cell" style="flex:2">
+      <div class="stat-lbl">Ecosystem remaining</div>
+      <div class="loss-track"><div class="loss-fill" id="loss-fill" style="width:79%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:5px">
+        <span style="font-size:11px;color:var(--t3);font-family:var(--font-mono)">0%</span>
+        <span style="font-size:11px;color:var(--t3);font-family:var(--font-mono)">100%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bar-label">All ice-free land on Earth (~33 billion acres) &mdash; hover any segment</div>
+  <div class="land-bar" id="land-bar"></div>
+
+  <div class="info-zone" id="info-zone">
+    <div class="info-hint">Hover any color segment above to explore a land use category</div>
+  </div>
+
+  <div class="year-row">
+    <div class="year-big" id="yr-disp">1800</div>
+    <div class="slider-flex">
+      <input type="range" id="yr-sl" min="1800" max="2023" value="1800" step="1">
+    </div>
+  </div>
+  <div class="tick-row">
+    <span class="tick" onclick="setYr(1800)">1800</span>
+    <span class="tick" onclick="setYr(1850)">1850</span>
+    <span class="tick" onclick="setYr(1900)">1900</span>
+    <span class="tick" onclick="setYr(1950)">1950</span>
+    <span class="tick" onclick="setYr(2000)">2000</span>
+    <span class="tick" onclick="setYr(2023)">2023</span>
+  </div>
+
+  <div class="quick-row">
+    <button class="qbtn on" id="b1800" onclick="setYr(1800)">Pre-industrial (1800)</button>
+    <button class="qbtn" id="b1900" onclick="setYr(1900)">Colonial era (1900)</button>
+    <button class="qbtn" id="b1950" onclick="setYr(1950)">Green Revolution (1950)</button>
+    <button class="qbtn" id="b2023" onclick="setYr(2023)">Today (2023)</button>
+  </div>
+
+  <div class="grid-lbl">Breakdown by category &mdash; click any card to expand</div>
+  <div class="cat-grid" id="cat-grid"></div>
+
+  <div class="note">Sources: FAO Global Forest Resources Assessment, Our World in Data (Hannah Ritchie), Poore &amp; Nemecek (2018) Science, Global Forest Watch, IPCC AR6 land use chapter. Total ice-free land: ~13.4B hectares / 33B acres. Functional ecosystem = intact forest + native grasslands + wetlands + natural dryland/shrubland. Pre-1900 estimates carry ±5% uncertainty. Tropical deforestation rates (Amazon, Congo, SE Asia) are the dominant driver of post-1950 loss. Livestock figures include indirect land use for feed crops.</div>
+
+  <div class="nav-bar">
+    <a class="nav-link" href="shrinking-ecosystem.html">&#8592; US view</a>
+  </div>
+
+  <footer>Created with Claude &mdash; summersgardening.com</footer>
+</div>
+
+<script>
+const TM=33;
+const CATS=[
+  {id:'intact_forest',  label:'Intact & primary forest',      color:'#1a5c3a',group:'eco',
+   desc:'Intact tropical, boreal, and temperate forests — the primary carbon sink, biodiversity reservoir, and water cycle regulator on Earth. The Amazon alone holds 10% of all species. Since 1800, roughly 40% of the world\'s primary forest has been cleared or severely degraded.'},
+  {id:'native_grass',   label:'Native grasslands & savanna',  color:'#2d9e6b',group:'eco',
+   desc:'Tropical savannas (like the Brazilian Cerrado), temperate steppes, and native grasslands. The Cerrado has lost over 50% of its original cover — less famous than the Amazon but equally threatened. African savannas face expanding livestock pressure from all directions.'},
+  {id:'wetlands',       label:'Wetlands & peatlands',         color:'#45b08c',group:'eco',
+   desc:'Peatlands alone store twice as much carbon as all the world\'s forests combined — and cover only 3% of land. Drainage for agriculture releases millennia of stored carbon instantly. Southeast Asian peat fires, often set deliberately for palm oil clearance, are a carbon catastrophe measured in gigatons.'},
+  {id:'other_nat',      label:'Dryland, shrubland & tundra',  color:'#6dba9a',group:'eco',
+   desc:'Arid shrublands, arctic tundra, and alpine ecosystems. Tundra permafrost contains roughly 1.5 trillion tons of carbon — a sleeping giant. As it thaws, it releases methane at rates that could dwarf all human emissions. The category least threatened by agriculture, most threatened by warming itself.'},
+  {id:'logging',        label:'Managed & logged forest',      color:'#7a8c54',group:'deg',
+   desc:'Secondary forests, plantation timber, and selectively logged primary forest. Official statistics frequently classify these as "forest," masking the true scale of ecosystem loss. A palm oil plantation is legally a "forest" in Indonesian reporting. Biodiversity and carbon function are a fraction of intact forest.'},
+  {id:'cropland',       label:'Crops for human food',         color:'#c9a84c',group:'ag',
+   desc:'The 12% of global land growing crops — but only a fraction feeds humans directly. Roughly 40% of global crop calories are fed to livestock. Corn, soy, and wheat dominate. Yield improvements since the Green Revolution have slowed; future food demand will require either more land or radical diet shifts.'},
+  {id:'grazing',        label:'Beef & livestock grazing',     color:'#b85c38',group:'ag',
+   desc:'The single largest anthropogenic land use on Earth — 26% of ice-free land, 70% of all agricultural land. The Amazon is being cleared at roughly one football field per minute, overwhelmingly for cattle ranching and soy for animal feed. Produces 18% of global calories on 77% of agricultural land. No other single dietary shift has a comparable land-use impact.'},
+  {id:'developed',      label:'Urban & built infrastructure', color:'#5f6b78',group:'dev',
+   desc:'Roads, cities, ports, airports — all human built infrastructure combined — covers roughly 1% of ice-free land. Urban sprawl is visible and visceral but is a rounding error compared to livestock land use. The "cities are eating the countryside" narrative is technically true and strategically misleading.'},
+  {id:'lawn',           label:'Lawns, golf & peri-urban green',color:'#8a9a50',group:'dev',
+   desc:'Low-density suburban land use with minimal ecological function. Globally smaller than in the US context, but expanding rapidly with economic development in Asia. The model of the American suburb — car, lawn, beef — is being exported worldwide, compounding land pressure.'},
+  {id:'solar',          label:'Energy infrastructure',        color:'#3a5f8a',group:'en',
+   desc:'Utility-scale solar, wind farms, hydroelectric reservoirs, and fossil fuel extraction footprint. Still a small fraction globally, but large hydropower (especially in the Congo Basin and Amazon tributaries) has caused significant ecosystem flooding. Solar land use scales with energy demand and siting decisions.'},
+];
+
+const KF={
+  1800:{intact_forest:32,native_grass:22,wetlands:7,other_nat:18,logging:1,cropland:5,grazing:8,developed:0.2,lawn:0.05,solar:0},
+  1850:{intact_forest:30,native_grass:20,wetlands:6.8,other_nat:17.5,logging:2,cropland:6.5,grazing:11,developed:0.3,lawn:0.1,solar:0},
+  1900:{intact_forest:27,native_grass:18,wetlands:6.5,other_nat:17,logging:3.5,cropland:8,grazing:14,developed:0.5,lawn:0.15,solar:0},
+  1950:{intact_forest:24,native_grass:15,wetlands:6,other_nat:16,logging:6,cropland:10,grazing:18,developed:0.6,lawn:0.2,solar:0},
+  2000:{intact_forest:20,native_grass:13,wetlands:5,other_nat:14,logging:10,cropland:11.5,grazing:23,developed:0.9,lawn:0.4,solar:0.01},
+  2023:{intact_forest:18,native_grass:11,wetlands:4.5,other_nat:13,logging:12,cropland:12,grazing:26,developed:1,lawn:0.5,solar:0.1},
+};
+const KYS=Object.keys(KF).map(Number).sort((a,b)=>a-b);
+
+function norm(d){const t=Object.values(d).reduce((s,v)=>s+v,0);const r={};for(const[k,v]of Object.entries(d))r[k]=(v/t)*100;return r;}
+function interp(yr){
+  if(yr<=KYS[0])return norm(KF[KYS[0]]);
+  if(yr>=KYS[KYS.length-1])return norm(KF[KYS[KYS.length-1]]);
+  let lo=KYS[0],hi=KYS[KYS.length-1];
+  for(let i=0;i<KYS.length-1;i++){if(KYS[i]<=yr&&yr<=KYS[i+1]){lo=KYS[i];hi=KYS[i+1];break;}}
+  const t=(yr-lo)/(hi-lo);const ld=norm(KF[lo]),hd=norm(KF[hi]);
+  const r={};for(const c of CATS)r[c.id]=ld[c.id]*(1-t)+hd[c.id]*t;return r;
+}
+
+const barEl=document.getElementById('land-bar');
+const segs={};
+for(const c of CATS){
+  const d=document.createElement('div');d.className='seg';d.style.background=c.color;
+  barEl.appendChild(d);segs[c.id]=d;
+}
+
+const gridEl=document.getElementById('cat-grid');
+const pEls={},aEls={};
+for(const c of CATS){
+  const card=document.createElement('div');card.className='cat-card';card.style.borderLeftColor=c.color;
+  card.innerHTML=`<div class="cat-n">${c.label}</div><div class="cat-p" id="p${c.id}">-</div><div class="cat-a" id="a${c.id}">-</div><div class="cat-x">${c.desc}</div>`;
+  card.addEventListener('click',()=>card.classList.toggle('open'));
+  gridEl.appendChild(card);pEls[c.id]=document.getElementById('p'+c.id);aEls[c.id]=document.getElementById('a'+c.id);
+}
+
+const infoZone=document.getElementById('info-zone');
+function showInfo(c,pct,acres){
+  infoZone.innerHTML=`<div class="info-name"><div class="info-dot" style="background:${c.color}"></div>${c.label}</div><div class="info-stat">${pct.toFixed(1)}% of ice-free land &mdash; ${acres.toFixed(1)}B acres</div><div class="info-desc">${c.desc}</div>`;
+}
+function clearInfo(){infoZone.innerHTML='<div class="info-hint">Hover any color segment above to explore a land use category</div>';}
+for(const c of CATS){
+  segs[c.id].addEventListener('mouseenter',()=>{
+    const pct=parseFloat(segs[c.id].style.width);showInfo(c,pct,pct/100*TM);
+    document.querySelectorAll('.seg').forEach(s=>s.classList.remove('hi'));segs[c.id].classList.add('hi');
+  });
+  segs[c.id].addEventListener('mouseleave',()=>{clearInfo();segs[c.id].classList.remove('hi');});
+}
+
+const sl=document.getElementById('yr-sl');
+const yd=document.getElementById('yr-disp');
+function setYr(yr){sl.value=yr;update(yr);['1800','1900','1950','2023'].forEach(y=>{const b=document.getElementById('b'+y);if(b)b.classList.toggle('on',parseInt(y)===yr);});}
+function update(yr){
+  const data=interp(yr);yd.textContent=Math.round(yr);
+  const ecoPct=data.intact_forest+data.native_grass+data.wetlands+data.other_nat;
+  const humPct=100-ecoPct;
+  document.getElementById('eco-n').textContent=Math.round(ecoPct)+'%';
+  document.getElementById('eco-a').textContent='~'+(ecoPct/100*TM).toFixed(1)+'B acres';
+  document.getElementById('hum-n').textContent=Math.round(humPct)+'%';
+  document.getElementById('hum-a').textContent='~'+(humPct/100*TM).toFixed(1)+'B acres';
+  document.getElementById('loss-fill').style.width=ecoPct+'%';
+  for(const c of CATS){const pct=data[c.id];segs[c.id].style.width=pct+'%';pEls[c.id].textContent=pct.toFixed(1)+'%';aEls[c.id].textContent=(pct/100*TM).toFixed(1)+'B acres';}
+}
+sl.addEventListener('input',e=>{document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('on'));update(parseInt(e.target.value));});
+update(1800);
+</script>
+</body>
+</html>
