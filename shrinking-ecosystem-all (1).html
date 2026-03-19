@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shrinking Ecosystem — Land Use by Region</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f4f3ef;--bg3:#e8e7e2;
+  --t1:#1a1a18;--t2:#5a5a56;--t3:#8a8a84;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+  --green:#1d7a52;--rust:#b85c38;
+  --r:8px;--rl:12px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'SFMono-Regular','Menlo','Consolas',monospace;
+  --serif:Georgia,'Times New Roman',serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;--t1:#f0efe8;--t2:#a8a89e;--t3:#6a6a62;--border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.22)}
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--t1);min-height:100vh;padding:0 0 5rem}
+.nav-outer{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:0.5px solid var(--border);padding:0 1.5rem}
+.nav-inner{max-width:900px;margin:0 auto;display:flex;overflow-x:auto;gap:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:10px 0}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-pill{white-space:nowrap;flex-shrink:0;font-size:12px;padding:6px 15px;border-radius:20px;border:0.5px solid transparent;background:transparent;color:var(--t3);cursor:pointer;font-family:var(--sans);transition:all .15s;letter-spacing:.01em}
+.nav-pill:hover{color:var(--t2);background:var(--bg2)}
+.nav-pill.on{border-color:var(--green);color:var(--green);background:rgba(29,122,82,.09);font-weight:500}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem 0}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-family:var(--mono);margin-bottom:8px}
+h1{font-size:26px;font-weight:500;color:var(--t1);margin-bottom:6px;font-family:var(--serif);line-height:1.2}
+.sub{font-size:14px;color:var(--t2);line-height:1.7;max-width:680px;margin-bottom:1.25rem}
+.callout{background:var(--bg2);border-left:3px solid var(--rust);border-radius:0 var(--r) var(--r) 0;padding:11px 15px;margin-bottom:1.5rem;max-width:680px}
+.callout p{font-size:13px;color:var(--t2);line-height:1.65}
+.callout strong{font-weight:500;color:var(--t1)}
+.stat-row{display:flex;margin-bottom:1.5rem;border:0.5px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.stat-cell{flex:1;padding:14px 18px;display:flex;flex-direction:column;gap:3px}
+.stat-cell+.stat-cell{border-left:0.5px solid var(--border)}
+.stat-num{font-size:40px;font-weight:500;font-family:var(--mono);line-height:1;transition:all .4s}
+.eco{color:var(--green)}.human{color:var(--rust)}
+.stat-lbl{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);font-family:var(--mono)}
+.stat-sub{font-size:11px;color:var(--t3);font-family:var(--mono);margin-top:1px}
+.bar-lbl{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);font-family:var(--mono);margin-bottom:7px}
+.land-bar{width:100%;height:72px;display:flex;border-radius:6px;overflow:hidden}
+.seg{height:100%;transition:width .8s cubic-bezier(.4,0,.2,1),filter .12s;flex-shrink:0;cursor:pointer}
+.seg:hover,.seg.hi{filter:brightness(1.2)}
+.info-zone{min-height:70px;padding:12px 0 8px;margin-bottom:4px;border-bottom:0.5px solid var(--border)}
+.info-name{font-size:14px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.info-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.info-stat{font-size:12px;color:var(--t2);font-family:var(--mono);margin-bottom:5px}
+.info-desc{font-size:13px;color:var(--t2);line-height:1.6;max-width:700px}
+.info-hint{font-size:13px;color:var(--t3);font-style:italic;padding-top:6px}
+.yr-row{display:flex;align-items:center;gap:14px;margin:1.25rem 0 4px}
+.yr-big{font-size:38px;font-weight:500;color:var(--t1);font-family:var(--serif);min-width:90px}
+input[type=range]{width:100%;accent-color:var(--green);cursor:pointer}
+.tick-row{display:flex;justify-content:space-between;padding:0 2px;margin-bottom:12px}
+.tick{font-size:11px;color:var(--t3);cursor:pointer;font-family:var(--mono)}
+.tick:hover{color:var(--t1)}
+.q-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:1.75rem}
+.qbtn{font-size:12px;padding:5px 14px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;font-family:var(--sans);transition:all .15s}
+.qbtn:hover{background:var(--bg2);color:var(--t1)}
+.qbtn.on{border-color:var(--green);color:var(--green);background:rgba(29,122,82,.09)}
+.grid-lbl{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);font-family:var(--mono);margin-bottom:10px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;margin-bottom:1.75rem}
+.cat-card{background:var(--bg2);border-radius:var(--r);padding:12px;cursor:pointer;border:0.5px solid var(--border);border-left-width:3px;transition:border-color .15s}
+.cat-card:hover{border-color:var(--border2)}
+.cat-n{font-size:12px;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:7px}
+.cat-p{font-size:22px;font-weight:500;font-family:var(--mono);color:var(--t1);line-height:1;margin-bottom:2px;transition:all .4s}
+.cat-a{font-size:11px;color:var(--t2);font-family:var(--mono)}
+.cat-x{font-size:12px;color:var(--t2);line-height:1.6;display:none;margin-top:9px;padding-top:9px;border-top:0.5px solid var(--border)}
+.cat-card.open .cat-x{display:block}
+.loss-track{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;border:0.5px solid var(--border);margin-top:7px}
+.loss-fill{height:100%;background:var(--green);border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.note{font-size:11px;color:var(--t3);line-height:1.75;border-top:0.5px solid var(--border);padding-top:1.25rem;margin-bottom:1.5rem}
+footer{font-size:12px;color:var(--t3)}
+</style>
+</head>
+<body>
+
+<div class="nav-outer">
+  <div class="nav-inner" id="nav-inner"></div>
+</div>
+
+<div class="wrap">
+  <div class="eyebrow" id="eyebrow"></div>
+  <h1 id="main-title"></h1>
+  <p class="sub" id="sub"></p>
+  <div class="callout" id="callout"><p id="callout-text"></p></div>
+
+  <div class="stat-row">
+    <div class="stat-cell">
+      <div class="stat-lbl">Functional ecosystem</div>
+      <div class="stat-num eco" id="eco-n">—</div>
+      <div class="stat-sub" id="eco-a">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-lbl">Human-dominated land</div>
+      <div class="stat-num human" id="hum-n">—</div>
+      <div class="stat-sub" id="hum-a">—</div>
+    </div>
+    <div class="stat-cell" style="flex:2">
+      <div class="stat-lbl">Ecosystem remaining</div>
+      <div class="loss-track"><div class="loss-fill" id="loss-fill" style="width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px">
+        <span style="font-size:10px;color:var(--t3);font-family:var(--mono)">0%</span>
+        <span style="font-size:10px;color:var(--t3);font-family:var(--mono)">100%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bar-lbl" id="bar-lbl"></div>
+  <div class="land-bar" id="land-bar"></div>
+  <div class="info-zone" id="info-zone"><div class="info-hint">Hover any color segment to explore a category</div></div>
+
+  <div class="yr-row">
+    <div class="yr-big" id="yr-disp">1800</div>
+    <div style="flex:1"><input type="range" id="yr-sl" min="1800" max="2023" value="1800" step="1"></div>
+  </div>
+  <div class="tick-row">
+    <span class="tick" onclick="setYr(1800)">1800</span>
+    <span class="tick" onclick="setYr(1850)">1850</span>
+    <span class="tick" onclick="setYr(1900)">1900</span>
+    <span class="tick" onclick="setYr(1950)">1950</span>
+    <span class="tick" onclick="setYr(2000)">2000</span>
+    <span class="tick" onclick="setYr(2023)">2023</span>
+  </div>
+  <div class="q-row" id="q-row"></div>
+
+  <div class="grid-lbl">Breakdown by category — click any card to expand</div>
+  <div class="cat-grid" id="cat-grid"></div>
+
+  <div class="note" id="note"></div>
+  <footer>Created with Claude &mdash; summersgardening.com</footer>
+</div>
+
+<script>
+const CATS=[
+  {id:'intact_forest', label:'Intact forest',               color:'#1a5c3a',
+   desc:'Old-growth and primary forests — irreplaceable carbon stores, water systems, and biodiversity reservoirs. Once cleared, centuries are required for full ecological recovery. Contains the majority of terrestrial species on Earth.'},
+  {id:'native_grass',  label:'Native grasslands & savanna', color:'#2d9e6b',
+   desc:'Tallgrass prairie, tropical savanna, steppe — deep root systems sequester carbon and support extraordinary biodiversity. Among the most endangered ecosystem types globally. Conversion is often invisible: a plowed field looks the same whether it replaced a parking lot or an ancient grassland.'},
+  {id:'wetlands',      label:'Wetlands & peatlands',        color:'#45b08c',
+   desc:'Peatlands store twice as much carbon as all forests combined — in just 3% of land area. Draining them for agriculture releases millennia of stored carbon instantly. Wetlands also provide flood control and water filtration worth trillions annually.'},
+  {id:'other_nat',     label:'Dryland, shrubland & tundra', color:'#6dba9a',
+   desc:'Arid scrublands, arctic tundra, alpine ecosystems. Less immediately threatened by agriculture but increasingly fragmented. Permafrost tundra contains ~1.5 trillion tons of carbon — a sleeping giant. As it thaws, it releases methane at rates that could dwarf all human emissions.'},
+  {id:'logging',       label:'Managed & logged forest',     color:'#7a8c54',
+   desc:'Secondary forests, plantation timber, selectively logged primary forest. Frequently classified as "forest" in official statistics, masking true ecosystem loss. A palm oil plantation is legally a forest in Indonesian reporting. Biodiversity and carbon function are a fraction of intact forest.'},
+  {id:'cropland',      label:'Industrial cropland',         color:'#c9a84c',
+   desc:'The 12% of global land growing crops — but only a fraction feeds humans directly. Roughly 40% of global crop calories are fed to livestock. Corn, soy, and wheat dominate. Yield improvements since the Green Revolution have slowed; future food demand requires either more land or radical diet shifts.'},
+  {id:'grazing',       label:'Beef & livestock grazing',    color:'#b85c38',
+   desc:'The single largest anthropogenic land use on Earth. Livestock uses 77% of all agricultural land but produces only 18% of global calories. The Amazon is clearing at roughly a football field per minute, overwhelmingly for cattle. No other single dietary shift has a comparable land-use impact.'},
+  {id:'developed',     label:'Urban & built infrastructure',color:'#5f6b78',
+   desc:'Roads, cities, ports, airports — all of it combined — covers roughly 1% of Earth\'s ice-free land. Urban sprawl is visible and visceral but is a rounding error compared to livestock land use. The "cities are eating the countryside" narrative is technically true and strategically misleading.'},
+  {id:'lawn',          label:'Lawns, golf & peri-urban',    color:'#8a9a50',
+   desc:'Low-density suburban land with near-zero ecological function. In the US alone, lawn exceeds 40 million acres — more than corn. The American suburban model (car, lawn, beef) is being exported globally, compounding land pressure in developing economies.'},
+  {id:'solar',         label:'Energy infrastructure',       color:'#3a5f8a',
+   desc:'Utility-scale solar, wind, hydropower reservoirs, fossil fuel extraction. Still small globally but growing fast. Smart siting on degraded agricultural land changes the equation dramatically versus siting on intact grassland or desert. Agrivoltaics (dual crop + solar use) are a genuine opportunity.'},
+];
+
+const VIEWS=[
+  {id:'global',name:'Global',total:33,unit:'B',
+   eyebrow:'Global land use — 1800 to 2023',
+   title:'The shrinking ecosystem — worldwide',
+   sub:'All 33 billion acres of ice-free land on Earth. The Amazon clears at a football field per minute. The Congo Basin is under accelerating pressure. Every continent shows the same curve: green compressing as rust expands.',
+   callout:'<strong>The ratio that matters:</strong> Livestock uses 77% of all agricultural land globally but produces only 18% of global calories. Beef and dairy occupy more land than all crops combined — yet feed far fewer people.',
+   barLbl:'All ice-free land on Earth (~33 billion acres)',
+   moments:[{yr:1800,lbl:'Pre-industrial (1800)'},{yr:1900,lbl:'Colonial era (1900)'},{yr:1950,lbl:'Green Revolution (1950)'},{yr:2023,lbl:'Today (2023)'}],
+   note:'Sources: FAO Global Forest Resources Assessment, Our World in Data (Hannah Ritchie), Poore & Nemecek (2018) Science, Global Forest Watch, IPCC AR6 land use chapter. Total ice-free land ~13.4B hectares / 33B acres. Functional ecosystem = intact forest + native grasslands + wetlands + natural dryland. Pre-1900 estimates carry ±5% uncertainty.',
+   kf:{
+     1800:{intact_forest:32,native_grass:22,wetlands:7,other_nat:18,logging:1,cropland:5,grazing:8,developed:0.2,lawn:0.05,solar:0},
+     1850:{intact_forest:30,native_grass:20,wetlands:6.8,other_nat:17.5,logging:2,cropland:6.5,grazing:11,developed:0.3,lawn:0.1,solar:0},
+     1900:{intact_forest:27,native_grass:18,wetlands:6.5,other_nat:17,logging:3.5,cropland:8,grazing:14,developed:0.5,lawn:0.15,solar:0},
+     1950:{intact_forest:24,native_grass:15,wetlands:6,other_nat:16,logging:6,cropland:10,grazing:18,developed:0.6,lawn:0.2,solar:0},
+     2000:{intact_forest:20,native_grass:13,wetlands:5,other_nat:14,logging:10,cropland:11.5,grazing:23,developed:0.9,lawn:0.4,solar:0.01},
+     2023:{intact_forest:18,native_grass:11,wetlands:4.5,other_nat:13,logging:12,cropland:12,grazing:26,developed:1,lawn:0.5,solar:0.1},
+   }},
+  {id:'north_america',name:'N. America',total:5.5,unit:'B',
+   eyebrow:'North America land use — 1800 to 2023',
+   title:'North America: the boreal buffer',
+   sub:"North America's story is two continents in one. Canada's vast boreal forest — still largely intact — cushions what would otherwise look like the US story writ large. Remove Canada, and the numbers collapse. The boreal is the continent's remaining ecological insurance.",
+   callout:"<strong>Canada's boreal:</strong> The world's largest intact forest — 1.2 billion acres of continuous woodland, peatland, and wetland. Holds 12% of Earth's unfrozen fresh water. Currently under pressure from oil sands expansion, logging, and climate-driven fire.",
+   barLbl:'All land in North America incl. Mexico & Central America (~5.5 billion acres)',
+   moments:[{yr:1800,lbl:'Before settlement (1800)'},{yr:1900,lbl:'Industrial era (1900)'},{yr:1950,lbl:'Post-war boom (1950)'},{yr:2023,lbl:'Today (2023)'}],
+   note:'Sources: USGS, USDA, Canadian Forest Service, CONAFOR (Mexico), FAO FRA. Includes US, Canada, Mexico, Central America (~5.5 billion acres). Canada\'s boreal forest substantially moderates the continental averages — the US-only view shows a sharper collapse.',
+   kf:{
+     1800:{intact_forest:38,native_grass:27,wetlands:8,other_nat:12,logging:0,cropland:2,grazing:2,developed:0.1,lawn:0.05,solar:0},
+     1850:{intact_forest:35,native_grass:23,wetlands:7.5,other_nat:11.5,logging:1,cropland:4,grazing:5,developed:0.3,lawn:0.1,solar:0},
+     1900:{intact_forest:30,native_grass:18,wetlands:7,other_nat:11,logging:4,cropland:8,grazing:10,developed:0.8,lawn:0.2,solar:0},
+     1950:{intact_forest:26,native_grass:13,wetlands:6.5,other_nat:10.5,logging:10,cropland:12,grazing:16,developed:1.2,lawn:0.5,solar:0},
+     2000:{intact_forest:22,native_grass:9,wetlands:5.5,other_nat:10,logging:14,cropland:13,grazing:21,developed:2,lawn:1.2,solar:0.02},
+     2023:{intact_forest:20,native_grass:8,wetlands:5,other_nat:10,logging:15,cropland:13,grazing:23,developed:2.5,lawn:1.5,solar:0.3},
+   }},
+  {id:'us',name:'United States',total:2.26,unit:'B',
+   eyebrow:'US land use — 1800 to 2023',
+   title:'United States: the conversion story',
+   sub:'The US converted faster and more completely than almost any comparable landmass in history. Prairie — the deep-rooted, carbon-sequestering grassland that covered the Midwest — is the most endangered ecosystem in North America. Over 90% gone in 150 years.',
+   callout:"<strong>Tallgrass prairie:</strong> Once covered 170 million acres. Now less than 4% remains — rarer than tropical rainforest. The conversion happened so fast, within living memory of living memory, that most Americans don't know it existed.",
+   barLbl:'All US land (~2.26 billion acres)',
+   moments:[{yr:1800,lbl:'Before settlement (1800)'},{yr:1900,lbl:'Industrial era (1900)'},{yr:1950,lbl:'Post-war boom (1950)'},{yr:2023,lbl:'Today (2023)'}],
+   note:'Sources: USGS National Land Cover Database, USDA ERS, EPA Wetlands Status & Trends, Global Forest Watch, USFS Forest Inventory & Analysis. Pre-1900 estimates from USGS historical surveys and Albrecht et al. (2006). US total land ~2.26 billion acres. Functional ecosystem includes desert/alpine not at agricultural risk. Historical estimates carry ±3–5% uncertainty.',
+   kf:{
+     1800:{intact_forest:40,native_grass:34,wetlands:10,other_nat:12,logging:0,cropland:1.5,grazing:1.5,developed:0.3,lawn:0.1,solar:0},
+     1850:{intact_forest:36,native_grass:29,wetlands:9.5,other_nat:11.5,logging:2,cropland:4,grazing:4.5,developed:0.6,lawn:0.2,solar:0},
+     1900:{intact_forest:27,native_grass:19,wetlands:8,other_nat:11,logging:7,cropland:13,grazing:11,developed:1.5,lawn:0.3,solar:0},
+     1950:{intact_forest:20,native_grass:11,wetlands:7,other_nat:10.5,logging:13,cropland:17,grazing:18,developed:2,lawn:0.8,solar:0},
+     2000:{intact_forest:13,native_grass:7,wetlands:5.5,other_nat:10,logging:16,cropland:17,grazing:27,developed:2.8,lawn:1.8,solar:0.05},
+     2023:{intact_forest:11,native_grass:6,wetlands:5,other_nat:10,logging:16,cropland:17,grazing:29,developed:3,lawn:2,solar:0.5},
+   }},
+  {id:'south_america',name:'S. America',total:4.2,unit:'B',
+   eyebrow:'South America land use — 1800 to 2023',
+   title:'South America: the active frontier',
+   sub:"South America holds the largest remaining block of tropical forest on Earth — and it's being cleared at a rate visible from space. The Amazon gets the attention. The Cerrado, equally biodiverse and already 50% gone, is mostly invisible in global media.",
+   callout:"<strong>The Cerrado:</strong> Brazil's vast interior savanna — larger than Western Europe — has lost over half its cover in 50 years, mostly to soy and cattle. It's the world's most biodiverse savanna and one of the least protected major ecosystems.",
+   barLbl:'All land in South America (~4.2 billion acres)',
+   moments:[{yr:1800,lbl:'Before colonization (1800)'},{yr:1900,lbl:'Colonial peak (1900)'},{yr:1950,lbl:'Green Revolution (1950)'},{yr:2023,lbl:'Today (2023)'}],
+   note:'Sources: PRODES (Brazil INPE), Global Forest Watch, FAO FRA, MapBiomas. ~4.2 billion acres total. Amazon deforestation best-documented; Cerrado and Gran Chaco estimates carry higher uncertainty. Cattle ranching accounts for ~80% of Amazon deforestation; soy (largely animal feed) is the second driver.',
+   kf:{
+     1800:{intact_forest:48,native_grass:24,wetlands:8,other_nat:8,logging:0,cropland:3,grazing:6,developed:0.15,lawn:0.05,solar:0},
+     1850:{intact_forest:47,native_grass:22,wetlands:7.8,other_nat:7.8,logging:0.5,cropland:4,grazing:7.5,developed:0.2,lawn:0.05,solar:0},
+     1900:{intact_forest:45,native_grass:20,wetlands:7.5,other_nat:7.5,logging:1,cropland:5,grazing:10,developed:0.4,lawn:0.1,solar:0},
+     1950:{intact_forest:42,native_grass:17,wetlands:7,other_nat:7,logging:3,cropland:7,grazing:14,developed:0.6,lawn:0.15,solar:0},
+     2000:{intact_forest:34,native_grass:13,wetlands:5.5,other_nat:6.5,logging:9,cropland:10,grazing:20,developed:0.8,lawn:0.3,solar:0.01},
+     2023:{intact_forest:29,native_grass:10,wetlands:5,other_nat:6,logging:12,cropland:12,grazing:23,developed:1,lawn:0.4,solar:0.1},
+   }},
+  {id:'europe',name:'Europe',total:1.1,unit:'B',
+   eyebrow:'Europe land use — 1800 to 2023',
+   title:'Europe: the conversion already happened',
+   sub:"Europe's ecological destruction is ancient history. By 1800 — where most countries start their environmental records — the continent was already deeply converted. The choices the US and South America are making now, Europe made centuries ago. Almost nothing intact remains.",
+   callout:"<strong>What Europe tells us:</strong> Less than 4% of Europe qualifies as wilderness. Primary forests in Central and Western Europe were cleared in the medieval period. What remains is managed forest, cropland, and cities. Europe is the future if current trajectories hold.",
+   barLbl:'All land in Europe excl. Russia (~1.1 billion acres)',
+   moments:[{yr:1800,lbl:'Pre-industrial (1800)'},{yr:1900,lbl:'Industrial peak (1900)'},{yr:1950,lbl:'Post-war (1950)'},{yr:2023,lbl:'Today (2023)'}],
+   note:'Sources: EEA (European Environment Agency), FAO FRA, Rewilding Europe. Excludes Russia (~1.1 billion acres). Remaining intact forest concentrated in Scandinavia, Carpathians, and Balkans. Peat drainage is a major ongoing carbon source. European rewilding efforts are expanding but cover a small fraction of historic range.',
+   kf:{
+     1800:{intact_forest:20,native_grass:10,wetlands:5,other_nat:3,logging:10,cropland:28,grazing:18,developed:3.5,lawn:1,solar:0},
+     1850:{intact_forest:17,native_grass:8,wetlands:4.5,other_nat:2.8,logging:12,cropland:28,grazing:19,developed:4,lawn:1.2,solar:0},
+     1900:{intact_forest:15,native_grass:6,wetlands:4,other_nat:2.5,logging:14,cropland:28,grazing:20,developed:5,lawn:1.5,solar:0},
+     1950:{intact_forest:13,native_grass:4.5,wetlands:3,other_nat:2,logging:16,cropland:27,grazing:22,developed:6,lawn:2,solar:0},
+     2000:{intact_forest:11,native_grass:3,wetlands:2,other_nat:1.5,logging:19,cropland:26,grazing:23,developed:7.5,lawn:4,solar:0.8},
+     2023:{intact_forest:10,native_grass:2.5,wetlands:1.5,other_nat:1.5,logging:20,cropland:25,grazing:23,developed:8,lawn:5,solar:3},
+   }},
+  {id:'africa',name:'Africa',total:7.4,unit:'B',
+   eyebrow:'Africa land use — 1800 to 2023',
+   title:'Africa: the next frontier',
+   sub:"Africa entered the 19th century with most ecosystems intact. The Congo Basin — the world's second largest rainforest — remains largely whole today, but deforestation is accelerating. Africa is where the next major ecological decisions will be made, and international finance is already arriving for both conservation and extraction.",
+   callout:'<strong>The Congo Basin:</strong> 500 million acres of contiguous rainforest — and the world\'s largest tropical peat deposit. Currently less threatened than the Amazon, but under increasing pressure from logging, artisanal agriculture, and a population with legitimate development needs. The politics are entirely different from the Amazon.',
+   barLbl:'All land in Africa (~7.4 billion acres)',
+   moments:[{yr:1800,lbl:'Pre-colonial (1800)'},{yr:1900,lbl:'Colonial era (1900)'},{yr:1950,lbl:'Independence era (1950)'},{yr:2023,lbl:'Today (2023)'}],
+   note:'Sources: FAO FRA, Global Forest Watch, Congo Basin Forest Partnership, African Forest Landscape Restoration Initiative (AFR100). ~7.4 billion acres total. Congo Basin data most reliable; Sahel dryland boundaries carry higher uncertainty. Population growth is the primary driver of cropland expansion in sub-Saharan Africa.',
+   kf:{
+     1800:{intact_forest:21,native_grass:38,wetlands:6,other_nat:22,logging:0,cropland:5,grazing:6,developed:0.1,lawn:0.05,solar:0},
+     1850:{intact_forest:21,native_grass:37,wetlands:5.8,other_nat:21,logging:0.2,cropland:5.5,grazing:7,developed:0.1,lawn:0.05,solar:0},
+     1900:{intact_forest:20,native_grass:35,wetlands:5.5,other_nat:20,logging:0.5,cropland:6,grazing:9,developed:0.2,lawn:0.1,solar:0},
+     1950:{intact_forest:19,native_grass:32,wetlands:5,other_nat:19,logging:1.5,cropland:8,grazing:12,developed:0.3,lawn:0.1,solar:0},
+     2000:{intact_forest:17,native_grass:27,wetlands:4.2,other_nat:18,logging:5,cropland:11,grazing:15,developed:0.6,lawn:0.2,solar:0.01},
+     2023:{intact_forest:15,native_grass:23,wetlands:3.8,other_nat:17,logging:8,cropland:14,grazing:17,developed:0.8,lawn:0.3,solar:0.1},
+   }},
+  {id:'asia',name:'Asia',total:9.5,unit:'B',
+   eyebrow:'Asia land use — 1800 to 2023',
+   title:'Asia: scale and speed',
+   sub:"Asia holds the largest human population and some of the fastest-moving deforestation on Earth. Southeast Asia's peatland and rainforest destruction — driven largely by palm oil and pulp — is a carbon catastrophe measured in gigatons. China's land use transformation since 1950 is historically unprecedented in speed.",
+   callout:"<strong>Southeast Asian peat:</strong> When drained for palm oil, ancient peatlands release thousands of years of stored carbon instantly. Indonesia's peat fires in 2015 emitted more CO₂ in a few months than the entire US economy in a year. This is still happening.",
+   barLbl:'All land in Asia excl. Russia (~9.5 billion acres)',
+   moments:[{yr:1800,lbl:'Pre-industrial (1800)'},{yr:1900,lbl:'Colonial era (1900)'},{yr:1950,lbl:'Green Revolution (1950)'},{yr:2023,lbl:'Today (2023)'}],
+   note:'Sources: FAO FRA, Global Forest Watch, JAXA forest monitoring, Hansen et al. global deforestation dataset. Excludes Russia (~9.5 billion acres). Southeast Asian peat deforestation among the most carbon-intensive land use change globally. India and China account for the largest share of post-1950 cropland expansion.',
+   kf:{
+     1800:{intact_forest:30,native_grass:18,wetlands:8,other_nat:20,logging:2,cropland:10,grazing:8,developed:0.5,lawn:0.1,solar:0},
+     1850:{intact_forest:28,native_grass:17,wetlands:7.8,other_nat:19,logging:2.5,cropland:11,grazing:9,developed:0.6,lawn:0.1,solar:0},
+     1900:{intact_forest:26,native_grass:15,wetlands:7.5,other_nat:18,logging:4,cropland:13,grazing:11,developed:1,lawn:0.2,solar:0},
+     1950:{intact_forest:23,native_grass:13,wetlands:7,other_nat:17,logging:6,cropland:14,grazing:13,developed:1.5,lawn:0.3,solar:0},
+     2000:{intact_forest:17,native_grass:10,wetlands:5,other_nat:15,logging:11,cropland:17,grazing:18,developed:2.5,lawn:0.8,solar:0.1},
+     2023:{intact_forest:14,native_grass:9,wetlands:4.5,other_nat:14,logging:13,cropland:18,grazing:20,developed:3,lawn:1,solar:2},
+   }},
+  {id:'oceania',name:'Oceania',total:2.1,unit:'B',
+   eyebrow:'Oceania land use — 1800 to 2023',
+   title:"Oceania: the invisible clearing",
+   sub:"Australia's woodland and scrubland clearing is one of the world's least-reported ecological stories. More land has been cleared in Queensland alone than in most countries. The vast arid interior remains intact — not from protection, but because it won't support agriculture. The ecological action is all on the margins.",
+   callout:"<strong>Australia's clearing rate:</strong> In the late 1990s Australia was clearing land faster per capita than Brazil. A Queensland moratorium (2006) slowed it dramatically — proof that policy works when applied. Clearing has since resumed under weakened protections.",
+   barLbl:'All land in Oceania — Australia, NZ, Pacific (~2.1 billion acres)',
+   moments:[{yr:1800,lbl:'Pre-settlement (1800)'},{yr:1900,lbl:'Pastoral era (1900)'},{yr:1950,lbl:'Post-war clearing (1950)'},{yr:2023,lbl:'Today (2023)'}],
+   note:'Sources: Australian Bureau of Statistics, Queensland Land Use Mapping Programme, NZ Ministry for the Environment, FAO FRA. ~2.1 billion acres total. Arid interior (~70% of Australian land area) remains largely intact. Ecosystem loss concentrated in temperate southeast, tropical Queensland, and southwest WA. NZ has lost ~80% of original forest cover since Polynesian and European settlement.',
+   kf:{
+     1800:{intact_forest:14,native_grass:20,wetlands:4,other_nat:48,logging:0,cropland:1,grazing:5,developed:0.1,lawn:0.05,solar:0},
+     1850:{intact_forest:13,native_grass:18,wetlands:3.8,other_nat:47,logging:0.5,cropland:2,grazing:10,developed:0.2,lawn:0.05,solar:0},
+     1900:{intact_forest:12,native_grass:16,wetlands:3.5,other_nat:44,logging:1,cropland:4,grazing:16,developed:0.3,lawn:0.1,solar:0},
+     1950:{intact_forest:11,native_grass:14,wetlands:3.2,other_nat:42,logging:2,cropland:6,grazing:19,developed:0.5,lawn:0.15,solar:0},
+     2000:{intact_forest:10,native_grass:12,wetlands:3,other_nat:38,logging:4,cropland:7.5,grazing:22,developed:0.8,lawn:0.5,solar:0.05},
+     2023:{intact_forest:9.5,native_grass:11,wetlands:2.8,other_nat:36,logging:5,cropland:8,grazing:24,developed:1.2,lawn:0.8,solar:0.3},
+   }},
+];
+
+const ECO_IDS=['intact_forest','native_grass','wetlands','other_nat'];
+const KYS=[1800,1850,1900,1950,2000,2023];
+let CV=VIEWS[0];
+
+function norm(d){
+  const t=Object.values(d).reduce((s,v)=>s+v,0);
+  const r={};for(const[k,v]of Object.entries(d))r[k]=(v/t)*100;return r;
+}
+function interp(yr,kf){
+  if(yr<=KYS[0])return norm(kf[KYS[0]]);
+  if(yr>=KYS[KYS.length-1])return norm(kf[KYS[KYS.length-1]]);
+  let lo=KYS[0],hi=KYS[KYS.length-1];
+  for(let i=0;i<KYS.length-1;i++){if(KYS[i]<=yr&&yr<=KYS[i+1]){lo=KYS[i];hi=KYS[i+1];break;}}
+  const t=(yr-lo)/(hi-lo);
+  const ld=norm(kf[lo]),hd=norm(kf[hi]);
+  const r={};for(const c of CATS)r[c.id]=ld[c.id]*(1-t)+hd[c.id]*t;return r;
+}
+function fmtAcres(pct,view){
+  const v=pct/100*view.total;
+  return view.unit==='B'?(v.toFixed(2)+'B acres'):(Math.round(v*1000)+'M acres');
+}
+
+// Build nav
+const navEl=document.getElementById('nav-inner');
+VIEWS.forEach(v=>{
+  const b=document.createElement('button');
+  b.className='nav-pill'+(v.id===CV.id?' on':'');
+  b.textContent=v.name;b.dataset.id=v.id;
+  b.addEventListener('click',()=>setView(v.id));
+  navEl.appendChild(b);
+});
+
+// Build segments
+const barEl=document.getElementById('land-bar');
+const segs={};
+CATS.forEach(c=>{
+  const d=document.createElement('div');d.className='seg';d.style.background=c.color;
+  barEl.appendChild(d);segs[c.id]=d;
+});
+
+// Build cat cards
+const gridEl=document.getElementById('cat-grid');
+const pEls={},aEls={};
+CATS.forEach(c=>{
+  const card=document.createElement('div');card.className='cat-card';card.style.borderLeftColor=c.color;
+  card.innerHTML=`<div class="cat-n">${c.label}</div><div class="cat-p" id="p_${c.id}">—</div><div class="cat-a" id="a_${c.id}">—</div><div class="cat-x">${c.desc}</div>`;
+  card.addEventListener('click',()=>card.classList.toggle('open'));
+  gridEl.appendChild(card);
+  pEls[c.id]=document.getElementById('p_'+c.id);
+  aEls[c.id]=document.getElementById('a_'+c.id);
+});
+
+// Info zone
+const infoZone=document.getElementById('info-zone');
+function showInfo(c,pct){
+  infoZone.innerHTML=`<div class="info-name"><div class="info-dot" style="background:${c.color}"></div>${c.label}</div><div class="info-stat">${pct.toFixed(1)}% of land &mdash; ${fmtAcres(pct,CV)}</div><div class="info-desc">${c.desc}</div>`;
+}
+function clearInfo(){infoZone.innerHTML='<div class="info-hint">Hover any color segment to explore a category</div>';}
+CATS.forEach(c=>{
+  segs[c.id].addEventListener('mouseenter',()=>{
+    const pct=parseFloat(segs[c.id].style.width);
+    showInfo(c,pct);
+    document.querySelectorAll('.seg').forEach(s=>s.classList.remove('hi'));
+    segs[c.id].classList.add('hi');
+  });
+  segs[c.id].addEventListener('mouseleave',()=>{clearInfo();segs[c.id].classList.remove('hi');});
+});
+
+const sl=document.getElementById('yr-sl');
+const yd=document.getElementById('yr-disp');
+
+function update(yr){
+  const data=interp(yr,CV.kf);
+  yd.textContent=Math.round(yr);
+  const ecoPct=ECO_IDS.reduce((s,id)=>s+data[id],0);
+  const humPct=100-ecoPct;
+  document.getElementById('eco-n').textContent=Math.round(ecoPct)+'%';
+  document.getElementById('eco-a').textContent='~'+fmtAcres(ecoPct,CV);
+  document.getElementById('hum-n').textContent=Math.round(humPct)+'%';
+  document.getElementById('hum-a').textContent='~'+fmtAcres(humPct,CV);
+  document.getElementById('loss-fill').style.width=ecoPct+'%';
+  CATS.forEach(c=>{
+    const pct=data[c.id];
+    segs[c.id].style.width=pct+'%';
+    pEls[c.id].textContent=pct.toFixed(1)+'%';
+    aEls[c.id].textContent=fmtAcres(pct,CV);
+  });
+}
+
+function setYr(yr){
+  sl.value=yr;update(yr);
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.toggle('on',parseInt(b.dataset.yr)===yr));
+}
+
+function buildQuickButtons(view){
+  const qr=document.getElementById('q-row');qr.innerHTML='';
+  view.moments.forEach(m=>{
+    const b=document.createElement('button');b.className='qbtn';b.textContent=m.lbl;b.dataset.yr=m.yr;
+    b.addEventListener('click',()=>setYr(m.yr));qr.appendChild(b);
+  });
+}
+
+function setView(vid){
+  CV=VIEWS.find(v=>v.id===vid);
+  document.querySelectorAll('.nav-pill').forEach(p=>p.classList.toggle('on',p.dataset.id===vid));
+  document.getElementById('eyebrow').textContent=CV.eyebrow;
+  document.getElementById('main-title').textContent=CV.title;
+  document.getElementById('sub').textContent=CV.sub;
+  document.getElementById('callout-text').innerHTML=CV.callout;
+  document.getElementById('bar-lbl').textContent=CV.barLbl;
+  document.getElementById('note').textContent=CV.note;
+  document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('open'));
+  clearInfo();
+  buildQuickButtons(CV);
+  setYr(1800);
+  document.querySelectorAll('.qbtn')[0]?.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+sl.addEventListener('input',e=>{
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('on'));
+  update(parseInt(e.target.value));
+});
+
+setView('global');
+</script>
+</body>
+</html>
