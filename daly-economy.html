@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Missing Substrate — Daly's Critique</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #faf8f5;
+      color: #1a1a1a;
+      padding: 2.5rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #1a1a1a;
+    }
+
+    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
+
+    .intro { font-size: 0.9rem; color: #333; line-height: 1.75; margin-bottom: 1.8rem; max-width: 680px; }
+    .intro p + p { margin-top: 0.7rem; }
+
+    /* nav */
+    nav {
+      margin-bottom: 1.5rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #ddd;
+      font-size: 0.8rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    nav a { color: #888; text-decoration: none; }
+    nav a:hover { color: #1a1a1a; }
+    nav .sep { color: #ddd; }
+
+    /* step controls */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .step-counter { font-size: 0.78rem; color: #999; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    button {
+      padding: 0.45rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.88rem;
+    }
+
+    .btn-primary { background: #2d6a4f; color: white; }
+    .btn-primary:hover { background: #1b4332; }
+    .btn-primary:disabled { background: #ccc; cursor: default; }
+    .btn-secondary { background: #eee; color: #444; }
+    .btn-secondary:hover { background: #ddd; }
+
+    /* explanation */
+    .explanation {
+      background: #f5f0eb;
+      border-left: 4px solid #2d6a4f;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.88rem;
+      color: #333;
+      line-height: 1.7;
+      min-height: 70px;
+    }
+
+    .explanation strong { color: #1a1a1a; }
+
+    /* diagram container */
+    .diagram-wrap {
+      background: #0d1f12;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    svg { display: block; width: 100%; height: auto; }
+
+    /* SVG element transitions */
+    .layer { transition: opacity 0.5s ease; }
+    .layer.hidden { opacity: 0; pointer-events: none; }
+    .layer.visible { opacity: 1; }
+
+    /* context */
+    .context {
+      margin-top: 2rem;
+      border-top: 2px solid #1a1a1a;
+      padding-top: 1.8rem;
+    }
+
+    .context h2 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      margin-bottom: 1.2rem;
+    }
+
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 580px) { .panels { grid-template-columns: 1fr; } }
+
+    .panel {
+      border-radius: 6px;
+      padding: 1rem 1.1rem;
+      font-size: 0.83rem;
+      line-height: 1.65;
+      color: #333;
+    }
+
+    .panel-title {
+      font-size: 0.72rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.5rem;
+    }
+
+    .p1 { background: #f0f9f4; border: 1px solid #c5e8d0; }
+    .p1 .panel-title { color: #1a6b3c; }
+    .p2 { background: #fff8ed; border: 1px solid #f6d86b; }
+    .p2 .panel-title { color: #92600a; }
+    .p3 { background: #f5f0fa; border: 1px solid #d4b8f0; }
+    .p3 .panel-title { color: #5b2d8e; }
+    .p4 { background: #f0f4ff; border: 1px solid #b8c8f0; }
+    .p4 .panel-title { color: #1a3a6b; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">← All models</a>
+    <span class="sep">|</span>
+    <a href="money-multiplier.html">1 · Money Multiplier</a>
+    <a href="debt-copies.html">2 · Debt Copies</a>
+    <a href="interest-ratchet.html">3 · Interest Ratchet</a>
+    <a href="interest-comparison.html">4 · Interest Variable</a>
+    <a href="daly-economy.html" style="color:#2d6a4f;font-weight:bold;">5 · Daly's Missing Substrate</a>
+  </nav>
+
+  <header>
+    <h1>The Missing Substrate</h1>
+    <p class="subtitle">What the standard economic model cannot see.</p>
+  </header>
+
+  <div class="intro">
+    <p>Every introductory economics course teaches the circular flow model: households supply labor, firms pay wages, households spend on goods, firms produce goods. Money and goods circulate in a loop. The model is elegant, internally consistent, and widely taught as a description of how economies work.</p>
+    <p>Herman Daly's critique is simple: the circular flow model treats the economy as a closed system. It has no inlet and no outlet. But real economies are not closed systems. They extract low-entropy matter and energy from the physical world, transform it into goods and services, and return high-entropy waste to the physical world. The model makes this throughput invisible. Step through the layers below to see what gets added back in.</p>
+  </div>
+
+  <div class="controls">
+    <span class="step-counter" id="step-counter">Step 1 of 5</span>
+    <button class="btn-primary" id="next-btn">Reveal next layer →</button>
+    <button class="btn-secondary" id="reset-btn">Reset</button>
+  </div>
+
+  <div class="explanation" id="explanation"></div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 840 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow-white" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.7)"/>
+        </marker>
+        <marker id="arrow-yellow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ffd54f"/>
+        </marker>
+        <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#69f0ae"/>
+        </marker>
+        <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ef9a9a"/>
+        </marker>
+        <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ffab40"/>
+        </marker>
+      </defs>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER 4: Space / thermodynamic frame (background) -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <g id="layer-space" class="layer hidden">
+        <!-- Sun -->
+        <circle cx="760" cy="60" r="38" fill="#fff176" opacity="0.95"/>
+        <circle cx="760" cy="60" r="30" fill="#fdd835"/>
+        <text x="760" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#5d4037" font-weight="bold">SUN</text>
+        <text x="760" y="69" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6d4c41">low-entropy</text>
+        <text x="760" y="80" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6d4c41">energy</text>
+        <!-- sun rays -->
+        <line x1="728" y1="38" x2="718" y2="28" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
+        <line x1="760" y1="22" x2="760" y2="10" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
+        <line x1="792" y1="38" x2="802" y2="28" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
+        <line x1="800" y1="60" x2="814" y2="60" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
+
+        <!-- Heat sink label bottom -->
+        <text x="420" y="490" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(255,100,80,0.6)">↓ HEAT / ENTROPY OUT — 2nd Law of Thermodynamics — all energy eventually dissipates as heat ↓</text>
+      </g>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER 2: Biosphere oval -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <g id="layer-biosphere" class="layer hidden">
+        <!-- Biosphere background -->
+        <ellipse cx="400" cy="265" rx="330" ry="210" fill="#1b4332" opacity="0.85"/>
+        <!-- Biosphere border -->
+        <ellipse cx="400" cy="265" rx="330" ry="210" fill="none" stroke="#52b788" stroke-width="2.5" stroke-dasharray="8,4" opacity="0.8"/>
+
+        <!-- Biosphere label -->
+        <text x="122" y="130" font-family="Georgia,serif" font-size="13" fill="#52b788" font-weight="bold">BIOSPHERE</text>
+        <text x="122" y="146" font-family="Georgia,serif" font-size="10" fill="#74c69d">finite · self-regulating · irreplaceable</text>
+
+        <!-- Sub-labels for biosphere contents -->
+        <text x="135" y="340" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">fossil fuels</text>
+        <text x="135" y="354" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">minerals &amp; metals</text>
+        <text x="135" y="368" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">fresh water</text>
+        <text x="135" y="382" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">topsoil &amp; biomass</text>
+        <text x="135" y="396" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">breathable air</text>
+        <text x="135" y="410" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">stable climate</text>
+      </g>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER 0 (always visible): Standard circular flow -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <g id="layer-economy">
+        <!-- Economy background box -->
+        <rect x="268" y="140" width="264" height="240" rx="8" fill="#0a3d2b" opacity="0.95"/>
+        <rect x="268" y="140" width="264" height="240" rx="8" fill="none" stroke="#2d9e6b" stroke-width="1.5" opacity="0.6"/>
+
+        <!-- HOUSEHOLDS box -->
+        <rect x="293" y="165" width="100" height="52" rx="5" fill="#1a6b3c"/>
+        <text x="343" y="187" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="white" font-weight="bold">HOUSEHOLDS</text>
+        <text x="343" y="201" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#a8d5b5">labor · capital</text>
+        <text x="343" y="212" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#a8d5b5">consumer spending</text>
+
+        <!-- FIRMS box -->
+        <rect x="407" y="165" width="100" height="52" rx="5" fill="#1a6b3c"/>
+        <text x="457" y="187" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="white" font-weight="bold">FIRMS</text>
+        <text x="457" y="201" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#a8d5b5">production</text>
+        <text x="457" y="212" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#a8d5b5">wages · profits</text>
+
+        <!-- Circular flow arrows: top loop (goods & services) -->
+        <path d="M393,172 Q400,148 407,172" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" marker-end="url(#arrow-white)"/>
+        <text x="400" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="rgba(255,255,255,0.6)">goods &amp; services ↕ spending</text>
+
+        <!-- Circular flow arrows: bottom loop (labor & wages) -->
+        <path d="M393,215 Q400,240 407,215" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" marker-end="url(#arrow-white)"/>
+        <text x="400" y="252" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="rgba(255,255,255,0.6)">labor &amp; capital ↕ wages &amp; profits</text>
+
+        <!-- Full outer loops -->
+        <!-- Upper outer: goods flow right, money flow left -->
+        <path d="M343,165 C343,280 457,280 457,165" fill="none" stroke="rgba(100,200,140,0.4)" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+        <!-- "ECONOMY" label -->
+        <text x="400" y="345" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#52b788" font-weight="bold" opacity="0.7">ECONOMY</text>
+        <text x="400" y="360" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#52b788" opacity="0.5">(as the model sees it)</text>
+
+        <!-- Invisible-to-model label -->
+        <text x="400" y="310" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="rgba(255,255,100,0.0)" id="model-blind-label">← this is all the model sees</text>
+      </g>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER 3: Resource extraction arrows -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <g id="layer-resources" class="layer hidden">
+        <!-- Arrow: biosphere → economy (resources in) -->
+        <line x1="268" y1="240" x2="215" y2="240" stroke="#69f0ae" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+        <line x1="215" y1="240" x2="175" y2="240" stroke="#69f0ae" stroke-width="2.5"/>
+
+        <!-- Resource labels -->
+        <text x="220" y="233" font-family="Georgia,serif" font-size="10" fill="#69f0ae" font-weight="bold">RESOURCES IN</text>
+        <text x="220" y="246" font-family="Georgia,serif" font-size="8.5" fill="#69f0ae" opacity="0.8">matter · energy · water · food</text>
+
+        <!-- Low entropy label -->
+        <text x="155" y="233" font-family="Georgia,serif" font-size="8" fill="#74c69d" opacity="0.7" text-anchor="middle">low</text>
+        <text x="155" y="243" font-family="Georgia,serif" font-size="8" fill="#74c69d" opacity="0.7" text-anchor="middle">entropy</text>
+        <text x="155" y="253" font-family="Georgia,serif" font-size="8" fill="#74c69d" opacity="0.7" text-anchor="middle">input</text>
+
+        <!-- Bracket showing what's being drawn down -->
+        <rect x="125" y="325" width="4" height="80" fill="#52b788" opacity="0.5" rx="2"/>
+        <text x="134" y="358" font-family="Georgia,serif" font-size="8.5" fill="#52b788" opacity="0.7">biosphere</text>
+        <text x="134" y="370" font-family="Georgia,serif" font-size="8.5" fill="#52b788" opacity="0.7">draws down</text>
+        <text x="134" y="382" font-family="Georgia,serif" font-size="8.5" fill="#52b788" opacity="0.7">when extracted</text>
+        <text x="134" y="394" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.9">not replenished</text>
+        <text x="134" y="406" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.9">by the model</text>
+      </g>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER 3b: Waste return arrows -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <g id="layer-waste" class="layer hidden">
+        <!-- Arrow: economy → biosphere (waste out) -->
+        <line x1="532" y1="290" x2="600" y2="290" stroke="#ef9a9a" stroke-width="2.5" marker-end="url(#arrow-red)"/>
+        <line x1="600" y1="290" x2="640" y2="290" stroke="#ef9a9a" stroke-width="2.5"/>
+
+        <text x="555" y="282" font-family="Georgia,serif" font-size="10" fill="#ef9a9a" font-weight="bold">WASTE OUT</text>
+        <text x="555" y="295" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.8">CO₂ · pollution · heat · degraded matter</text>
+
+        <!-- High entropy label -->
+        <text x="650" y="283" font-family="Georgia,serif" font-size="8" fill="#ef9a9a" opacity="0.7">high</text>
+        <text x="650" y="293" font-family="Georgia,serif" font-size="8" fill="#ef9a9a" opacity="0.7">entropy</text>
+        <text x="650" y="303" font-family="Georgia,serif" font-size="8" fill="#ef9a9a" opacity="0.7">output</text>
+
+        <!-- Waste absorption capacity note -->
+        <text x="590" y="340" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.8" text-anchor="middle">biosphere absorbs</text>
+        <text x="590" y="352" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.8" text-anchor="middle">waste — up to a limit</text>
+        <text x="590" y="364" font-family="Georgia,serif" font-size="8.5" fill="#ffd54f" opacity="0.9" text-anchor="middle">past that limit: collapse</text>
+      </g>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER 4b: Solar energy + heat entropy flows -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <g id="layer-energy" class="layer hidden">
+        <!-- Solar energy arrow: sun → biosphere -->
+        <line x1="726" y1="80" x2="660" y2="120" stroke="#ffd54f" stroke-width="2.5" marker-end="url(#arrow-yellow)"/>
+        <text x="700" y="108" font-family="Georgia,serif" font-size="9" fill="#ffd54f" text-anchor="middle">solar energy</text>
+        <text x="700" y="120" font-family="Georgia,serif" font-size="8" fill="#ffd54f" opacity="0.7" text-anchor="middle">photosynthesis · wind · rain cycles</text>
+
+        <!-- Heat / entropy arrow: biosphere → downward to heat sink -->
+        <line x1="400" y1="475" x2="400" y2="455" stroke="#ff7043" stroke-width="2.5" marker-end="url(#arrow-orange)"/>
+        <text x="400" y="450" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#ff7043">all energy eventually becomes heat — dissipates to space</text>
+
+        <!-- Thermodynamic frame note -->
+        <text x="60" y="470" font-family="Georgia,serif" font-size="9" fill="rgba(255,200,100,0.5)">1st Law: energy conserved</text>
+        <text x="60" y="484" font-family="Georgia,serif" font-size="9" fill="rgba(255,200,100,0.5)">2nd Law: entropy always increases</text>
+      </g>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER 5: "What the model misses" callout -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <g id="layer-callout" class="layer hidden">
+        <!-- Dashed box around economy with label "what the model sees" -->
+        <rect x="263" y="135" width="274" height="250" rx="10" fill="none" stroke="#ffd54f" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.6"/>
+        <text x="400" y="128" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#ffd54f" opacity="0.9">↑ what the standard model sees ↑</text>
+
+        <!-- What's invisible label -->
+        <text x="400" y="405" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ffd54f" font-weight="bold">Everything outside this box is invisible to standard economics.</text>
+        <text x="400" y="420" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="rgba(255,220,80,0.7)">The biosphere is not an input. It is the system the economy is embedded in.</text>
+        <text x="400" y="434" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="rgba(255,220,80,0.7)">When the biosphere degrades, the model has no variable for it.</text>
+      </g>
+
+    </svg>
+  </div>
+
+  <div class="context">
+    <h2>Daly's critique — the key ideas</h2>
+    <div class="panels">
+      <div class="panel p1">
+        <div class="panel-title">The economy is a subsystem, not the system</div>
+        Standard economics treats the economy as the whole system and nature as one of many inputs (a "factor of production"). Daly inverts this: the economy is a subsystem of the biosphere, which is itself a subsystem of the thermodynamic system bounded by solar energy in and heat out. You cannot have infinite economic growth within a finite biosphere any more than you can have infinite growth of any subsystem within a finite system.
+      </div>
+      <div class="panel p2">
+        <div class="panel-title">Throughput: the invisible variable</div>
+        The circular flow model shows money and goods going around in loops. What it hides is the throughput — the one-way flow of matter and energy through the economy. Resources enter as low-entropy inputs (ordered, energy-rich), are transformed into goods and services, and leave as high-entropy waste (disordered, energy-poor). This throughput is not circular. It cannot be made circular. The 2nd Law of Thermodynamics says entropy always increases: you can recycle matter but you cannot recycle energy.
+      </div>
+      <div class="panel p3">
+        <div class="panel-title">The sun is the only real income</div>
+        Daly distinguishes between natural capital (the stock — forests, fisheries, aquifers, stable climate) and solar income (the flow — the renewable energy that arrives each day from the sun and powers photosynthesis, wind, rain cycles, and ultimately all biological productivity). A sustainable economy lives off solar income without depleting natural capital stocks. The current economy is drawing down stocks as if they were income — spending the principal and calling it revenue.
+      </div>
+      <div class="panel p4">
+        <div class="panel-title">What "unpriced" actually means</div>
+        When economists say a wetland or a forest is "unpriced," they mean it has no line in the circular flow model — no transaction, no price, no entry on a balance sheet. But the wetland is not unpriced because it has no value. It is unpriced because the model has no mechanism to see it. The standard model cannot register an asset that was never bought, never sold, and generates no cash flow — even if the entire regional economy depends on it for flood control, water filtration, and climate regulation.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const steps = [
+      {
+        layers: ['layer-economy'],
+        title: null,
+        text: '<strong>The standard model.</strong> Households supply labor and capital; firms pay wages and profits. Households spend on goods and services; firms produce them. Money flows one way, goods the other. The model is internally consistent and widely taught. It has no inlet and no outlet. It is, by design, a closed loop.'
+      },
+      {
+        layers: ['layer-economy', 'layer-biosphere'],
+        title: null,
+        text: '<strong>Zoom out: the biosphere.</strong> The economy does not float in empty space. It exists inside the biosphere — the thin layer of Earth that supports life. The biosphere provides everything the economy uses as raw material: fossil fuels, minerals, fresh water, topsoil, breathable air, stable climate. None of these appear in the circular flow diagram. The model has no variable for any of them.'
+      },
+      {
+        layers: ['layer-economy', 'layer-biosphere', 'layer-resources'],
+        title: null,
+        text: '<strong>Resources in: the extraction the model ignores.</strong> Every good produced by firms began as matter extracted from the biosphere. Timber, iron ore, oil, fish, wheat, fresh water — all of it comes from somewhere. The standard model records the transaction (you bought the timber) but not the extraction (a forest was drawn down). The biosphere\'s stocks are finite. The model treats them as unlimited.'
+      },
+      {
+        layers: ['layer-economy', 'layer-biosphere', 'layer-resources', 'layer-waste'],
+        title: null,
+        text: '<strong>Waste out: the return the model ignores.</strong> Everything that enters the economy as a resource leaves as waste — CO₂, pollution, heat, degraded soil, contaminated water. The biosphere absorbs some of this, up to its regenerative capacity. Past that threshold, absorption capacity fails — climate destabilizes, fisheries collapse, aquifers don\'t recharge. The standard model has no variable for the biosphere\'s absorptive limit.'
+      },
+      {
+        layers: ['layer-space', 'layer-biosphere', 'layer-economy', 'layer-resources', 'layer-waste', 'layer-energy'],
+        title: null,
+        text: '<strong>Solar energy: the only real income.</strong> What powers the biosphere — and therefore the economy — is a continuous flow of low-entropy energy from the sun. Photosynthesis, wind, rain cycles, ocean circulation: all solar-powered. This energy flows through the system and exits as heat, as required by the 2nd Law of Thermodynamics. You can recycle matter (partially), but you cannot recycle energy. Every economic process uses energy that is then gone.'
+      },
+      {
+        layers: ['layer-space', 'layer-biosphere', 'layer-economy', 'layer-resources', 'layer-waste', 'layer-energy', 'layer-callout'],
+        title: null,
+        text: '<strong>The full picture — and what it means.</strong> The yellow dashed box is what the standard economic model can see. Everything outside it — the biosphere, the resource flows, the waste streams, the solar energy budget, the thermodynamic constraints — is invisible to the model. This is not a gap that can be patched with a tax or a subsidy. It is a structural feature of a model that was built to describe exchange, not physical reality.'
+      }
+    ];
+
+    let current = 0;
+
+    function allLayers() {
+      return ['layer-space', 'layer-biosphere', 'layer-economy', 'layer-resources', 'layer-waste', 'layer-energy', 'layer-callout'];
+    }
+
+    function render() {
+      const s = steps[current];
+
+      // update explanation
+      document.getElementById('explanation').innerHTML = s.text;
+      document.getElementById('step-counter').textContent = `Step ${current + 1} of ${steps.length}`;
+      document.getElementById('next-btn').disabled = current >= steps.length - 1;
+
+      // show/hide layers
+      allLayers().forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (s.layers.includes(id)) {
+          el.classList.remove('hidden');
+          el.classList.add('visible');
+        } else {
+          el.classList.remove('visible');
+          el.classList.add('hidden');
+        }
+      });
+    }
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+      if (current < steps.length - 1) { current++; render(); }
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      current = 0; render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
