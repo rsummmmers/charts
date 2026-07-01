@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risk Models and a Changing World</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
+    header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
+    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
+    .intro { font-size: 0.92rem; color: #333; line-height: 1.75; margin-bottom: 0.5rem; max-width: 700px; }
+    .intro p + p { margin-top: 0.7rem; }
+    .interactive-hint { font-size: 0.8rem; color: #888; margin: 1rem 0; }
+
+    nav { margin-bottom: 1.5rem; padding: 0.6rem 0; border-bottom: 1px solid #ddd; font-size: 0.8rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    nav a { color: #888; text-decoration: none; }
+    nav a:hover { color: #1a1a1a; }
+    nav .sep { color: #ddd; }
+
+    .controls { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .step-counter { font-size: 0.78rem; color: #999; text-transform: uppercase; letter-spacing: 0.06em; }
+    button { padding: 0.45rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 0.88rem; }
+    .btn-primary { background: #5b2d8e; color: white; }
+    .btn-primary:hover { background: #44206e; }
+    .btn-primary:disabled { background: #ccc; cursor: default; }
+    .btn-secondary { background: #eee; color: #444; }
+    .btn-secondary:hover { background: #ddd; }
+
+    .explanation { background: #f5f0fa; border-left: 4px solid #5b2d8e; padding: 1rem 1.2rem; margin-bottom: 1.4rem; font-size: 0.88rem; color: #333; line-height: 1.7; min-height: 60px; }
+    .explanation strong { color: #1a1a1a; }
+
+    .diagram-wrap { background: #0f0f1a; border-radius: 10px; padding: 1.2rem; margin-bottom: 1.5rem; }
+    svg { display: block; width: 100%; height: auto; }
+
+    .layer { transition: opacity 0.5s ease; }
+    .layer.hidden { opacity: 0; pointer-events: none; }
+    .layer.visible { opacity: 1; }
+
+    /* key insight box */
+    .insight { border: 2px solid #5b2d8e; border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; font-size: 0.88rem; line-height: 1.7; color: #333; opacity: 0; transition: opacity 0.5s; }
+    .insight.visible { opacity: 1; }
+    .insight strong { color: #5b2d8e; }
+
+    .context { margin-top: 2rem; border-top: 2px solid #1a1a1a; padding-top: 1.8rem; }
+    .context h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 1.2rem; }
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 580px) { .panels { grid-template-columns: 1fr; } }
+    .panel { border-radius: 6px; padding: 1rem 1.1rem; font-size: 0.83rem; line-height: 1.65; color: #333; }
+    .panel-title { font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; }
+    .p1 { background: #f5f0fa; border: 1px solid #d4b8f0; } .p1 .panel-title { color: #5b2d8e; }
+    .p2 { background: #fff8ed; border: 1px solid #f6d86b; } .p2 .panel-title { color: #92600a; }
+    .p3 { background: #f0f9f4; border: 1px solid #c5e8d0; } .p3 .panel-title { color: #1a6b3c; }
+    .p4 { background: #fff0f0; border: 1px solid #f0b8b8; } .p4 .panel-title { color: #8b1a1a; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← All models</a>
+    <span class="sep">|</span>
+    <a href="money-multiplier.html">1 · Money Multiplier</a>
+    <a href="debt-copies.html">2 · Debt Copies</a>
+    <a href="interest-ratchet.html">3 · Interest Ratchet</a>
+    <a href="interest-comparison.html">4 · Interest Variable</a>
+    <a href="daly-economy.html">5 · Daly's Missing Substrate</a>
+    <a href="capital-requirements.html">6 · Reserve vs. Capital</a>
+    <a href="risk-modeling.html" style="color:#5b2d8e;font-weight:bold;">7 · Risk Models</a>
+  </nav>
+
+  <header>
+    <h1>Risk Models and a Changing World</h1>
+    <p class="subtitle">Financial risk models are built on historical data. What happens when history stops being a reliable guide to the future?</p>
+  </header>
+
+  <p class="intro">Every major financial institution uses quantitative risk models to assess how much capital to hold, which loans to approve, and how exposed they are to loss. These models share a common assumption: that the distribution of future outcomes will resemble the distribution of past outcomes. In a stable world, this is reasonable. In a world where the underlying physical conditions are shifting, it fails — silently, and at scale.</p>
+  <p class="interactive-hint">▶ Interactive — step through to see how the assumption breaks.</p>
+
+  <div class="controls">
+    <span class="step-counter" id="step-counter">Step 1 of 5</span>
+    <button class="btn-primary" id="next-btn">Next →</button>
+    <button class="btn-secondary" id="reset-btn">Reset</button>
+  </div>
+
+  <div class="explanation" id="explanation"></div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 820 380" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Grid lines (always visible) -->
+      <g id="layer-grid">
+        <!-- x-axis -->
+        <line x1="60" y1="300" x2="760" y2="300" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <!-- x-axis labels: outcomes from rare-bad to common to rare-good -->
+        <text x="60"  y="318" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.35)">catastrophic</text>
+        <text x="410" y="318" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.35)">average year</text>
+        <text x="760" y="318" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.35)">exceptional</text>
+        <text x="410" y="335" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.25)">← worse outcomes · · · · · · · · · · · · · · · · better outcomes →</text>
+        <!-- y-axis label -->
+        <text x="30" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.35)" transform="rotate(-90,30,180)">probability</text>
+        <!-- vertical tick marks -->
+        <line x1="60"  y1="296" x2="60"  y2="304" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+        <line x1="410" y1="296" x2="410" y2="304" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+        <line x1="760" y1="296" x2="760" y2="304" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+      </g>
+
+      <!-- LAYER 1: Historical curve (blue) -->
+      <g id="layer-historical" class="layer hidden">
+        <path d="M60,299 C100,299 160,260 220,200 C280,140 330,55 410,40 C490,55 540,140 600,200 C660,260 720,299 760,299"
+              fill="rgba(100,160,255,0.15)" stroke="#6496ff" stroke-width="2.5"/>
+        <text x="410" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#6496ff" font-weight="bold">HISTORICAL DISTRIBUTION</text>
+        <text x="410" y="42" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#6496ff" opacity="0.7">based on the last 20–30 years of data</text>
+
+        <!-- Tail labels -->
+        <text x="115" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6496ff" opacity="0.7">rare</text>
+        <text x="115" y="291" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6496ff" opacity="0.7">losses</text>
+        <text x="700" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6496ff" opacity="0.7">rare</text>
+        <text x="700" y="291" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6496ff" opacity="0.7">gains</text>
+      </g>
+
+      <!-- LAYER 2: Model projection line -->
+      <g id="layer-projection" class="layer hidden">
+        <!-- Dashed vertical line at "acceptable loss" threshold -->
+        <line x1="175" y1="60" x2="175" y2="300" stroke="#ffd54f" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.8"/>
+        <text x="175" y="56" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#ffd54f">"acceptable loss"</text>
+        <text x="175" y="68" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#ffd54f" opacity="0.7">threshold (VaR 99%)</text>
+
+        <!-- Shaded left tail — "the model says this won't happen" -->
+        <path d="M60,299 C100,299 140,290 175,262 L175,300 Z"
+              fill="rgba(255,213,79,0.1)" stroke="none"/>
+        <text x="116" y="248" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ffd54f" opacity="0.8">1% chance</text>
+        <text x="116" y="260" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ffd54f" opacity="0.8">of exceeding this</text>
+        <text x="116" y="272" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ffd54f" opacity="0.8">(the model says)</text>
+
+        <!-- Arrow: "model projects forward" -->
+        <line x1="410" y1="100" x2="480" y2="130" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="490" y="128" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.4)">model assumes</text>
+        <text x="490" y="140" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.4)">future ≈ past</text>
+      </g>
+
+      <!-- LAYER 3: Actual shifted curve (red/amber) -->
+      <g id="layer-shifted" class="layer hidden">
+        <!-- Shifted distribution — same shape, moved LEFT (more bad outcomes) -->
+        <path d="M60,299 C80,299 110,270 170,200 C230,130 300,48 375,35 C450,48 510,130 570,200 C630,270 700,299 760,299"
+              fill="rgba(255,100,80,0.12)" stroke="#ff6b6b" stroke-width="2.5" stroke-dasharray="none"/>
+        <text x="370" y="24" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ff6b6b" font-weight="bold">ACTUAL DISTRIBUTION</text>
+        <text x="370" y="37" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#ff6b6b" opacity="0.7">shifted left — worse outcomes are more frequent</text>
+
+        <!-- Shift arrow -->
+        <line x1="410" y1="55" x2="375" y2="55" stroke="#ffd54f" stroke-width="2" marker-end="url(#shift-arrow)"/>
+        <defs>
+          <marker id="shift-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ffd54f"/>
+          </marker>
+        </defs>
+        <text x="390" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#ffd54f">distribution shifts</text>
+        <text x="390" y="83" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#ffd54f" opacity="0.8">as conditions change</text>
+      </g>
+
+      <!-- LAYER 4: The gap — what the model misses -->
+      <g id="layer-gap" class="layer hidden">
+        <!-- Highlight the zone the model said was "1%" but is now much more likely -->
+        <rect x="60" y="180" width="115" height="120" fill="rgba(255,50,50,0.15)" rx="4"/>
+        <text x="117" y="175" text-anchor="middle" font-family="Georgia,serif" font-size="9"   fill="#ff6b6b" font-weight="bold">UNDERPRICED RISK</text>
+        <text x="117" y="188" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ff6b6b" opacity="0.8">model says: 1% chance</text>
+        <text x="117" y="200" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ff6b6b" opacity="0.8">reality: much higher</text>
+
+        <!-- Examples -->
+        <text x="530" y="180" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.8)">examples of shifted distributions:</text>
+        <text x="530" y="196" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· "100-year floods" now every 10–15 years</text>
+        <text x="530" y="210" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· crop yield variance increasing</text>
+        <text x="530" y="224" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· wildfire season length doubling</text>
+        <text x="530" y="238" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· coastal property insurance unwriteable</text>
+        <text x="530" y="252" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· pandemic frequency accelerating</text>
+
+        <!-- The model doesn't know it's wrong -->
+        <rect x="530" y="265" width="220" height="34" rx="4" fill="rgba(255,213,79,0.12)" stroke="#ffd54f" stroke-width="1" opacity="0.8"/>
+        <text x="640" y="279" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#ffd54f">The model doesn't know it's wrong.</text>
+        <text x="640" y="292" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#ffd54f" opacity="0.8">It still outputs a confidence interval.</text>
+      </g>
+
+      <!-- LAYER 5: Stationarity assumption label -->
+      <g id="layer-stationarity" class="layer hidden">
+        <rect x="60" y="345" width="700" height="28" rx="4" fill="rgba(91,45,142,0.2)" stroke="#9c6fcc" stroke-width="1" opacity="0.9"/>
+        <text x="410" y="363" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#c9a0f5" font-weight="bold">Core assumption: stationarity — the statistical properties of the world don't change over time. In ecology and climate, this assumption has failed.</text>
+      </g>
+
+    </svg>
+  </div>
+
+  <div class="insight" id="insight-box">
+    <strong>The silent failure mode:</strong> A risk model that is running on a shifted distribution does not produce an error message. It produces a number — a VaR figure, a stress test result, a capital ratio — that looks exactly like a correct answer. The model is confident. The confidence is unfounded. The gap between the model's world and the actual world widens as conditions change, and the model has no mechanism to detect this. It will only become visible after the fact, in the losses.
+  </div>
+
+  <div class="context">
+    <h2>The stationarity problem in practice</h2>
+    <div class="panels">
+      <div class="panel p1">
+        <div class="panel-title">What VaR actually measures</div>
+        Value at Risk (VaR) is the standard financial risk metric. A 99% VaR of $10M means: based on historical data, there is a 1% chance of losing more than $10M on any given day. The critical words are "based on historical data." VaR doesn't predict the future — it describes the past, then assumes the future will look like it. When it doesn't, VaR is precisely wrong, not roughly wrong.
+      </div>
+      <div class="panel p2">
+        <div class="panel-title">Stress tests and their model</div>
+        Annual bank stress tests (Dodd-Frank, Basel III) run banks through "severe but plausible" scenarios. The scenarios are built from historical data: the worst recession in the last 30 years, the worst housing crash, the worst credit crunch. But "worst in the last 30 years" is not the same as "worst that can happen." It is the worst that has happened in a period of relative ecological and climate stability that is now ending.
+      </div>
+      <div class="panel p3">
+        <div class="panel-title">What changes when the distribution shifts</div>
+        When "100-year floods" occur every 10 years, flood insurance is systematically underpriced. When crop yield variance increases, agricultural lending risk is systematically underestimated. When wildfire seasons extend, property values in affected areas are systematically overvalued as collateral. Each of these is a case where the historical distribution gives a number that looks rigorous but is wrong — and where the error compounds across the entire system simultaneously.
+      </div>
+      <div class="panel p4">
+        <div class="panel-title">Why this matters for the other models</div>
+        Capital requirements (model 6) use risk-weighted assets — and the weights are derived from historical default rates. If default rates in certain asset classes are about to rise due to climate-driven physical damage, the capital held against those assets is inadequate. The guardrail was calibrated to the old world. This is not a failure of individual banks being reckless: it is a structural failure of the entire risk modeling framework applied to a non-stationary world.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const steps = [
+      {
+        layers: ['layer-grid'],
+        text: '<strong>The setup.</strong> Every financial risk model works by looking at historical outcomes and fitting a distribution to them. The x-axis is the range of possible outcomes — from catastrophic losses on the left to exceptional gains on the right. The y-axis is probability. The model then uses this distribution to calculate how much risk the institution is exposed to.',
+        showInsight: false
+      },
+      {
+        layers: ['layer-grid', 'layer-historical'],
+        text: '<strong>The historical distribution.</strong> Built from 20–30 years of actual data. In normal conditions, losses cluster around the center. Catastrophic losses (left tail) are rare. Exceptional gains (right tail) are also rare. The model treats this shape as the truth about how the world behaves.',
+        showInsight: false
+      },
+      {
+        layers: ['layer-grid', 'layer-historical', 'layer-projection'],
+        text: '<strong>How the model uses the distribution.</strong> The model sets a threshold — say, the 99th percentile loss. It declares that anything to the left of this line has only a 1% chance of occurring. Capital requirements are set accordingly. The bank holds enough buffer to survive a 1-in-100-year event, as defined by the historical record.',
+        showInsight: false
+      },
+      {
+        layers: ['layer-grid', 'layer-historical', 'layer-projection', 'layer-shifted'],
+        text: '<strong>The actual distribution is shifting.</strong> As the underlying physical conditions change — climate, ecology, infrastructure — the distribution of outcomes changes too. Bad outcomes become more frequent. The entire curve shifts left. The model is still using the old blue curve. The real world is now running on the red one.',
+        showInsight: false
+      },
+      {
+        layers: ['layer-grid', 'layer-historical', 'layer-projection', 'layer-shifted', 'layer-gap', 'layer-stationarity'],
+        text: '<strong>The gap between model and reality.</strong> The zone the model said had a 1% chance of occurring is now far more probable. The model does not know this. It continues to produce confidence intervals based on historical data. The capital held is insufficient for the world that actually exists — but the model says it is fine.',
+        showInsight: true
+      }
+    ];
+
+    const allLayerIds = ['layer-grid','layer-historical','layer-projection','layer-shifted','layer-gap','layer-stationarity'];
+    let current = 0;
+
+    function render() {
+      const s = steps[current];
+      document.getElementById('explanation').innerHTML = s.text;
+      document.getElementById('step-counter').textContent = `Step ${current + 1} of ${steps.length}`;
+      document.getElementById('next-btn').disabled = current >= steps.length - 1;
+
+      allLayerIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (s.layers.includes(id)) { el.classList.remove('hidden'); el.classList.add('visible'); }
+        else { el.classList.remove('visible'); el.classList.add('hidden'); }
+      });
+
+      const insightEl = document.getElementById('insight-box');
+      if (s.showInsight) insightEl.classList.add('visible');
+      else insightEl.classList.remove('visible');
+    }
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+      if (current < steps.length - 1) { current++; render(); }
+    });
+    document.getElementById('reset-btn').addEventListener('click', () => { current = 0; render(); });
+
+    render();
+  </script>
+</body>
+</html>
