@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Debt Copy Problem</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #faf8f5;
+      color: #1a1a1a;
+      padding: 2.5rem 2rem;
+      max-width: 860px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #1a1a1a;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: normal;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.3rem;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #777;
+      font-style: italic;
+    }
+
+    .intro {
+      font-size: 0.9rem;
+      color: #333;
+      line-height: 1.75;
+      margin-bottom: 1.8rem;
+      max-width: 680px;
+    }
+
+    .intro p + p { margin-top: 0.7rem; }
+
+    /* stage nav */
+    .stage-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .stage-counter {
+      font-size: 0.78rem;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      min-width: 80px;
+    }
+
+    button {
+      padding: 0.45rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.88rem;
+    }
+
+    .btn-primary { background: #1a6b3c; color: white; }
+    .btn-primary:hover { background: #145530; }
+    .btn-primary:disabled { background: #aaa; cursor: default; }
+    .btn-secondary { background: #eee; color: #444; }
+    .btn-secondary:hover { background: #ddd; }
+
+    /* explanation box */
+    .explanation {
+      background: #f5f0eb;
+      border-left: 4px solid #1a1a1a;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      min-height: 80px;
+      transition: opacity 0.3s ease;
+    }
+
+    .explanation .stage-title {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 0.4rem;
+      color: #1a1a1a;
+    }
+
+    .explanation .stage-text {
+      font-size: 0.88rem;
+      color: #444;
+      line-height: 1.7;
+    }
+
+    /* game board */
+    .board-wrap {
+      background: #2a5c34;
+      border-radius: 12px;
+      padding: 1.8rem 1.5rem;
+      margin-bottom: 2rem;
+      min-height: 280px;
+      position: relative;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .board-row {
+      margin-bottom: 1.4rem;
+    }
+
+    .row-label {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.5rem;
+    }
+
+    .tiles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: flex-end;
+    }
+
+    /* individual tile */
+    .tile {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      min-height: 78px;
+      border-radius: 6px;
+      padding: 6px 4px 5px;
+      position: relative;
+      opacity: 0;
+      transform: scale(0.85) translateY(8px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .tile.visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    .tile-original {
+      background: #fffde7;
+      border: 3px solid #f9a825;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    }
+
+    .tile-copy {
+      background: #fff8e1;
+      border: 2px solid #fdd835;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .tile-reserve {
+      background: #e8f5e9;
+      border: 2px solid #66bb6a;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      opacity: 0.75 !important;
+    }
+
+    .tile-owed {
+      background: rgba(255,235,235,0.15);
+      border: 2px dashed #ef9a9a;
+      box-shadow: none;
+    }
+
+    .tile-gone {
+      background: rgba(0,0,0,0.15);
+      border: 2px dashed rgba(255,255,255,0.15);
+    }
+
+    .tile-value {
+      font-size: 1.15rem;
+      font-weight: bold;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .tile-original .tile-value { color: #e65100; }
+    .tile-copy .tile-value { color: #f57f17; }
+    .tile-reserve .tile-value { color: #2e7d32; }
+    .tile-owed .tile-value { color: #ef9a9a; font-size: 0.9rem; }
+    .tile-gone .tile-value { color: rgba(255,255,255,0.2); }
+
+    .tile-sublabel {
+      font-size: 0.58rem;
+      text-align: center;
+      line-height: 1.3;
+      margin-top: 3px;
+    }
+
+    .tile-original .tile-sublabel { color: #bf360c; }
+    .tile-copy .tile-sublabel { color: #e65100; }
+    .tile-reserve .tile-sublabel { color: #1b5e20; }
+    .tile-owed .tile-sublabel { color: #ef9a9a; }
+    .tile-gone .tile-sublabel { color: rgba(255,255,255,0.2); }
+
+    .tile-tag {
+      position: absolute;
+      top: -8px;
+      right: -6px;
+      font-size: 0.58rem;
+      background: #1a1a1a;
+      color: white;
+      padding: 1px 4px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    /* flow arrow */
+    .flow-note {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.5);
+      font-style: italic;
+      margin-top: 0.4rem;
+      padding-left: 2px;
+    }
+
+    /* divider line on board */
+    .board-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      margin: 1rem 0;
+    }
+
+    /* tally bar */
+    .tally {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .tally-item {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .tally-item .tally-val {
+      font-size: 1.1rem;
+      font-weight: bold;
+      display: block;
+      line-height: 1.2;
+    }
+
+    .tally-orig { color: #ffd54f; }
+    .tally-copies { color: #fff9c4; }
+    .tally-owed { color: #ef9a9a; }
+
+    /* context panels */
+    .context {
+      margin-top: 2rem;
+      border-top: 2px solid #1a1a1a;
+      padding-top: 1.8rem;
+    }
+
+    .context h2 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      margin-bottom: 1.2rem;
+    }
+
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 560px) { .panels { grid-template-columns: 1fr; } }
+
+    .panel {
+      border-radius: 6px;
+      padding: 1rem 1.1rem;
+      font-size: 0.83rem;
+      line-height: 1.65;
+      color: #333;
+    }
+
+    .panel-title {
+      font-size: 0.72rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.5rem;
+    }
+
+    .panel-analogy { background: #f0f9f4; border: 1px solid #c5e8d0; }
+    .panel-analogy .panel-title { color: #1a6b3c; }
+
+    .panel-limit { background: #fff8ed; border: 1px solid #f6d86b; }
+    .panel-limit .panel-title { color: #92600a; }
+
+    .panel-key { background: #f5f0fa; border: 1px solid #d4b8f0; }
+    .panel-key .panel-title { color: #5b2d8e; }
+
+    .panel-game { background: #f0f0f0; border: 1px solid #ccc; }
+    .panel-game .panel-title { color: #444; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>The Debt Copy Problem</h1>
+    <p class="subtitle">Why the copies feel real — and why the board can never fully clear.</p>
+  </header>
+
+  <div class="intro">
+    <p>In Rummikub, tiles are fixed and finite. Every tile on the board at the start is still there at the end. No new tiles appear when you make a move. The game is a zero-sum redistribution of a known quantity.</p>
+    <p>Fractional reserve banking works differently. When a loan is made, a <em>copy</em> of the deposited money appears in the economy — real, spendable, indistinguishable from the original. The copy can be deposited, lent out, and copied again. The board fills with tiles that were never in the original box. Each one has a claim attached: it must eventually return to the bank that created it. Plus interest. And the interest tiles were never made.</p>
+  </div>
+
+  <div class="stage-nav">
+    <span class="stage-counter" id="stage-counter">Stage 1 of 6</span>
+    <button class="btn-primary" id="next-btn">Next →</button>
+    <button class="btn-secondary" id="reset-btn">Reset</button>
+  </div>
+
+  <div class="explanation" id="explanation">
+    <div class="stage-title" id="exp-title"></div>
+    <div class="stage-text" id="exp-text"></div>
+  </div>
+
+  <div class="board-wrap" id="board"></div>
+
+  <div class="context">
+    <h2>What the analogy shows — and where it stops</h2>
+    <div class="panels">
+      <div class="panel panel-analogy">
+        <div class="panel-title">What the Rummikub frame captures</div>
+        The copies are genuinely real — you can't tell a lent dollar from a deposited one. This is not fraud at the level of any individual transaction. The problem is structural: every copy carries a claim back to its origin, and those claims, in aggregate, exceed the tiles on the board. The game cannot end with every player whole.
+      </div>
+      <div class="panel panel-limit">
+        <div class="panel-title">Where the analogy breaks down</div>
+        In Rummikub, there is no concept of "interest." The return obligation in banking is what creates the gap — not the copying itself. A world of interest-free loans would still have copies, but the board <em>could</em> clear. The growth imperative comes specifically from charging interest on money that was created as debt.
+      </div>
+      <div class="panel panel-key">
+        <div class="panel-title">The key distinction</div>
+        Josh is right that individual banks don't lend more than they take in. Each tile on this board was created by a legitimate transaction. The problem is not any single bank's behavior — it is that the <em>system</em> as a whole has created more claims than tiles. That gap is structural. It cannot be resolved by any individual actor acting more responsibly.
+      </div>
+      <div class="panel panel-game">
+        <div class="panel-title">Why this matters beyond banking</div>
+        If the only things that can receive a loan are things with collateral and a projected cash flow, then the only things that get copies made of them are already-valued assets. A wetland generates no cash flow. Care work generates no cash flow. The copy-making machine has a built-in filter — and what it filters out is exactly what the incomplete ledger fails to count.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const stages = [
+      {
+        title: "One tile. One deposit.",
+        text: "Bank A receives $100. This is the original tile — the only one that existed before any lending happened. Under fractional reserve banking at 10%, Bank A must hold $10 and may lend the remaining $90.",
+        board: [
+          {
+            rowLabel: "Bank A — original deposit",
+            tiles: [
+              { type: "original", value: "$100", sub: "original\ndeposit", tag: null }
+            ],
+            flow: null
+          }
+        ],
+        tally: { original: "$100", copies: "—", owed: "—" }
+      },
+      {
+        title: "The first copy appears.",
+        text: "Bank A lends $90. That $90 is spent — on a house, a car, a business expense — and the recipient deposits it at Bank B. A copy of the original tile now exists in the economy. It is real. Bank B's depositor can spend it. It is indistinguishable from the original $100.",
+        board: [
+          {
+            rowLabel: "Bank A — holds $10 reserve, lent $90",
+            tiles: [
+              { type: "reserve", value: "$10", sub: "held in\nreserve", tag: null },
+              { type: "gone", value: "→ $90", sub: "loaned\nout", tag: null }
+            ],
+            flow: "The $90 loan becomes a deposit at Bank B ↓"
+          },
+          {
+            rowLabel: "Bank B — new deposit (copy #1)",
+            tiles: [
+              { type: "copy", value: "$90", sub: "copy #1\nBank B deposit", tag: "real" }
+            ],
+            flow: null
+          }
+        ],
+        tally: { original: "$100", copies: "$90 (1 copy)", owed: "—" }
+      },
+      {
+        title: "The cascade.",
+        text: "Bank B holds $9 and lends $81. That $81 becomes a deposit at Bank C — copy #2. The process continues. Each copy is real and spendable. Each carries a claim back to the bank that created it.",
+        board: [
+          {
+            rowLabel: "Bank A — $10 reserve, $90 lent",
+            tiles: [
+              { type: "reserve", value: "$10", sub: "reserve", tag: null },
+              { type: "gone", value: "→$90", sub: "lent", tag: null }
+            ],
+            flow: null
+          },
+          {
+            rowLabel: "Bank B — $9 reserve, $81 lent",
+            tiles: [
+              { type: "reserve", value: "$9", sub: "reserve", tag: null },
+              { type: "gone", value: "→$81", sub: "lent", tag: null }
+            ],
+            flow: null
+          },
+          {
+            rowLabel: "Bank C — $8.10 reserve, $72.90 lent",
+            tiles: [
+              { type: "reserve", value: "$8.10", sub: "reserve", tag: null },
+              { type: "gone", value: "→$72.90", sub: "lent", tag: null }
+            ],
+            flow: "… continues through 10+ banks …"
+          },
+          {
+            rowLabel: "Total circulating in economy",
+            tiles: [
+              { type: "copy", value: "$90", sub: "copy #1", tag: null },
+              { type: "copy", value: "$81", sub: "copy #2", tag: null },
+              { type: "copy", value: "$72.90", sub: "copy #3", tag: null },
+              { type: "copy", value: "…", sub: "copies\n#4–10", tag: null },
+              { type: "original", value: "$100", sub: "original", tag: "origin" }
+            ],
+            flow: null
+          }
+        ],
+        tally: { original: "$100", copies: "$900 (9 copies)", owed: "$1,000 owed back" }
+      },
+      {
+        title: "End of game — the principal returns.",
+        text: "Loans are repaid. Each copy flows back to the bank that created it and is retired — it disappears from circulation. If everyone repays their principal and nothing else, the board clears back to the original $100. This part works.",
+        board: [
+          {
+            rowLabel: "Repaid copies — removed from circulation",
+            tiles: [
+              { type: "gone", value: "$90", sub: "returned\n& retired", tag: null },
+              { type: "gone", value: "$81", sub: "returned\n& retired", tag: null },
+              { type: "gone", value: "$72.90", sub: "returned\n& retired", tag: null },
+              { type: "gone", value: "…", sub: "all copies\nretired", tag: null }
+            ],
+            flow: "All copies retired. $900 disappears from the economy."
+          },
+          {
+            rowLabel: "What remains",
+            tiles: [
+              { type: "original", value: "$100", sub: "original\nstill here", tag: "origin" }
+            ],
+            flow: null
+          }
+        ],
+        tally: { original: "$100", copies: "$0 (all retired)", owed: "still owed: interest" }
+      },
+      {
+        title: "End of game — the interest gap.",
+        text: "But every borrower also owes interest — say 5%. On $900 in loans, that's $45 in interest. Those tiles were never created. They don't exist in the economy. Every borrower who repays their interest must find that money somewhere — which means someone else must take on new debt. The board cannot clear.",
+        board: [
+          {
+            rowLabel: "What exists in the economy after principal repayment",
+            tiles: [
+              { type: "original", value: "$100", sub: "original", tag: "exists" }
+            ],
+            flow: null
+          },
+          {
+            rowLabel: "What is owed but was never created",
+            tiles: [
+              { type: "owed", value: "~$45", sub: "interest\non $900", tag: null },
+              { type: "owed", value: "owed", sub: "tile never\nmade", tag: null },
+              { type: "owed", value: "owed", sub: "tile never\nmade", tag: null }
+            ],
+            flow: "These tiles must come from somewhere. That somewhere is new debt."
+          }
+        ],
+        tally: { original: "$100", copies: "$0 retired", owed: "~$45 interest: never created" }
+      },
+      {
+        title: "The board can never fully clear.",
+        text: "To pay interest on existing debt, someone must borrow new money into existence. That new borrowing creates new copies — and new interest obligations. The system requires continuous new lending to service existing debt. This is not a flaw in any individual bank's behavior. It is a structural property of money created as interest-bearing debt.",
+        board: [
+          {
+            rowLabel: "New loans taken out to cover interest on old loans",
+            tiles: [
+              { type: "copy", value: "new", sub: "loan to\ncover gap", tag: "new debt" },
+              { type: "copy", value: "new", sub: "loan to\ncover gap", tag: "new debt" },
+              { type: "copy", value: "new", sub: "loan to\ncover gap", tag: "new debt" }
+            ],
+            flow: "New copies created. New interest owed. The cycle continues."
+          },
+          {
+            rowLabel: "What this means at the system level",
+            tiles: [
+              { type: "original", value: "$100", sub: "original\n(still the same)", tag: "origin" },
+              { type: "owed", value: "∞?", sub: "interest\nobligation\ngrows", tag: null }
+            ],
+            flow: "Total debt in the system must always grow to service existing debt. There is no equilibrium state where all loans are repaid and all interest is paid. The game cannot end."
+          }
+        ],
+        tally: { original: "$100", copies: "always growing", owed: "always exceeds what exists" }
+      }
+    ];
+
+    let currentStage = 0;
+
+    const boardEl = document.getElementById('board');
+    const expTitle = document.getElementById('exp-title');
+    const expText = document.getElementById('exp-text');
+    const counter = document.getElementById('stage-counter');
+    const nextBtn = document.getElementById('next-btn');
+    const resetBtn = document.getElementById('reset-btn');
+
+    function renderStage(idx) {
+      const s = stages[idx];
+      expTitle.textContent = s.title;
+      expText.textContent = s.text;
+      counter.textContent = `Stage ${idx + 1} of ${stages.length}`;
+      nextBtn.disabled = idx >= stages.length - 1;
+
+      boardEl.innerHTML = '';
+
+      s.board.forEach(row => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'board-row';
+
+        const rowLabel = document.createElement('div');
+        rowLabel.className = 'row-label';
+        rowLabel.textContent = row.rowLabel;
+        rowEl.appendChild(rowLabel);
+
+        const tilesEl = document.createElement('div');
+        tilesEl.className = 'tiles';
+
+        row.tiles.forEach((t, ti) => {
+          const tile = document.createElement('div');
+          tile.className = 'tile tile-' + t.type;
+
+          if (t.tag) {
+            const tag = document.createElement('div');
+            tag.className = 'tile-tag';
+            tag.textContent = t.tag;
+            tile.appendChild(tag);
+          }
+
+          const val = document.createElement('div');
+          val.className = 'tile-value';
+          val.textContent = t.value;
+          tile.appendChild(val);
+
+          const sub = document.createElement('div');
+          sub.className = 'tile-sublabel';
+          sub.textContent = t.sub;
+          tile.appendChild(sub);
+
+          tilesEl.appendChild(tile);
+
+          setTimeout(() => tile.classList.add('visible'), ti * 80 + 50);
+        });
+
+        rowEl.appendChild(tilesEl);
+
+        if (row.flow) {
+          const flow = document.createElement('div');
+          flow.className = 'flow-note';
+          flow.textContent = row.flow;
+          rowEl.appendChild(flow);
+        }
+
+        boardEl.appendChild(rowEl);
+      });
+
+      // tally
+      if (s.tally) {
+        const div = document.createElement('hr');
+        div.className = 'board-divider';
+        boardEl.appendChild(div);
+
+        const tally = document.createElement('div');
+        tally.className = 'tally';
+        tally.innerHTML = `
+          <div class="tally-item"><span class="tally-val tally-orig">${s.tally.original}</span>original deposit</div>
+          <div class="tally-item"><span class="tally-val tally-copies">${s.tally.copies}</span>copies circulating</div>
+          <div class="tally-item"><span class="tally-val tally-owed">${s.tally.owed}</span>interest gap</div>
+        `;
+        boardEl.appendChild(tally);
+      }
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStage < stages.length - 1) {
+        currentStage++;
+        renderStage(currentStage);
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      currentStage = 0;
+      renderStage(0);
+    });
+
+    renderStage(0);
+  </script>
+</body>
+</html>
