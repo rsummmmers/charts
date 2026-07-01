@@ -285,22 +285,20 @@
       <!-- LAYER 3: Resource extraction arrows -->
       <!-- ═══════════════════════════════════════════════ -->
       <g id="layer-resources" class="layer hidden">
-        <!-- Arrow: biosphere → economy (resources in) -->
-        <line x1="268" y1="240" x2="215" y2="240" stroke="#69f0ae" stroke-width="2.5" marker-end="url(#arrow-green)"/>
-        <line x1="215" y1="240" x2="175" y2="240" stroke="#69f0ae" stroke-width="2.5"/>
+        <!-- Arrow: biosphere → economy (resources in) — at y=310, well below biosphere list -->
+        <line x1="268" y1="310" x2="215" y2="310" stroke="#69f0ae" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+        <line x1="215" y1="310" x2="175" y2="310" stroke="#69f0ae" stroke-width="2.5"/>
 
         <!-- Resource labels -->
-        <text x="220" y="233" font-family="Georgia,serif" font-size="10" fill="#69f0ae" font-weight="bold">RESOURCES IN</text>
-        <text x="220" y="246" font-family="Georgia,serif" font-size="8.5" fill="#69f0ae" opacity="0.8">matter · energy · water · food</text>
+        <text x="178" y="303" font-family="Georgia,serif" font-size="10" fill="#69f0ae" font-weight="bold">RESOURCES IN</text>
+        <text x="178" y="323" font-family="Georgia,serif" font-size="8.5" fill="#69f0ae" opacity="0.8">matter · energy · water · food</text>
 
         <!-- Low entropy label -->
-        <text x="155" y="233" font-family="Georgia,serif" font-size="8" fill="#74c69d" opacity="0.7" text-anchor="middle">low</text>
-        <text x="155" y="243" font-family="Georgia,serif" font-size="8" fill="#74c69d" opacity="0.7" text-anchor="middle">entropy</text>
-        <text x="155" y="253" font-family="Georgia,serif" font-size="8" fill="#74c69d" opacity="0.7" text-anchor="middle">input</text>
+        <text x="122" y="303" font-family="Georgia,serif" font-size="8" fill="#74c69d" opacity="0.7">low-entropy input</text>
 
-        <!-- "not replenished" note — below the resources arrow, clear of biosphere list -->
-        <text x="155" y="268" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.9" text-anchor="middle">stocks not replenished</text>
-        <text x="155" y="280" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.9" text-anchor="middle">by the model</text>
+        <!-- "not replenished" note -->
+        <text x="122" y="340" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.9">stocks finite,</text>
+        <text x="122" y="352" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.9">not replenished by the model</text>
       </g>
 
       <!-- ═══════════════════════════════════════════════ -->
