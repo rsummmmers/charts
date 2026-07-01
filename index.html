@@ -1,13 +1,76 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Charts</title>
-  </head>
-  <body>
-    <h1>Charts</h1>
-    <ul>
-      <li><a href="land-leverage.html">Land Leverage</a></li>
-      <li><a href="shrinking-ecosystem.html">Shrinking Ecosystem</a></li>
-    </ul>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Economic Models</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 760px; margin: 0 auto; line-height: 1.6; }
+    header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
+    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
+    .intro { font-size: 0.88rem; color: #555; margin-bottom: 2rem; max-width: 580px; line-height: 1.7; }
+    .models { display: flex; flex-direction: column; gap: 0.8rem; }
+    .model-card { display: flex; align-items: stretch; border: 1.5px solid #ddd; border-radius: 8px; overflow: hidden; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    .model-card:hover { border-color: #999; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .model-num { display: flex; align-items: center; justify-content: center; width: 56px; font-size: 1.3rem; font-weight: bold; flex-shrink: 0; color: white; }
+    .model-body { padding: 1rem 1.2rem; flex: 1; }
+    .model-title { font-size: 1rem; font-weight: bold; margin-bottom: 0.2rem; color: #1a1a1a; }
+    .model-desc { font-size: 0.82rem; color: #666; line-height: 1.5; }
+    .model-tag { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; margin-top: 0.4rem; }
+    .model-arrow { display: flex; align-items: center; padding: 0 1rem; color: #bbb; font-size: 1.1rem; flex-shrink: 0; }
+    .c1 { background: #1a6b3c; }
+    .c2 { background: #2a5c34; }
+    .c3 { background: #7b3f00; }
+    .c4 { background: #1a3a6b; }
+    .sequence-note { font-size: 0.78rem; color: #aaa; margin-top: 1.5rem; font-style: italic; border-top: 1px solid #eee; padding-top: 1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>How Money Actually Works</h1>
+    <p class="subtitle">Four interactive models of fractional reserve banking and the interest problem</p>
+  </header>
+  <p class="intro">These models are designed to be used in sequence. Each one builds on the last. Start with #1 if you're new to the topic; jump to #3 or #4 to get directly to the structural argument.</p>
+  <div class="models">
+    <a class="model-card" href="money-multiplier.html">
+      <div class="model-num c1">1</div>
+      <div class="model-body">
+        <div class="model-title">The Money Multiplier</div>
+        <div class="model-desc">How $100 becomes $1,000 through the cascade of deposits and loans. The math is bounded — not infinite — but every dollar in the chain is someone's debt. Interactive slider shows how reserve requirements control the multiplier.</div>
+        <div class="model-tag">Reserve requirements · Deposit cascade · Bounded multiplication</div>
+      </div>
+      <div class="model-arrow">→</div>
+    </a>
+    <a class="model-card" href="debt-copies.html">
+      <div class="model-num c2">2</div>
+      <div class="model-body">
+        <div class="model-title">The Debt Copy Problem</div>
+        <div class="model-desc">A Rummikub analogy for why the copies feel real — and why the board can never fully clear. Step through the game from first deposit to the unclearable interest gap.</div>
+        <div class="model-tag">Money creation · Claim chains · Why individual banks aren't the problem</div>
+      </div>
+      <div class="model-arrow">→</div>
+    </a>
+    <a class="model-card" href="interest-ratchet.html">
+      <div class="model-num c3">3</div>
+      <div class="model-body">
+        <div class="model-title">The Interest Ratchet</div>
+        <div class="model-desc">Why the gap between money that exists and money that is owed can only grow. Each attempt to close the gap with new borrowing creates a slightly larger gap. Tracks the compounding over 7 cycles.</div>
+        <div class="model-tag">Structural growth imperative · Compound gap · The off-switch problem</div>
+      </div>
+      <div class="model-arrow">→</div>
+    </a>
+    <a class="model-card" href="interest-comparison.html">
+      <div class="model-num c4">4</div>
+      <div class="model-body">
+        <div class="model-title">The Interest Variable</div>
+        <div class="model-desc">Holds everything constant and changes one thing: whether loans carry interest. Toggle between interest-free and interest-bearing to see exactly where the structural problem enters.</div>
+        <div class="model-tag">A/B comparison · Isolates the interest mechanism · The specific design flaw</div>
+      </div>
+      <div class="model-arrow">→</div>
+    </a>
+  </div>
+  <p class="sequence-note">These models address the mechanics of money creation. They do not address what those mechanics filter out: care work, ecological infrastructure, and anything else that generates no cash flow and carries no collateral.</p>
+</body>
 </html>
