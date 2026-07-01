@@ -199,158 +199,97 @@
         </marker>
       </defs>
 
-      <!-- ═══════════════════════════════════════════════ -->
-      <!-- LAYER 4: Space / thermodynamic frame (background) -->
-      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER: Space / thermodynamic frame -->
       <g id="layer-space" class="layer hidden">
-        <!-- Sun -->
-        <circle cx="760" cy="60" r="38" fill="#fff176" opacity="0.95"/>
-        <circle cx="760" cy="60" r="30" fill="#fdd835"/>
-        <text x="760" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#5d4037" font-weight="bold">SUN</text>
-        <text x="760" y="69" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6d4c41">low-entropy</text>
-        <text x="760" y="80" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6d4c41">energy</text>
-        <!-- sun rays -->
-        <line x1="728" y1="38" x2="718" y2="28" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
-        <line x1="760" y1="22" x2="760" y2="10" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
-        <line x1="792" y1="38" x2="802" y2="28" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
-        <line x1="800" y1="60" x2="814" y2="60" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
-
-        <!-- Heat sink label bottom -->
-        <text x="420" y="490" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(255,100,80,0.6)">↓ HEAT / ENTROPY OUT — 2nd Law of Thermodynamics — all energy eventually dissipates as heat ↓</text>
+        <circle cx="762" cy="56" r="36" fill="#fff176" opacity="0.95"/>
+        <circle cx="762" cy="56" r="28" fill="#fdd835"/>
+        <text x="762" y="51" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#5d4037" font-weight="bold">SUN</text>
+        <text x="762" y="64" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#6d4c41">low-entropy</text>
+        <text x="762" y="74" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#6d4c41">energy</text>
+        <line x1="732" y1="35" x2="721" y2="23" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
+        <line x1="762" y1="20" x2="762" y2="8"  stroke="#fdd835" stroke-width="2" opacity="0.6"/>
+        <line x1="792" y1="35" x2="803" y2="23" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
+        <line x1="800" y1="56" x2="814" y2="56" stroke="#fdd835" stroke-width="2" opacity="0.6"/>
+        <!-- bottom heat label — y=492, nothing else near it -->
+        <text x="420" y="492" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="rgba(255,100,80,0.55)">↓ HEAT / ENTROPY OUT — 2nd Law of Thermodynamics — all energy eventually dissipates as heat ↓</text>
       </g>
 
-      <!-- ═══════════════════════════════════════════════ -->
-      <!-- LAYER 2: Biosphere oval -->
-      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER: Biosphere oval -->
+      <!-- Text zones: BIOSPHERE header y=98-113, list y=128-208, nothing else on left above y=255 -->
       <g id="layer-biosphere" class="layer hidden">
-        <!-- Biosphere background -->
         <ellipse cx="400" cy="265" rx="330" ry="210" fill="#1b4332" opacity="0.85"/>
-        <!-- Biosphere border -->
         <ellipse cx="400" cy="265" rx="330" ry="210" fill="none" stroke="#52b788" stroke-width="2.5" stroke-dasharray="8,4" opacity="0.8"/>
-
-        <!-- Biosphere label -->
-        <text x="122" y="130" font-family="Georgia,serif" font-size="13" fill="#52b788" font-weight="bold">BIOSPHERE</text>
-        <text x="122" y="146" font-family="Georgia,serif" font-size="10" fill="#74c69d">finite · self-regulating · irreplaceable</text>
-
-        <!-- Sub-labels for biosphere contents — upper-left, above resources arrow -->
-        <text x="122" y="164" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">fossil fuels</text>
-        <text x="122" y="177" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">minerals &amp; metals</text>
-        <text x="122" y="190" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">fresh water</text>
-        <text x="122" y="203" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">topsoil &amp; biomass</text>
-        <text x="122" y="216" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">breathable air</text>
-        <text x="122" y="229" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.8">stable climate</text>
+        <!-- Header — top-left of ellipse -->
+        <text x="83" y="98"  font-family="Georgia,serif" font-size="13"  fill="#52b788" font-weight="bold">BIOSPHERE</text>
+        <text x="83" y="113" font-family="Georgia,serif" font-size="9.5" fill="#74c69d">finite · self-regulating · irreplaceable</text>
+        <!-- Resource list — y=128 to y=208, left column only (x=83), well clear of y=255+ -->
+        <text x="83" y="130" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.85">fossil fuels</text>
+        <text x="83" y="145" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.85">minerals &amp; metals</text>
+        <text x="83" y="160" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.85">fresh water</text>
+        <text x="83" y="175" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.85">topsoil &amp; biomass</text>
+        <text x="83" y="190" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.85">breathable air</text>
+        <text x="83" y="205" font-family="Georgia,serif" font-size="9.5" fill="#74c69d" opacity="0.85">stable climate</text>
       </g>
 
-      <!-- ═══════════════════════════════════════════════ -->
-      <!-- LAYER 0 (always visible): Standard circular flow -->
-      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER: Standard circular flow (always visible, step 1) -->
       <g id="layer-economy">
-        <!-- Economy background box -->
         <rect x="268" y="140" width="264" height="240" rx="8" fill="#0a3d2b" opacity="0.95"/>
         <rect x="268" y="140" width="264" height="240" rx="8" fill="none" stroke="#2d9e6b" stroke-width="1.5" opacity="0.6"/>
-
-        <!-- HOUSEHOLDS box -->
         <rect x="293" y="165" width="100" height="52" rx="5" fill="#1a6b3c"/>
         <text x="343" y="187" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="white" font-weight="bold">HOUSEHOLDS</text>
-        <text x="343" y="201" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#a8d5b5">labor · capital</text>
-        <text x="343" y="212" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#a8d5b5">consumer spending</text>
-
-        <!-- FIRMS box -->
+        <text x="343" y="201" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#a8d5b5">labor · capital</text>
+        <text x="343" y="212" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#a8d5b5">consumer spending</text>
         <rect x="407" y="165" width="100" height="52" rx="5" fill="#1a6b3c"/>
         <text x="457" y="187" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="white" font-weight="bold">FIRMS</text>
-        <text x="457" y="201" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#a8d5b5">production</text>
-        <text x="457" y="212" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#a8d5b5">wages · profits</text>
-
-        <!-- Circular flow arrows: top loop (goods & services) -->
+        <text x="457" y="201" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#a8d5b5">production</text>
+        <text x="457" y="212" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#a8d5b5">wages · profits</text>
         <path d="M393,172 Q400,148 407,172" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" marker-end="url(#arrow-white)"/>
         <text x="400" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="rgba(255,255,255,0.6)">goods &amp; services ↕ spending</text>
-
-        <!-- Circular flow arrows: bottom loop (labor & wages) -->
         <path d="M393,215 Q400,240 407,215" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" marker-end="url(#arrow-white)"/>
         <text x="400" y="252" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="rgba(255,255,255,0.6)">labor &amp; capital ↕ wages &amp; profits</text>
-
-        <!-- Full outer loops -->
-        <!-- Upper outer: goods flow right, money flow left -->
         <path d="M343,165 C343,280 457,280 457,165" fill="none" stroke="rgba(100,200,140,0.4)" stroke-width="1.5" stroke-dasharray="5,3"/>
-
-        <!-- "ECONOMY" label -->
-        <text x="400" y="345" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#52b788" font-weight="bold" opacity="0.7">ECONOMY</text>
-        <text x="400" y="360" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#52b788" opacity="0.5">(as the model sees it)</text>
-
-        <!-- Invisible-to-model label -->
-        <text x="400" y="310" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="rgba(255,255,100,0.0)" id="model-blind-label">← this is all the model sees</text>
+        <text x="400" y="338" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#52b788" font-weight="bold" opacity="0.7">ECONOMY</text>
+        <text x="400" y="353" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#52b788" opacity="0.5">(as the model sees it)</text>
       </g>
 
-      <!-- ═══════════════════════════════════════════════ -->
-      <!-- LAYER 3: Resource extraction arrows -->
-      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER: Resources in -->
+      <!-- Arrow at y=270 — gap of 65 units below list end (y=205), nothing else in left zone at this y -->
       <g id="layer-resources" class="layer hidden">
-        <!-- Arrow: biosphere → economy (resources in) — at y=310, well below biosphere list -->
-        <line x1="268" y1="310" x2="215" y2="310" stroke="#69f0ae" stroke-width="2.5" marker-end="url(#arrow-green)"/>
-        <line x1="215" y1="310" x2="175" y2="310" stroke="#69f0ae" stroke-width="2.5"/>
-
-        <!-- Resource labels -->
-        <text x="178" y="303" font-family="Georgia,serif" font-size="10" fill="#69f0ae" font-weight="bold">RESOURCES IN</text>
-        <text x="178" y="323" font-family="Georgia,serif" font-size="8.5" fill="#69f0ae" opacity="0.8">matter · energy · water · food</text>
-
-        <!-- Low entropy label -->
-        <text x="122" y="303" font-family="Georgia,serif" font-size="8" fill="#74c69d" opacity="0.7">low-entropy input</text>
-
-        <!-- "not replenished" note -->
-        <text x="122" y="340" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.9">stocks finite,</text>
-        <text x="122" y="352" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.9">not replenished by the model</text>
+        <line x1="265" y1="270" x2="86" y2="270" stroke="#69f0ae" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+        <!-- Label ABOVE arrow at y=262, label BELOW at y=283 — no other text at these y values on left -->
+        <text x="88" y="262" font-family="Georgia,serif" font-size="10"  fill="#69f0ae" font-weight="bold">RESOURCES IN</text>
+        <text x="88" y="283" font-family="Georgia,serif" font-size="8.5" fill="#69f0ae" opacity="0.8">matter · energy · water · food</text>
       </g>
 
-      <!-- ═══════════════════════════════════════════════ -->
-      <!-- LAYER 3b: Waste return arrows -->
-      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER: Waste out -->
+      <!-- Mirror of resources: arrow at y=310, labels above (y=302) and below (y=323) -->
       <g id="layer-waste" class="layer hidden">
-        <!-- Arrow: economy → biosphere (waste out) -->
-        <line x1="532" y1="290" x2="600" y2="290" stroke="#ef9a9a" stroke-width="2.5" marker-end="url(#arrow-red)"/>
-        <line x1="600" y1="290" x2="640" y2="290" stroke="#ef9a9a" stroke-width="2.5"/>
-
-        <text x="555" y="282" font-family="Georgia,serif" font-size="10" fill="#ef9a9a" font-weight="bold">WASTE OUT</text>
-        <text x="555" y="295" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.8">CO₂ · pollution · heat · degraded matter</text>
-
-        <!-- High entropy label -->
-        <text x="650" y="283" font-family="Georgia,serif" font-size="8" fill="#ef9a9a" opacity="0.7">high</text>
-        <text x="650" y="293" font-family="Georgia,serif" font-size="8" fill="#ef9a9a" opacity="0.7">entropy</text>
-        <text x="650" y="303" font-family="Georgia,serif" font-size="8" fill="#ef9a9a" opacity="0.7">output</text>
-
-        <!-- Waste absorption capacity note -->
-        <text x="590" y="340" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.8" text-anchor="middle">biosphere absorbs</text>
-        <text x="590" y="352" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.8" text-anchor="middle">waste — up to a limit</text>
-        <text x="590" y="364" font-family="Georgia,serif" font-size="8.5" fill="#ffd54f" opacity="0.9" text-anchor="middle">past that limit: collapse</text>
+        <line x1="534" y1="310" x2="720" y2="310" stroke="#ef9a9a" stroke-width="2.5" marker-end="url(#arrow-red)"/>
+        <text x="540" y="302" font-family="Georgia,serif" font-size="10"  fill="#ef9a9a" font-weight="bold">WASTE OUT</text>
+        <text x="540" y="323" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.8">CO₂ · pollution · heat · degraded matter</text>
+        <!-- Absorption limit — lower right, y=370-390, clear of all other elements -->
+        <text x="630" y="370" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ef9a9a" opacity="0.8">biosphere absorbs waste —</text>
+        <text x="630" y="384" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ffd54f" opacity="0.9">past its limit: collapse</text>
       </g>
 
-      <!-- ═══════════════════════════════════════════════ -->
-      <!-- LAYER 4b: Solar energy + heat entropy flows -->
-      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER: Solar energy + thermodynamic flows -->
+      <!-- Solar labels at y=108-120 (top right). Heat label at y=448. Thermo text at y=466/479. -->
       <g id="layer-energy" class="layer hidden">
-        <!-- Solar energy arrow: sun → biosphere -->
-        <line x1="726" y1="80" x2="660" y2="120" stroke="#ffd54f" stroke-width="2.5" marker-end="url(#arrow-yellow)"/>
-        <text x="700" y="108" font-family="Georgia,serif" font-size="9" fill="#ffd54f" text-anchor="middle">solar energy</text>
-        <text x="700" y="120" font-family="Georgia,serif" font-size="8" fill="#ffd54f" opacity="0.7" text-anchor="middle">photosynthesis · wind · rain cycles</text>
-
-        <!-- Heat / entropy arrow: biosphere → downward to heat sink -->
-        <line x1="400" y1="475" x2="400" y2="455" stroke="#ff7043" stroke-width="2.5" marker-end="url(#arrow-orange)"/>
-        <text x="400" y="450" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#ff7043">all energy eventually becomes heat — dissipates to space</text>
-
-        <!-- Thermodynamic frame note -->
-        <text x="60" y="470" font-family="Georgia,serif" font-size="9" fill="rgba(255,200,100,0.5)">1st Law: energy conserved</text>
-        <text x="60" y="484" font-family="Georgia,serif" font-size="9" fill="rgba(255,200,100,0.5)">2nd Law: entropy always increases</text>
+        <line x1="737" y1="80" x2="665" y2="118" stroke="#ffd54f" stroke-width="2.5" marker-end="url(#arrow-yellow)"/>
+        <text x="708" y="104" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#ffd54f">solar energy</text>
+        <text x="708" y="116" text-anchor="middle" font-family="Georgia,serif" font-size="8"  fill="#ffd54f" opacity="0.7">photosynthesis · wind · rain</text>
+        <line x1="400" y1="474" x2="400" y2="456" stroke="#ff7043" stroke-width="2.5" marker-end="url(#arrow-orange)"/>
+        <text x="400" y="451" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ff7043">all energy eventually becomes heat — dissipates to space</text>
+        <text x="65"  y="466" font-family="Georgia,serif" font-size="8.5" fill="rgba(255,200,100,0.5)">1st Law: energy conserved</text>
+        <text x="65"  y="480" font-family="Georgia,serif" font-size="8.5" fill="rgba(255,200,100,0.5)">2nd Law: entropy always increases</text>
       </g>
 
-      <!-- ═══════════════════════════════════════════════ -->
-      <!-- LAYER 5: "What the model misses" callout -->
-      <!-- ═══════════════════════════════════════════════ -->
+      <!-- LAYER: Callout — what the model sees -->
+      <!-- Dashed box y=134-390. Header at y=127. Footer at y=410 — clear of waste (y=384) and heat (y=451) -->
       <g id="layer-callout" class="layer hidden">
-        <!-- Dashed box around economy with label "what the model sees" -->
-        <rect x="263" y="135" width="274" height="250" rx="10" fill="none" stroke="#ffd54f" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.6"/>
-        <text x="400" y="128" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#ffd54f" opacity="0.9">↑ what the standard model sees ↑</text>
-
-        <!-- What's invisible label — moved above economy box to avoid bottom clutter -->
-        <text x="400" y="395" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#ffd54f" font-weight="bold">Everything outside this box is invisible to standard economics.</text>
+        <rect x="262" y="134" width="276" height="252" rx="10" fill="none" stroke="#ffd54f" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>
+        <text x="400" y="127" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#ffd54f" opacity="0.9">↑ what the standard model sees ↑</text>
+        <text x="400" y="410" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#ffd54f" font-weight="bold">Everything outside this box is invisible to the model.</text>
       </g>
 
     </svg>
