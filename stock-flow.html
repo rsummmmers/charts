@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stock vs. Flow: Two Ways Water Can Fail</title>
+  <title>Stock vs Flow Systems</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 980px; margin: 0 auto; line-height: 1.6; }
@@ -41,12 +41,39 @@
     .lesson { margin-top: 0.5rem; padding: 1rem 1.2rem; border-left: 4px solid #7b3f00; background: #fff8ed; font-size: 0.87rem; line-height: 1.7; color: #333; }
     .lesson strong { color: #1a1a1a; }
 
+    /* examples grid */
+    .examples-section { margin-top: 2rem; border-top: 2px solid #1a1a1a; padding-top: 1.5rem; }
+    .examples-section h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 1rem; font-weight: normal; }
+    .examples-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    @media (max-width: 620px) { .examples-grid { grid-template-columns: 1fr; } }
+    .ex-col { border-radius: 7px; overflow: hidden; }
+    .ex-head { padding: 0.6rem 0.9rem; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.08em; color: white; }
+    .ex-head-flow { background: #1a3a6b; }
+    .ex-head-hybrid { background: #7b3f00; }
+    .ex-head-stock { background: #1a5c3a; }
+    .ex-head-sub { font-size: 0.62rem; opacity: 0.75; font-weight: normal; text-transform: none; letter-spacing: 0; margin-top: 0.15rem; }
+    .ex-body { background: #f4f4f0; padding: 0.75rem 0.9rem; }
+    .ex-item { font-size: 0.8rem; color: #333; padding: 0.3rem 0; border-bottom: 1px solid #e8e8e4; line-height: 1.45; }
+    .ex-item:last-child { border-bottom: none; }
+    .ex-item strong { color: #1a1a1a; display: block; font-size: 0.78rem; }
+    .ex-item span { color: #777; font-size: 0.73rem; }
+
     /* term definitions */
-    .terms { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
-    @media (max-width: 560px) { .terms { grid-template-columns: 1fr; } }
-    .term-box { background: #f4f4f0; border-radius: 6px; padding: 0.85rem 1rem; font-size: 0.82rem; line-height: 1.6; }
-    .term-name { font-weight: bold; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; color: #666; }
+    .terms { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    @media (max-width: 620px) { .terms { grid-template-columns: 1fr; } }
+    .term-box { border-radius: 6px; padding: 0.85rem 1rem; font-size: 0.82rem; line-height: 1.6; }
+    .term-box-flow { background: #eef2fa; border: 1px solid #c5d0e8; }
+    .term-box-hybrid { background: #fff8ed; border: 1px solid #f0d89a; }
+    .term-box-stock { background: #eef7f1; border: 1px solid #b8dfc6; }
+    .term-box-failure { background: #f4f4f0; border: 1px solid #ddd; }
+    .term-name { font-weight: bold; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .term-name-flow { color: #1a3a6b; }
+    .term-name-hybrid { color: #7b3f00; }
+    .term-name-stock { color: #1a5c3a; }
+    .term-name-neutral { color: #666; }
     .term-def { color: #333; }
+    .terms-failures { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+    @media (max-width: 620px) { .terms-failures { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -54,15 +81,15 @@
   <nav>
     <a href="index.html">← All models</a>
     <span style="color:#ddd">|</span>
-    <span style="font-weight:bold;color:#1a1a1a;">8 · Stock vs. Flow</span>
+    <span style="font-weight:bold;color:#1a1a1a;">8 · Stock vs Flow Systems</span>
   </nav>
 
   <header>
-    <h1>Stock vs. Flow: Two Ways Water Can Fail</h1>
-    <p class="subtitle">The Colorado River (flow-dependent) and the Quabbin Reservoir (managed stock) — same resource, different failure modes.</p>
+    <h1>Stock vs Flow Systems</h1>
+    <p class="subtitle">Three system types with fundamentally different dynamics, vulnerabilities, and failure modes.</p>
   </header>
 
-  <p class="intro">In systems thinking, a <em>flow</em> is a rate — water moving through a river right now. A <em>stock</em> is an accumulated quantity — water stored in a reservoir. These two types of resource have fundamentally different dynamics, different vulnerabilities, and different collapse patterns. Step through to see how each one fails under pressure.</p>
+  <p class="intro">In systems thinking, a <em>flow</em> is a rate — water moving through a river right now. A <em>stock</em> is an accumulated quantity — water held in a reservoir. A <em>hybrid</em> is both: a living system that accumulates and cycles simultaneously, like a forest or a topsoil layer. These types fail differently, recover at different speeds, and are invisible to each other's warning signs. The water comparison below shows the stock/flow contrast most clearly.</p>
 
   <div class="step-controls">
     <button class="step-btn" id="btn-prev" onclick="changeStep(-1)">← Back</button>
@@ -94,21 +121,74 @@
   </div>
 
   <div class="terms">
-    <div class="term-box">
-      <div class="term-name">Flow</div>
-      <div class="term-def">A rate of change over time. Measured in volume-per-time (acre-feet/year, gallons/day). Stops when the source stops. Examples: river discharge, rainfall, solar radiation, interest income, wage income.</div>
+    <div class="term-box term-box-flow">
+      <div class="term-name term-name-flow">Flow</div>
+      <div class="term-def">A rate of change over time. Measured in volume-per-time. Stops when the source stops; recovers when it returns. Failure is immediate and visible. Examples: a river, rainfall, solar radiation, annual harvest from a managed forest, wages.</div>
     </div>
-    <div class="term-box">
-      <div class="term-name">Stock</div>
-      <div class="term-def">An accumulated quantity. Measured in volume (acre-feet, gallons). Persists when inflow stops — but depletes if outflow exceeds inflow. Examples: reservoir storage, groundwater, topsoil, a savings account, biodiversity.</div>
+    <div class="term-box term-box-hybrid">
+      <div class="term-name term-name-hybrid">Hybrid</div>
+      <div class="term-def">A system that is both stock and flow: it accumulates over time AND continuously processes and cycles. Living systems are typically hybrids. They can tip from cycling to depleted — and unlike pure stocks, the shift is often irreversible. Examples: topsoil, a working forest, a fishery, a wetland, a factory using bio-feedstock.</div>
     </div>
-    <div class="term-box">
-      <div class="term-name">Flow failure</div>
-      <div class="term-def">Immediate: when the source is stressed (drought, diversion), downstream users feel it at once. The Colorado's compact allocates more water than flows — any shortfall is instantly visible.</div>
+    <div class="term-box term-box-stock">
+      <div class="term-name term-name-stock">Stock</div>
+      <div class="term-def">An accumulated quantity. Persists when inflow stops — but depletes if outflow exceeds inflow, and does not regenerate on human timescales. Failure is slow, then sudden. Examples: a reservoir, fossil groundwater, coal and oil deposits, mineral ore, old-growth forest.</div>
     </div>
-    <div class="term-box">
-      <div class="term-name">Stock failure</div>
-      <div class="term-def">Gradual, then sudden: a reservoir can absorb years of deficit before the level becomes critical. When it crosses a threshold, the collapse can be rapid. The gap between "drawing down" and "crisis" masks the problem.</div>
+  </div>
+
+  <div class="terms-failures">
+    <div class="term-box term-box-failure">
+      <div class="term-name term-name-flow">Flow failure</div>
+      <div class="term-def">Immediate and transparent: when supply drops, downstream users feel it at once. Recovery is fast if the source returns. The Colorado's compact allocates more water than flows — any shortfall is instantly visible.</div>
+    </div>
+    <div class="term-box term-box-failure">
+      <div class="term-name term-name-hybrid">Hybrid failure</div>
+      <div class="term-def">Threshold-based and often irreversible: the system appears functional while being quietly degraded, then crosses a point where the cycling mechanism itself breaks down. A fishery collapse, a soil system that can no longer hold water, a forest that can no longer seed itself.</div>
+    </div>
+    <div class="term-box term-box-failure">
+      <div class="term-name term-name-stock">Stock failure</div>
+      <div class="term-def">Gradual, then sudden: a reservoir absorbs years of deficit before reaching critical level. Once there, recharge can take decades. The gap between "drawing down" and "crisis" is where political and economic attention is absent.</div>
+    </div>
+  </div>
+
+  <div class="examples-section">
+    <h2>Examples across system types</h2>
+    <div class="examples-grid">
+      <div class="ex-col">
+        <div class="ex-head ex-head-flow">Flow systems<div class="ex-head-sub">renewable if not overwhelmed · fails fast, recovers fast</div></div>
+        <div class="ex-body">
+          <div class="ex-item"><strong>Rivers and streams</strong><span>Colorado, Connecticut, Nile — dependent on snowpack and rainfall each year</span></div>
+          <div class="ex-item"><strong>Annual crop yields</strong><span>Wheat, corn, rice — renewed each growing season from soil and rain</span></div>
+          <div class="ex-item"><strong>Solar radiation</strong><span>Arrives continuously; cannot be stockpiled in large quantities</span></div>
+          <div class="ex-item"><strong>Wind and tidal energy</strong><span>Rate-dependent; zero when conditions are absent</span></div>
+          <div class="ex-item"><strong>Managed timber rotations</strong><span>Young plantation forests harvested on a cycle — flow if the cycle holds</span></div>
+          <div class="ex-item"><strong>Wages and income</strong><span>A rate, not a quantity — stops when work stops</span></div>
+          <div class="ex-item"><strong>Seasonal rainfall</strong><span>Monsoons, snowmelt, storm systems — available annually, not stored</span></div>
+        </div>
+      </div>
+      <div class="ex-col">
+        <div class="ex-head ex-head-hybrid">Hybrid systems<div class="ex-head-sub">stock + active cycling · fails at thresholds · often irreversible</div></div>
+        <div class="ex-body">
+          <div class="ex-item"><strong>Topsoil</strong><span>Builds at ~1 inch per 500 years through biological activity; can erode in a single season. Living and mineral simultaneously.</span></div>
+          <div class="ex-item"><strong>Forests</strong><span>A young managed forest is a flow; an old-growth forest is closer to a stock. Both cycle water and carbon.</span></div>
+          <div class="ex-item"><strong>Fisheries</strong><span>A healthy fishery is a self-renewing flow. Overfished, it collapses into a depleted stock that may never recover.</span></div>
+          <div class="ex-item"><strong>Wetlands</strong><span>Ongoing water filtration and flood buffering (flow service) built on accumulated peat and biodiversity (stock).</span></div>
+          <div class="ex-item"><strong>A sawmill or paper mill</strong><span>Converts a biological flow (timber) into products using capital stock (machinery, building). Output depends on both.</span></div>
+          <div class="ex-item"><strong>A dairy or livestock herd</strong><span>The herd reproduces (flow); the existing animals are stock. Overwork the herd, the flow collapses.</span></div>
+          <div class="ex-item"><strong>Shallow aquifers</strong><span>Recharged by rainfall (flow component) but stored in geological formations (stock component). Recharge rate often far below extraction rate.</span></div>
+        </div>
+      </div>
+      <div class="ex-col">
+        <div class="ex-head ex-head-stock">Stock systems<div class="ex-head-sub">accumulated over geological time · depletes without renewal · fails slowly then suddenly</div></div>
+        <div class="ex-body">
+          <div class="ex-item"><strong>Fossil fuels</strong><span>Coal, oil, natural gas — formed over 300 million years. Once extracted, gone on any human timescale.</span></div>
+          <div class="ex-item"><strong>Mineral ore deposits</strong><span>Iron, copper, lithium, phosphate rock — concentrated by geological processes. No recharge mechanism.</span></div>
+          <div class="ex-item"><strong>Fossil groundwater</strong><span>The Ogallala Aquifer took ~6,000 years to fill; parts are being drawn down at 50× the recharge rate.</span></div>
+          <div class="ex-item"><strong>Old-growth forest</strong><span>Ancient redwoods, Amazon old-growth — centuries of accumulated structure. Cannot be replanted into existence.</span></div>
+          <div class="ex-item"><strong>Biodiversity</strong><span>Species lost through extinction don't return. The web of interdependencies is a stock that quietly depletes.</span></div>
+          <div class="ex-item"><strong>Reservoirs</strong><span>Built storage — a managed stock. Quabbin Reservoir: 412 billion gallons accumulated since 1939.</span></div>
+          <div class="ex-item"><strong>Stable climate</strong><span>The Holocene climate envelope humanity evolved within — a 10,000-year accumulation of atmospheric and oceanic balance now being drawn down.</span></div>
+        </div>
+      </div>
     </div>
   </div>
 
