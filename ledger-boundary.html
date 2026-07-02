@@ -21,7 +21,7 @@
     .step-btn:disabled { opacity: 0.35; cursor: default; }
     .step-indicator { font-size: 0.8rem; color: #888; }
 
-    .viz-wrap { margin-bottom: 1rem; border-radius: 8px; overflow: hidden; background: #111a10; }
+    .viz-wrap { margin-bottom: 1rem; border-radius: 8px; overflow: hidden; background: #f4f4f0; border: 1.5px solid #ddd; }
     canvas { display: block; width: 100%; }
 
     .lesson { padding: 1rem 1.2rem; border-left: 4px solid #2a5c34; background: #f0f9f4; font-size: 0.87rem; line-height: 1.7; color: #333; margin-bottom: 1.5rem; }
@@ -169,51 +169,51 @@
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, W, H);
 
-    ctx.fillStyle = '#0e180e';
+    // Light background
+    ctx.fillStyle = '#f4f4f0';
     ctx.fillRect(0, 0, W, H);
 
-    const cx = W * 0.38, cy = H * 0.5;
-    const R = Math.min(W * 0.28, H * 0.38);
+    const cx = W * 0.36, cy = H * 0.5;
+    const R = Math.min(W * 0.26, H * 0.38);
     const expanded = s.expanded;
 
-    // Outside items (if any)
+    // Outside zone tint
     if (s.show_outside && s.items_out.length > 0) {
       const ocol = s.outside_color || '#666';
-      ctx.fillStyle = ocol + '22';
-      ctx.fillRect(0, 0, W, H);
+      // Tinted right zone
+      ctx.fillStyle = ocol + '12';
+      ctx.fillRect(cx + R - 10, 0, W - (cx + R - 10), H);
 
-      // Right side items
-      const startY = H * 0.08;
-      const itemH = Math.min(22, (H * 0.85) / s.items_out.length);
-      const rightX = cx + R + 28;
+      const startY = H * 0.06;
+      const itemH = Math.min(20, (H * 0.88) / s.items_out.length);
+      const rightX = cx + R + 20;
+
+      // Outside section header
+      ctx.fillStyle = ocol;
+      ctx.font = 'bold 9px Georgia,serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('OUTSIDE THE LEDGER', rightX, startY);
 
       s.items_out.forEach((item, i) => {
-        const y = startY + i * itemH;
-        // Small dot
-        ctx.fillStyle = ocol + 'cc';
-        ctx.beginPath(); ctx.arc(rightX, y + 7, 3, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = ocol + 'ee';
-        ctx.font = `${Math.min(11, itemH * 0.6)}px Georgia,serif`;
+        const y = startY + 14 + i * itemH;
+        ctx.fillStyle = ocol;
+        ctx.beginPath(); ctx.arc(rightX + 4, y + 2, 2.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#222';
+        ctx.font = `${Math.min(11, itemH * 0.62)}px Georgia,serif`;
         ctx.textAlign = 'left';
-        ctx.fillText(item, rightX + 10, y + 11);
+        ctx.fillText(item, rightX + 12, y + 6);
       });
 
-      // "OUTSIDE" label
-      ctx.fillStyle = ocol + 'aa';
-      ctx.font = '9px Georgia,serif';
-      ctx.textAlign = 'left';
-      ctx.fillText('OUTSIDE THE LEDGER', rightX, H * 0.96);
-
       if (s.highlight_gap) {
-        ctx.strokeStyle = ocol + '66';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 4]);
-        ctx.beginPath(); ctx.arc(cx, cy, R + 14, 0, Math.PI * 2); ctx.stroke();
+        ctx.strokeStyle = '#b91c1c';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.arc(cx, cy, R + 12, 0, Math.PI * 2); ctx.stroke();
         ctx.setLineDash([]);
-        ctx.fillStyle = 'rgba(200,50,50,0.5)';
-        ctx.font = 'bold 10px Georgia,serif';
+        ctx.fillStyle = '#b91c1c';
+        ctx.font = 'bold 9px Georgia,serif';
         ctx.textAlign = 'center';
-        ctx.fillText('← Everything outside this line is invisible to the ledger', cx, cy - R - 22);
+        ctx.fillText('Everything outside this line is invisible to the ledger', cx, cy - R - 16);
       }
     }
 
@@ -222,35 +222,36 @@
     const circleColor = expanded ? '#1a6b3c' : '#2a5c34';
 
     ctx.beginPath(); ctx.arc(cx, cy, circleR, 0, Math.PI * 2);
-    ctx.fillStyle = circleColor + '33';
+    ctx.fillStyle = expanded ? '#d4f0e0' : '#e8f4ee';
     ctx.fill();
-    ctx.strokeStyle = circleColor + 'cc';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = circleColor;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
+
+    // Boundary label above circle
+    ctx.fillStyle = circleColor;
+    ctx.font = 'bold 10px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(s.boundary_label, cx, cy - circleR - 7);
 
     // Inside items
     const items = s.items_in;
-    const startY = cy - (items.length * 16) / 2;
+    const lineH = 16;
+    const startY = cy - (items.length * lineH) / 2 + 8;
     items.forEach((item, i) => {
-      const y = startY + i * 17;
-      const inExpanded = expanded && i >= 6;
-      ctx.fillStyle = inExpanded ? '#4ade80cc' : 'rgba(255,255,255,0.75)';
-      ctx.font = `${inExpanded ? 'bold ' : ''}10px Georgia,serif`;
+      const y = startY + i * lineH;
+      const isNew = expanded && i >= 6;
+      ctx.fillStyle = isNew ? '#1a6b3c' : '#1a1a1a';
+      ctx.font = isNew ? 'bold 10px Georgia,serif' : '10px Georgia,serif';
       ctx.textAlign = 'center';
       ctx.fillText(item, cx, y);
     });
 
-    // Boundary label
-    ctx.fillStyle = circleColor + 'dd';
-    ctx.font = 'bold 10px Georgia,serif';
+    // Inside label at bottom of circle
+    ctx.fillStyle = '#888';
+    ctx.font = '8px Georgia,serif';
     ctx.textAlign = 'center';
-    ctx.fillText(s.boundary_label, cx, cy - circleR - 8);
-
-    // INSIDE label
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
-    ctx.font = '9px Georgia,serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('INSIDE THE LEDGER', cx, cy + circleR - 12);
+    ctx.fillText('INSIDE THE LEDGER', cx, cy + circleR - 10);
   }
 
   function resize() {
