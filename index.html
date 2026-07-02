@@ -20,26 +20,18 @@
     .model-desc { font-size: 0.82rem; color: #666; line-height: 1.5; }
     .model-tag { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; margin-top: 0.4rem; }
     .model-arrow { display: flex; align-items: center; padding: 0 1rem; color: #bbb; font-size: 1.1rem; flex-shrink: 0; }
-    .c1 { background: #1a6b3c; }
-    .c2 { background: #2a5c34; }
-    .c3 { background: #7b3f00; }
-    .c4 { background: #1a3a6b; }
-    .c5 { background: #1a5c3a; }
-    .c6 { background: #1a3a6b; }
-    .c7 { background: #5b2d8e; }
-    .c8 { background: #1a5c6b; }
     .sequence-note { font-size: 0.78rem; color: #aaa; margin-top: 1.5rem; font-style: italic; border-top: 1px solid #eee; padding-top: 1rem; }
   </style>
 </head>
 <body>
   <header>
     <h1>Visualizations of Money, Debt, and Growth Implications</h1>
-    <p class="subtitle">Eight interactive models: money creation, the interest mechanism, the physical substrate, regulatory limits, and systems dynamics</p>
+    <p class="subtitle">Thirteen interactive models: money creation, the interest mechanism, the physical substrate, regulatory limits, and systems dynamics</p>
   </header>
-  <p class="intro">These models can be used in sequence or independently. Start with #1 for the mechanics of money creation; #3 and #4 for the structural argument about interest; #5 for Herman Daly's critique of what the standard model leaves out; #6 for the distinction between reserve and capital requirements; #7 for why historical risk modeling fails in a non-stationary world; #8 for stock vs. flow dynamics using water.</p>
+  <p class="intro">These models can be used in sequence or independently. Start with #1 for the mechanics of money creation; #3 and #4 for the structural argument about interest; #5 for Herman Daly's critique of what the standard model leaves out; #6 for the three regulatory guardrails and their limits; #7 for why historical risk modeling fails in a non-stationary world; #8 for stock vs. flow dynamics; #12 for how the money-creation mechanism itself can be redesigned; #13 for how the structural growth imperative compares to a Ponzi scheme.</p>
   <div class="models">
     <a class="model-card" href="money-multiplier.html">
-      <div class="model-num c1">1</div>
+      <div class="model-num" style="background:#1a6b3c;">1</div>
       <div class="model-body">
         <div class="model-title">The Money Multiplier</div>
         <div class="model-desc">How $100 becomes $1,000 through the cascade of deposits and loans. The math is bounded — not infinite — but every dollar in the chain is someone's debt. Interactive slider shows how reserve requirements control the multiplier.</div>
@@ -48,7 +40,7 @@
       <div class="model-arrow">→</div>
     </a>
     <a class="model-card" href="debt-copies.html">
-      <div class="model-num c2">2</div>
+      <div class="model-num" style="background:#2a5c34;">2</div>
       <div class="model-body">
         <div class="model-title">The Debt Copy Problem</div>
         <div class="model-desc">A Rummikub analogy for why the copies feel real — and why the board can never fully clear. Step through the game from first deposit to the unclearable interest gap.</div>
@@ -57,7 +49,7 @@
       <div class="model-arrow">→</div>
     </a>
     <a class="model-card" href="interest-ratchet.html">
-      <div class="model-num c3">3</div>
+      <div class="model-num" style="background:#7b3f00;">3</div>
       <div class="model-body">
         <div class="model-title">The Interest Ratchet</div>
         <div class="model-desc">Why the gap between money that exists and money that is owed can only grow. A fixed money supply against compounding debt obligation — drag the rate and time sliders to see the divergence.</div>
@@ -66,7 +58,7 @@
       <div class="model-arrow">→</div>
     </a>
     <a class="model-card" href="interest-comparison.html">
-      <div class="model-num c4">4</div>
+      <div class="model-num" style="background:#1a3a6b;">4</div>
       <div class="model-body">
         <div class="model-title">The Interest Variable</div>
         <div class="model-desc">Holds everything constant and changes one thing: whether loans carry interest. Toggle between interest-free and interest-bearing to see exactly where the structural problem enters.</div>
@@ -75,7 +67,7 @@
       <div class="model-arrow">→</div>
     </a>
     <a class="model-card" href="daly-economy.html">
-      <div class="model-num c5">5</div>
+      <div class="model-num" style="background:#1a5c3a;">5</div>
       <div class="model-body">
         <div class="model-title">Daly's Missing Substrate</div>
         <div class="model-desc">The standard economic circular flow shows households and firms exchanging money for goods and services — but shows nothing about where the goods come from. Step through what the model omits: the biosphere, resource throughput, solar energy, and entropy.</div>
@@ -84,16 +76,16 @@
       <div class="model-arrow">→</div>
     </a>
     <a class="model-card" href="capital-requirements.html">
-      <div class="model-num c6">6</div>
+      <div class="model-num" style="background:#1a3a6b;">6</div>
       <div class="model-body">
-        <div class="model-title">Reserve vs. Capital Requirements</div>
-        <div class="model-desc">Two different guardrails protecting against two different bank failures — and what neither one addresses. Reserve requirements (currently 0% in the US) protect against bank runs. Capital requirements protect against loan defaults. Both are silent on the structural interest gap.</div>
-        <div class="model-tag">Liquidity vs. solvency · Basel III · What the guardrails don't cover</div>
+        <div class="model-title">Three Banking Guardrails</div>
+        <div class="model-desc">Reserve requirements, capital requirements, and loan loss reserves (ACL) protect against three different failure modes: bank runs, loan defaults, and expected credit losses. Each is set by a different mechanism. All three are silent on the structural interest gap.</div>
+        <div class="model-tag">Liquidity · Solvency · Credit quality · OCC / Fed / FDIC · Basel III · What the guardrails don't cover</div>
       </div>
       <div class="model-arrow">→</div>
     </a>
     <a class="model-card" href="risk-modeling.html">
-      <div class="model-num c7">7</div>
+      <div class="model-num" style="background:#5b2d8e;">7</div>
       <div class="model-body">
         <div class="model-title">Risk Models and a Changing World</div>
         <div class="model-desc">Financial risk models assume the future will look statistically like the past. In a non-stationary world — where climate shifts baselines, ecological tipping points change frequencies, and "100-year events" happen every decade — this assumption fails silently. The model outputs a number that looks correct. It isn't.</div>
@@ -102,15 +94,14 @@
       <div class="model-arrow">→</div>
     </a>
     <a class="model-card" href="stock-flow.html">
-      <div class="model-num c8">8</div>
+      <div class="model-num" style="background:#1a5c6b;">8</div>
       <div class="model-body">
         <div class="model-title">Stock vs Flow Systems</div>
-        <div class="model-desc">Three system types — flow (a river), stock (a reservoir), and hybrid (topsoil, a fishery, a working forest) — with fundamentally different dynamics and failure modes. Flow fails instantly and visibly. Stock fails slowly, then suddenly. Hybrid can tip at a threshold and never recover. Examples across water, ecology, industry, and economy.</div>
+        <div class="model-desc">Three system types — flow (a river), stock (a reservoir), and hybrid (topsoil, a fishery, a working forest) — with fundamentally different dynamics and failure modes. Flow fails instantly and visibly. Stock fails slowly, then suddenly. Hybrid can tip at a threshold and never recover. It's not the bucket. It's the rain.</div>
         <div class="model-tag">Systems thinking · Hybrid systems · Threshold failure · Ecological assets</div>
       </div>
       <div class="model-arrow">→</div>
     </a>
-  </div>
     <a class="model-card" href="ledger-boundary.html">
       <div class="model-num" style="background:#2a5c34;">9</div>
       <div class="model-body">
@@ -129,7 +120,6 @@
       </div>
       <div class="model-arrow">→</div>
     </a>
-  </div>
     <a class="model-card" href="offsets-problem.html">
       <div class="model-num" style="background:#5b2d00;">11</div>
       <div class="model-body">
@@ -139,7 +129,25 @@
       </div>
       <div class="model-arrow">→</div>
     </a>
+    <a class="model-card" href="public-private-credit.html">
+      <div class="model-num" style="background:#1a4a6b;">12</div>
+      <div class="model-body">
+        <div class="model-title">Public vs. Private Credit Creation</div>
+        <div class="model-desc">Both systems create money as debt. The difference is in who captures the interest — private shareholders or the public treasury. This single variable changes whether the system requires continuous private-sector growth to remain solvent. Step through the mechanism, trace where the interest goes, and see what changes when the money-creation design changes.</div>
+        <div class="model-tag">Sovereign issuance · Public banks · Interest destination · Growth imperative · Bank of North Dakota</div>
+      </div>
+      <div class="model-arrow">→</div>
+    </a>
+    <a class="model-card" href="ponzi.html">
+      <div class="model-num" style="background:#7b2d00;">13</div>
+      <div class="model-body">
+        <div class="model-title">The Ponzi Comparison</div>
+        <div class="model-desc">A Ponzi scheme and the interest-bearing banking system share a structural feature: both require continuous new growth to service existing obligations. They differ in intent, production, and what happens at ecological limits. Step through the Ponzi mechanics, then the banking mechanics, then the comparison — and see where the distinction narrows.</div>
+        <div class="model-tag">Structural similarity · Intent vs. consequence · Production vs. no production · Ecological limits · Collapse conditions</div>
+      </div>
+      <div class="model-arrow">→</div>
+    </a>
   </div>
-  <p class="sequence-note">Models 1–4: mechanics of money creation. Models 5, 9: the physical substrate and the incomplete ledger. Models 6–7: regulatory guardrails and their limits. Model 8: stock vs flow dynamics. Model 10: threshold failure — why living systems collapse without warning. Model 11: the offset problem — why damage-as-baseline is a different problem than it solves.</p>
+  <p class="sequence-note">Models 1–4: mechanics of money creation and the interest mechanism. Model 5, 9: the physical substrate and the incomplete ledger. Model 6–7: regulatory guardrails and their limits. Model 8: stock vs. flow dynamics. Model 10: threshold failure in living systems. Model 11: the offset problem. Model 12: public vs. private credit — redesigning the money-creation mechanism. Model 13: the Ponzi comparison — structural similarity and where it ends.</p>
 </body>
 </html>
