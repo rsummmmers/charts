@@ -6,585 +6,317 @@
   <title>The Interest Ratchet</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 880px; margin: 0 auto; line-height: 1.6; }
+    header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
+    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
+    .intro { font-size: 0.92rem; color: #333; line-height: 1.75; margin-bottom: 1rem; max-width: 700px; }
 
-    body {
-      font-family: 'Georgia', serif;
-      background: #faf8f5;
-      color: #1a1a1a;
-      padding: 2.5rem 2rem;
-      max-width: 860px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
+    nav { margin-bottom: 1.5rem; padding: 0.6rem 0; border-bottom: 1px solid #ddd; font-size: 0.8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: #888; text-decoration: none; }
+    nav a:hover { color: #1a1a1a; }
 
-    header {
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid #1a1a1a;
-    }
+    .controls { display: flex; gap: 2rem; align-items: flex-end; margin-bottom: 1.2rem; flex-wrap: wrap; }
+    .control-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .control-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+    .control-value { font-size: 1.3rem; font-weight: bold; color: #7b3f00; }
+    input[type="range"] { width: 200px; accent-color: #7b3f00; }
 
-    h1 {
-      font-size: 1.5rem;
-      font-weight: normal;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.3rem;
-    }
+    .chart-wrap { position: relative; margin-bottom: 1.2rem; }
+    canvas { display: block; width: 100%; border-radius: 6px; }
 
-    .subtitle {
-      font-size: 0.9rem;
-      color: #777;
-      font-style: italic;
-    }
+    /* stat strip */
+    .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: #1a1a1a; border: 1.5px solid #1a1a1a; border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; }
+    .stat { padding: 1rem; text-align: center; }
+    .stat-created { background: #f0f9f4; }
+    .stat-owed    { background: #fff5f5; }
+    .stat-gap     { background: #fff8e6; }
+    .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: #888; margin-bottom: 0.3rem; }
+    .stat-value { font-size: 1.8rem; font-weight: bold; line-height: 1; }
+    .stat-created .stat-value { color: #1a6b3c; }
+    .stat-owed    .stat-value { color: #b71c1c; }
+    .stat-gap     .stat-value { color: #92600a; }
+    .stat-note { font-size: 0.7rem; color: #aaa; margin-top: 0.3rem; }
 
-    .intro {
-      font-size: 0.9rem;
-      color: #333;
-      line-height: 1.75;
-      margin-bottom: 1.8rem;
-      max-width: 680px;
-    }
-
-    .intro p + p { margin-top: 0.7rem; }
-
-    /* controls */
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .cycle-counter {
-      font-size: 0.78rem;
-      color: #999;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    button {
-      padding: 0.45rem 1rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 0.88rem;
-    }
-
-    .btn-primary { background: #7b3f00; color: white; }
-    .btn-primary:hover { background: #5d2f00; }
-    .btn-primary:disabled { background: #ccc; cursor: default; }
-    .btn-secondary { background: #eee; color: #444; }
-    .btn-secondary:hover { background: #ddd; }
-
-    /* big ledger display */
-    .ledger {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 0;
-      margin-bottom: 1.5rem;
-      border: 1.5px solid #1a1a1a;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .ledger-col {
-      padding: 1.4rem 1.5rem;
-    }
-
-    .ledger-col-created { background: #f0f9f4; }
-    .ledger-col-gap {
-      background: #fff8e6;
-      border-left: 1.5px solid #1a1a1a;
-      border-right: 1.5px solid #1a1a1a;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      min-width: 130px;
-    }
-    .ledger-col-owed { background: #fff5f5; }
-
-    .ledger-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: #888;
-      margin-bottom: 0.4rem;
-    }
-
-    .ledger-amount {
-      font-size: 2rem;
-      font-weight: bold;
-      line-height: 1.1;
-      transition: all 0.4s ease;
-    }
-
-    .ledger-col-created .ledger-amount { color: #1a6b3c; }
-    .ledger-col-owed .ledger-amount { color: #b71c1c; }
-
-    .ledger-sublabel {
-      font-size: 0.75rem;
-      color: #888;
-      margin-top: 0.3rem;
-    }
-
-    .gap-label {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: #92600a;
-      margin-bottom: 0.3rem;
-    }
-
-    .gap-amount {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #92600a;
-      transition: all 0.4s ease;
-    }
-
-    .gap-note {
-      font-size: 0.65rem;
-      color: #b8860b;
-      text-align: center;
-      margin-top: 0.4rem;
-      line-height: 1.4;
-    }
-
-    /* explanation */
-    .explanation {
-      background: #f5f0eb;
-      border-left: 4px solid #7b3f00;
-      padding: 1rem 1.2rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.88rem;
-      color: #333;
-      line-height: 1.7;
-      min-height: 70px;
-      transition: opacity 0.3s ease;
-    }
-
-    .explanation strong { color: #1a1a1a; }
-
-    /* timeline chart */
-    .timeline-wrap {
-      margin-bottom: 2rem;
-    }
-
-    .timeline-label {
-      font-size: 0.72rem;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.6rem;
-    }
-
-    .timeline {
-      display: flex;
-      align-items: flex-end;
-      gap: 0.4rem;
-      height: 120px;
-      border-bottom: 2px solid #ddd;
-      border-left: 2px solid #ddd;
-      padding: 0 0.5rem 0;
-      position: relative;
-    }
-
-    .bar-group {
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      flex: 1;
-      max-width: 70px;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .bar-group.visible { opacity: 1; }
-
-    .bar {
-      flex: 1;
-      border-radius: 2px 2px 0 0;
-      transition: height 0.5s ease;
-      min-width: 18px;
-    }
-
-    .bar-c { background: #1a6b3c; }
-    .bar-o { background: #b71c1c; }
-
-    .bar-group-label {
-      font-size: 0.62rem;
-      color: #aaa;
-      text-align: center;
-      margin-top: 4px;
-    }
-
-    .bar-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-    }
-
-    /* gap indicator dots in timeline */
-    .gap-dot {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: #f9a825;
-      border-radius: 50%;
-      transition: all 0.4s ease;
-    }
+    /* key insight */
+    .insight { background: #fff8e6; border-left: 4px solid #92600a; padding: 1rem 1.2rem; font-size: 0.88rem; color: #333; line-height: 1.7; margin-bottom: 1.5rem; }
+    .insight strong { color: #1a1a1a; }
 
     /* legend */
-    .legend {
-      display: flex;
-      gap: 1.5rem;
-      margin-bottom: 0.5rem;
-      font-size: 0.78rem;
-      color: #555;
-    }
+    .legend { display: flex; gap: 1.5rem; font-size: 0.8rem; color: #555; margin-bottom: 0.8rem; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+    .lline { width: 28px; height: 3px; border-radius: 2px; }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .swatch {
-      width: 12px;
-      height: 12px;
-      border-radius: 2px;
-    }
-
-    /* gap tracker */
-    .gap-tracker {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.82rem;
-      flex-wrap: wrap;
-    }
-
-    .tracker-item {
-      background: #fff8e6;
-      border: 1px solid #f6d86b;
-      border-radius: 4px;
-      padding: 0.4rem 0.8rem;
-      color: #92600a;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .tracker-item.visible { opacity: 1; }
-    .tracker-item .t-label { font-size: 0.65rem; color: #b8860b; display: block; }
-    .tracker-item .t-val { font-weight: bold; }
-
-    /* context */
-    .context {
-      margin-top: 2rem;
-      border-top: 2px solid #1a1a1a;
-      padding-top: 1.8rem;
-    }
-
-    .context h2 {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #999;
-      margin-bottom: 1.2rem;
-    }
-
-    .panels {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    @media (max-width: 560px) {
-      .panels { grid-template-columns: 1fr; }
-      .ledger { grid-template-columns: 1fr; }
-      .ledger-col-gap { border-left: none; border-right: none; border-top: 1.5px solid #1a1a1a; border-bottom: 1.5px solid #1a1a1a; }
-    }
-
-    .panel {
-      border-radius: 6px;
-      padding: 1rem 1.1rem;
-      font-size: 0.83rem;
-      line-height: 1.65;
-      color: #333;
-    }
-
-    .panel-title {
-      font-size: 0.72rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      margin-bottom: 0.5rem;
-    }
-
-    .panel-mechanism { background: #fff8ed; border: 1px solid #f6d86b; }
-    .panel-mechanism .panel-title { color: #92600a; }
-
-    .panel-practice { background: #f0f9f4; border: 1px solid #c5e8d0; }
-    .panel-practice .panel-title { color: #1a6b3c; }
-
-    .panel-closes { background: #f5f5f5; border: 1px solid #ccc; }
-    .panel-closes .panel-title { color: #444; }
-
-    .panel-daly { background: #f5f0fa; border: 1px solid #d4b8f0; }
-    .panel-daly .panel-title { color: #5b2d8e; }
-
-    .option-list {
-      margin-top: 0.5rem;
-    }
-
-    .option {
-      padding: 0.4rem 0;
-      border-bottom: 1px solid #e5e5e5;
-      font-size: 0.8rem;
-    }
-
-    .option:last-child { border-bottom: none; }
-
-    .option-name { font-weight: bold; color: #333; }
-    .option-verdict {
-      font-size: 0.7rem;
-      font-style: italic;
-      color: #888;
-    }
+    .context { margin-top: 2rem; border-top: 2px solid #1a1a1a; padding-top: 1.8rem; }
+    .context h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 1.2rem; }
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .panels { grid-template-columns: 1fr; } }
+    .panel { border-radius: 6px; padding: 1rem 1.1rem; font-size: 0.83rem; line-height: 1.65; color: #333; }
+    .panel-title { font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; }
+    .p1 { background: #fff8ed; border: 1px solid #f6d86b; } .p1 .panel-title { color: #92600a; }
+    .p2 { background: #f0f9f4; border: 1px solid #c5e8d0; } .p2 .panel-title { color: #1a6b3c; }
+    .p3 { background: #f5f5f5; border: 1px solid #ccc; }   .p3 .panel-title { color: #444; }
+    .p4 { background: #f5f0fa; border: 1px solid #d4b8f0; } .p4 .panel-title { color: #5b2d8e; }
   </style>
 </head>
 <body>
-  <!-- nav bar -->
-    <nav style="margin-bottom:1.5rem;padding:0.6rem 0;border-bottom:1px solid #ddd;font-size:0.8rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
-    <a href="index.html" style="color:#888;text-decoration:none;font-style:italic;">← All models</a>
+  <nav>
+    <a href="index.html">← All models</a>
     <span style="color:#ddd">|</span>
-    <a href="debt-copies.html" style="color:#888;text-decoration:none;">← 2</a>
+    <a href="debt-copies.html">← 2</a>
     <span style="font-weight:bold;color:#1a1a1a;">3 · Interest Ratchet</span>
-    <a href="interest-comparison.html" style="color:#888;text-decoration:none;">4 →</a>
+    <a href="interest-comparison.html">4 →</a>
   </nav>
 
   <header>
     <h1>The Interest Ratchet</h1>
-    <p class="subtitle">Why the gap between money that exists and money that is owed can only grow.</p>
+    <p class="subtitle">What happens to a fixed money supply when debt compounds.</p>
   </header>
 
-  <div class="intro">
-    <p>When a bank makes a loan, it creates the principal — the amount borrowed — and adds it to the economy. It does not create the interest. The interest must be repaid from money that already exists in the economy, or from money created by someone else taking out a new loan.</p>
-    <p>This means that at any given moment, the total debt in the system exceeds the total money available to repay it. To close the gap, someone must borrow more. But borrowing more creates new interest obligations. The gap grows. There is no stable state in which all existing debt can be repaid from existing money. This is not a policy failure. It is a structural feature of money created as interest-bearing debt.</p>
-  </div>
+  <p class="intro">When a bank makes a loan, it creates the principal — not the interest. The interest must be repaid from money already in circulation, or from someone else taking on new debt. This model shows the simplest version of the problem: a fixed amount of money in existence, and a debt obligation that compounds every year. Drag the slider to change the interest rate. The chart shows what happens over 30 years.</p>
 
   <div class="controls">
-    <span class="cycle-counter" id="cycle-counter">Cycle 1 of 7</span>
-    <button class="btn-primary" id="next-btn">Next cycle →</button>
-    <button class="btn-secondary" id="reset-btn">Reset</button>
-  </div>
-
-  <div class="ledger" id="ledger">
-    <div class="ledger-col ledger-col-created">
-      <div class="ledger-label">Money in existence</div>
-      <div class="ledger-amount" id="created-amt">$1,000</div>
-      <div class="ledger-sublabel">created through lending</div>
+    <div class="control-group">
+      <div class="control-label">Interest rate</div>
+      <input type="range" id="rate-slider" min="2" max="20" step="1" value="5">
+      <div class="control-value" id="rate-val">5%</div>
     </div>
-    <div class="ledger-col ledger-col-gap">
-      <div class="gap-label">Gap</div>
-      <div class="gap-amount" id="gap-amt">$50</div>
-      <div class="gap-note">interest owed<br>but never created</div>
+    <div class="control-group">
+      <div class="control-label">Starting loan</div>
+      <div class="control-value">$1,000</div>
     </div>
-    <div class="ledger-col ledger-col-owed">
-      <div class="ledger-label">Money owed back</div>
-      <div class="ledger-amount" id="owed-amt">$1,050</div>
-      <div class="ledger-sublabel">principal + interest (5%)</div>
+    <div class="control-group">
+      <div class="control-label">Time horizon</div>
+      <input type="range" id="year-slider" min="5" max="50" step="5" value="30">
+      <div class="control-value" id="year-val">30 years</div>
     </div>
   </div>
 
-  <div class="explanation" id="explanation">
-    Loading...
+  <div class="legend">
+    <div class="legend-item"><div class="lline" style="background:#1a6b3c"></div> Money in existence (fixed)</div>
+    <div class="legend-item"><div class="lline" style="background:#b71c1c"></div> Total debt obligation (compounding)</div>
+    <div class="legend-item"><div class="lline" style="background:rgba(185,95,0,0.4);height:12px;border-radius:3px;"></div> Gap — money owed but never created</div>
   </div>
 
-  <div class="gap-tracker" id="gap-tracker"></div>
+  <div class="chart-wrap">
+    <canvas id="chart" height="340"></canvas>
+  </div>
 
-  <div class="timeline-wrap">
-    <div class="timeline-label">Gap growth over time — each bar pair: created (green) vs. owed (red)</div>
-    <div class="legend">
-      <div class="legend-item"><div class="swatch" style="background:#1a6b3c"></div> Money in existence</div>
-      <div class="legend-item"><div class="swatch" style="background:#b71c1c"></div> Money owed back</div>
+  <div class="stats">
+    <div class="stat stat-created">
+      <div class="stat-label">Money in existence</div>
+      <div class="stat-value" id="stat-created">$1,000</div>
+      <div class="stat-note">unchanged — principal only</div>
     </div>
-    <div class="timeline" id="timeline"></div>
+    <div class="stat stat-owed">
+      <div class="stat-label">Debt obligation at year <span id="stat-year">30</span></div>
+      <div class="stat-value" id="stat-owed">$4,322</div>
+      <div class="stat-note">principal × (1 + rate)ⁿ</div>
+    </div>
+    <div class="stat stat-gap">
+      <div class="stat-label">Gap</div>
+      <div class="stat-value" id="stat-gap">$3,322</div>
+      <div class="stat-note">must come from new debt</div>
+    </div>
   </div>
+
+  <div class="insight" id="insight-text"></div>
 
   <div class="context">
-    <h2>The mechanism — and what it means</h2>
+    <h2>Understanding the ratchet</h2>
     <div class="panels">
-      <div class="panel panel-mechanism">
-        <div class="panel-title">Why the ratchet only turns one way</div>
-        A ratchet is a mechanical device that allows rotation in one direction and prevents it in the other. The interest obligation is the pawl — every time the economy tries to contract, the interest owed prevents full contraction. The gap closes only by creating more debt, which creates more gap. The lever has a direction and no reverse.
+      <div class="panel p1">
+        <div class="panel-title">The structural impossibility</div>
+        In a closed system — fixed money supply — repaying interest-bearing debt is mathematically impossible. Only the principal was created; the interest was not. To pay the interest, someone must either default (destroying the debt without repayment) or take on new debt to cover it. But new debt carries new interest. The gap compounds. This is not a temporary crisis: it is a permanent feature of any monetary system where money is created as interest-bearing debt.
       </div>
-
-      <div class="panel panel-practice">
-        <div class="panel-title">What partially mitigates it in practice</div>
-        Banks spend their interest income back into the economy — as salaries, dividends, operating costs, and reinvestment. This recirculates money that can be used to pay interest, and it partially closes the gap without requiring new loans. But it depends on banks spending rather than hoarding, and it doesn't eliminate the structural growth requirement — it only delays it. As long as any money is held rather than circulated, the gap reasserts.
+      <div class="panel p2">
+        <div class="panel-title">How the real system "solves" it</div>
+        Real economies are not closed systems. New money is created continuously through new lending. The gap can be serviced by borrowing more — which is why total debt in most economies grows every year. Banks recycle interest income (as salaries, dividends, and operating costs) back into the economy, which partially recirculates it. The concern is not that individual loans fail to close — it is that the system requires continuous debt growth to remain functional. Growth is not a choice; it is a structural requirement.
       </div>
-
-      <div class="panel panel-closes">
-        <div class="panel-title">What would actually close the gap</div>
+      <div class="panel p3">
+        <div class="panel-title">What closes the gap in practice</div>
         <div class="option-list">
-          <div class="option">
-            <div class="option-name">Zero interest rates</div>
-            <div class="option-verdict">Eliminates the gap but removes the incentive for lending. Not a stable state.</div>
-          </div>
-          <div class="option">
-            <div class="option-name">Government issues debt-free money</div>
-            <div class="option-verdict">The MMT argument. Money created by public spending, not lending. Eliminates the interest problem but requires political will and inflation management.</div>
-          </div>
-          <div class="option">
-            <div class="option-name">Continuous economic growth</div>
-            <div class="option-verdict">The current operating assumption. New production creates new income to service old debt. Works until it doesn't — in a physically finite world, this is a structural tension.</div>
-          </div>
-          <div class="option">
-            <div class="option-name">Banks spend all interest back</div>
-            <div class="option-verdict">Partially true, partially mitigating. Not complete, not guaranteed.</div>
-          </div>
+          Options for closing the gap, with their limits:
+          <ul style="margin-top:0.5rem;padding-left:1.2rem;font-size:0.8rem;line-height:1.8;">
+            <li><strong>New borrowing</strong> — defers and compounds the gap</li>
+            <li><strong>Income from real economic activity</strong> — works if the economy grows faster than interest</li>
+            <li><strong>Bank profit recirculation</strong> — partial; banks spend interest on wages, dividends</li>
+            <li><strong>Default / debt forgiveness</strong> — closes the gap, destroys the claim</li>
+            <li><strong>Inflation</strong> — reduces real value of debt, transfers gap to savers</li>
+          </ul>
+          None of these close the gap permanently. They redistribute it, defer it, or destroy wealth in the process.
         </div>
       </div>
-
-      <div class="panel panel-daly">
-        <div class="panel-title">The Daly connection</div>
-        Herman Daly's critique of standard economics is that it treats the economy as the whole system and nature as an input. The interest ratchet makes this structural: because debt must always grow to service existing debt, the economy must always expand — extracting more resources, producing more goods, generating more cash flow to service the interest on the loans that financed the last round of extraction. A steady-state economy is incompatible with interest-bearing money creation as the primary mechanism of economic expansion. You cannot have infinite debt service in a finite physical world.
+      <div class="panel p4">
+        <div class="panel-title">What this means at ecological limits</div>
+        The "real economy grows faster than interest" solution requires perpetual economic growth. Economic growth requires throughput — matter and energy extracted from the biosphere (model 5). In a physically finite world, throughput cannot grow forever. At ecological limits, the standard escape valve closes. The structural growth imperative built into interest-bearing money becomes a direct driver of resource extraction — not because anyone chooses it, but because the math requires it.
       </div>
     </div>
   </div>
 
   <script>
-    const RATE = 0.05;
+    const canvas = document.getElementById('chart');
+    const ctx = canvas.getContext('2d');
+    const PRINCIPAL = 1000;
 
-    const cycles = [];
-    let created = 1000;
-    let owed = 1000 * (1 + RATE);
-
-    for (let i = 0; i < 7; i++) {
-      const gap = owed - created;
-      cycles.push({ cycle: i + 1, created, owed, gap });
-      // next cycle: borrow the gap to cover it, that creates more interest
-      const newLoan = gap;
-      created = created + newLoan;
-      owed = owed + newLoan * (1 + RATE);
-    }
-
-    const explanations = [
-      `<strong>Cycle 1 — the starting point.</strong> $1,000 is loaned into existence at 5% interest. Total money in the economy: $1,000. Total owed back: $1,050. Gap: $50. That $50 was never created. It doesn't exist anywhere in the economy. Someone must find it.`,
-      `<strong>Cycle 2 — closing the gap requires new debt.</strong> To pay the $50 interest, someone borrows $50. That new loan creates $50 of new money — bringing money in existence to $1,050. But it also creates $52.50 in new obligations. The gap doesn't close. It grows to $52.50.`,
-      `<strong>Cycle 3 — the gap compounds.</strong> $52.50 borrowed to cover last cycle's gap. Money grows to $1,102.50. New interest owed: $55.13. The gap is now growing at the interest rate — it's compounding, not shrinking.`,
-      `<strong>Cycle 4 — the pattern holds.</strong> Each attempt to close the gap with new borrowing creates a slightly larger gap. The gap grows by 5% per cycle — the same rate as the interest. The ratchet turns.`,
-      `<strong>Cycle 5 — five cycles in.</strong> The original $1,000 has become $1,215.50 in existence and $1,276.28 owed. The gap started at $50. It's now $60.78. It has grown by 21.6% — compounding at the interest rate since cycle 1.`,
-      `<strong>Cycle 6 — the gap is self-reinforcing.</strong> There is no action available to any single borrower, lender, or bank that closes the system-level gap. Each individual transaction is rational. The aggregate outcome is a gap that cannot close without new debt, which creates a larger gap.`,
-      `<strong>Cycle 7 — the structural conclusion.</strong> The gap between money in existence and money owed has grown from $50 to $77.78 over 7 cycles. It will continue growing as long as new debt carries interest. This is not a crisis — it is the normal operating state of a debt-money system. The economy must continuously expand to service it. When expansion stops, the gap becomes visible as default, deflation, or crisis.`
-    ];
-
-    let currentCycle = 0;
-
-    const createdEl = document.getElementById('created-amt');
-    const owedEl = document.getElementById('owed-amt');
-    const gapEl = document.getElementById('gap-amt');
-    const expEl = document.getElementById('explanation');
-    const counterEl = document.getElementById('cycle-counter');
-    const nextBtn = document.getElementById('next-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const timelineEl = document.getElementById('timeline');
-    const trackerEl = document.getElementById('gap-tracker');
+    let rate = 0.05;
+    let years = 30;
 
     function fmt(n) {
-      return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+      if (n >= 1000) return '$' + Math.round(n).toLocaleString();
+      return '$' + Math.round(n);
     }
 
-    const MAX_HEIGHT = 100; // px
-    const MAX_VAL = cycles[cycles.length - 1].owed;
+    function draw() {
+      const W = canvas.width;
+      const H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
 
-    function getBarH(val) {
-      return Math.round((val / MAX_VAL) * MAX_HEIGHT);
-    }
+      const pad = { top: 40, right: 40, bottom: 50, left: 80 };
+      const cw = W - pad.left - pad.right;
+      const ch = H - pad.top - pad.bottom;
 
-    function renderTimeline() {
-      timelineEl.innerHTML = '';
-      cycles.forEach((c, i) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'bar-wrapper';
-
-        const group = document.createElement('div');
-        group.className = 'bar-group';
-        group.id = 'bar-group-' + i;
-
-        const barC = document.createElement('div');
-        barC.className = 'bar bar-c';
-        barC.style.height = getBarH(c.created) + 'px';
-        barC.title = 'Created: ' + fmt(c.created);
-
-        const barO = document.createElement('div');
-        barO.className = 'bar bar-o';
-        barO.style.height = getBarH(c.owed) + 'px';
-        barO.title = 'Owed: ' + fmt(c.owed);
-
-        group.appendChild(barC);
-        group.appendChild(barO);
-        wrapper.appendChild(group);
-
-        const lbl = document.createElement('div');
-        lbl.className = 'bar-group-label';
-        lbl.textContent = 'Yr ' + i;
-        wrapper.appendChild(lbl);
-
-        timelineEl.appendChild(wrapper);
-      });
-    }
-
-    function renderTracker() {
-      trackerEl.innerHTML = '';
-      for (let i = 0; i <= currentCycle; i++) {
-        const item = document.createElement('div');
-        item.className = 'tracker-item';
-        item.id = 'tracker-' + i;
-        item.innerHTML = `<span class="t-label">Cycle ${i + 1} gap</span><span class="t-val">${fmt(cycles[i].gap)}</span>`;
-        trackerEl.appendChild(item);
-        setTimeout(() => item.classList.add('visible'), i * 30);
+      // compute data
+      const data = [];
+      for (let y = 0; y <= years; y++) {
+        data.push({ year: y, created: PRINCIPAL, owed: PRINCIPAL * Math.pow(1 + rate, y) });
       }
-    }
+      const maxOwed = data[data.length - 1].owed;
+      const yMax = maxOwed * 1.08;
 
-    function showCycle(idx) {
-      const c = cycles[idx];
-      createdEl.textContent = fmt(c.created);
-      owedEl.textContent = fmt(c.owed);
-      gapEl.textContent = fmt(c.gap);
-      expEl.innerHTML = explanations[idx];
-      counterEl.textContent = `Cycle ${idx + 1} of ${cycles.length}`;
-      nextBtn.disabled = idx >= cycles.length - 1;
+      function xp(y) { return pad.left + (y / years) * cw; }
+      function yp(v) { return pad.top + ch - (v / yMax) * ch; }
 
-      // show bars up to this cycle
-      for (let i = 0; i <= idx; i++) {
-        const g = document.getElementById('bar-group-' + i);
-        if (g) g.classList.add('visible');
+      // background
+      ctx.fillStyle = '#1a1208';
+      ctx.beginPath();
+      ctx.roundRect(0, 0, W, H, 8);
+      ctx.fill();
+
+      // grid lines
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const v = (yMax / 4) * i;
+        const y = yp(v);
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.font = '10px Georgia,serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(fmt(v), pad.left - 8, y + 4);
       }
 
-      renderTracker();
+      // x-axis labels
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.font = '10px Georgia,serif';
+      ctx.textAlign = 'center';
+      const step = years <= 20 ? 5 : years <= 30 ? 5 : 10;
+      for (let y = 0; y <= years; y += step) {
+        ctx.fillText('yr ' + y, xp(y), H - pad.bottom + 18);
+      }
+
+      // gap fill
+      ctx.beginPath();
+      ctx.moveTo(xp(0), yp(PRINCIPAL));
+      for (let i = 0; i < data.length; i++) ctx.lineTo(xp(data[i].year), yp(data[i].owed));
+      ctx.lineTo(xp(years), yp(PRINCIPAL));
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(180,60,20,0.25)';
+      ctx.fill();
+
+      // owed line (red, bold)
+      ctx.beginPath();
+      ctx.moveTo(xp(0), yp(data[0].owed));
+      for (let i = 1; i < data.length; i++) ctx.lineTo(xp(data[i].year), yp(data[i].owed));
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      // created line (green, flat)
+      ctx.beginPath();
+      ctx.moveTo(xp(0), yp(PRINCIPAL));
+      ctx.lineTo(xp(years), yp(PRINCIPAL));
+      ctx.strokeStyle = '#4ade80';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([]);
+      ctx.stroke();
+
+      // endpoint dots
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath(); ctx.arc(xp(years), yp(maxOwed), 5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#4ade80';
+      ctx.beginPath(); ctx.arc(xp(years), yp(PRINCIPAL), 5, 0, Math.PI*2); ctx.fill();
+
+      // endpoint labels
+      ctx.font = 'bold 11px Georgia,serif';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText(fmt(maxOwed) + ' owed', xp(years) + 8, yp(maxOwed) + 4);
+      ctx.fillStyle = '#4ade80';
+      ctx.fillText(fmt(PRINCIPAL) + ' in existence', xp(years) + 8, yp(PRINCIPAL) + 4);
+
+      // gap bracket on right side
+      const gapMid = (yp(PRINCIPAL) + yp(maxOwed)) / 2;
+      if (yp(PRINCIPAL) - yp(maxOwed) > 24) {
+        ctx.strokeStyle = 'rgba(255,200,100,0.4)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3,3]);
+        ctx.beginPath(); ctx.moveTo(W - pad.right - 12, yp(maxOwed)); ctx.lineTo(W - pad.right - 12, yp(PRINCIPAL)); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(255,200,100,0.6)';
+        ctx.font = '10px Georgia,serif';
+        ctx.textAlign = 'center';
+        if (yp(PRINCIPAL) - yp(maxOwed) > 40) {
+          ctx.fillText('gap', W - pad.right - 12, gapMid - 6);
+          ctx.fillText(fmt(maxOwed - PRINCIPAL), W - pad.right - 12, gapMid + 8);
+        }
+      }
+
+      // year 0 annotation
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.font = '10px Georgia,serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('$1,000 lent', xp(0), yp(PRINCIPAL) - 10);
     }
 
-    nextBtn.addEventListener('click', () => {
-      if (currentCycle < cycles.length - 1) {
-        currentCycle++;
-        showCycle(currentCycle);
-      }
-    });
+    function resize() {
+      const wrap = canvas.parentElement;
+      const w = wrap.clientWidth;
+      canvas.width = w;
+      canvas.height = Math.round(w * 0.42);
+      draw();
+    }
 
-    resetBtn.addEventListener('click', () => {
-      currentCycle = 0;
-      document.querySelectorAll('.bar-group').forEach(g => g.classList.remove('visible'));
-      showCycle(0);
-    });
+    function update() {
+      rate = parseInt(document.getElementById('rate-slider').value) / 100;
+      years = parseInt(document.getElementById('year-slider').value);
+      document.getElementById('rate-val').textContent = Math.round(rate * 100) + '%';
+      document.getElementById('year-val').textContent = years + ' years';
 
-    renderTimeline();
-    showCycle(0);
+      const finalOwed = PRINCIPAL * Math.pow(1 + rate, years);
+      const gap = finalOwed - PRINCIPAL;
+      const doublingYears = Math.round(Math.log(2) / Math.log(1 + rate));
+
+      document.getElementById('stat-year').textContent = years;
+      document.getElementById('stat-created').textContent = fmt(PRINCIPAL);
+      document.getElementById('stat-owed').textContent = fmt(finalOwed);
+      document.getElementById('stat-gap').textContent = fmt(gap);
+
+      const ratePct = Math.round(rate * 100);
+      document.getElementById('insight-text').innerHTML =
+        `At ${ratePct}% interest over ${years} years, $1,000 of debt requires <strong>${fmt(finalOwed)}</strong> to repay — against <strong>$1,000</strong> in existence. The gap of <strong>${fmt(gap)}</strong> must come from somewhere. In practice it comes from new borrowing — which creates new interest obligations. Debt at ${ratePct}% doubles roughly every <strong>${doublingYears} years</strong>. The money supply does not double on its own.`;
+
+      draw();
+    }
+
+    document.getElementById('rate-slider').addEventListener('input', update);
+    document.getElementById('year-slider').addEventListener('input', update);
+    window.addEventListener('resize', resize);
+
+    resize();
+    update();
   </script>
 </body>
 </html>
