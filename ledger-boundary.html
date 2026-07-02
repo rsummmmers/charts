@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Incomplete Ledger</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 880px; margin: 0 auto; line-height: 1.6; }
+    header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
+    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
+    .intro { font-size: 0.88rem; color: #555; line-height: 1.75; margin-bottom: 1.5rem; max-width: 700px; }
+    nav { margin-bottom: 1.5rem; padding: 0.6rem 0; border-bottom: 1px solid #ddd; font-size: 0.8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: #888; text-decoration: none; }
+    nav a:hover { color: #1a1a1a; }
+
+    .step-controls { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .step-btn { padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-radius: 4px; }
+    .step-btn:hover { background: #1a1a1a; color: white; }
+    .step-btn:disabled { opacity: 0.35; cursor: default; }
+    .step-indicator { font-size: 0.8rem; color: #888; }
+
+    .viz-wrap { margin-bottom: 1rem; border-radius: 8px; overflow: hidden; background: #111a10; }
+    canvas { display: block; width: 100%; }
+
+    .lesson { padding: 1rem 1.2rem; border-left: 4px solid #2a5c34; background: #f0f9f4; font-size: 0.87rem; line-height: 1.7; color: #333; margin-bottom: 1.5rem; }
+    .lesson strong { color: #1a1a1a; }
+
+    .context { border-top: 2px solid #1a1a1a; padding-top: 1.5rem; margin-top: 1rem; }
+    .context h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 1rem; font-weight: normal; }
+    .ctx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .ctx-grid { grid-template-columns: 1fr; } }
+    .ctx-box { border-radius: 6px; padding: 0.85rem 1rem; font-size: 0.81rem; line-height: 1.6; color: #333; }
+    .ctx-title { font-weight: bold; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+    .b1 { background: #f0f9f4; border: 1px solid #b8dfc6; } .b1 .ctx-title { color: #1a6b3c; }
+    .b2 { background: #fff8ed; border: 1px solid #f0d89a; } .b2 .ctx-title { color: #92600a; }
+    .b3 { background: #f5f0fa; border: 1px solid #d4b8f0; } .b3 .ctx-title { color: #5b2d8e; }
+    .b4 { background: #f4f4f0; border: 1px solid #ddd; } .b4 .ctx-title { color: #444; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← All models</a>
+    <span style="color:#ddd">|</span>
+    <span style="font-weight:bold;color:#1a1a1a;">9 · The Incomplete Ledger</span>
+  </nav>
+
+  <header>
+    <h1>The Incomplete Ledger</h1>
+    <p class="subtitle">What gets counted is a design choice. The ledger always looks complete from inside it.</p>
+  </header>
+
+  <p class="intro">Every accounting system draws a boundary. What's inside the boundary gets counted, priced, tracked, and managed. What's outside the boundary doesn't exist — not because it isn't real, but because the ledger wasn't designed to see it. The boundary isn't neutral. It reflects whose costs matter and whose don't. Step through to see what the standard economic ledger leaves out — and what a fuller accounting might include.</p>
+
+  <div class="step-controls">
+    <button class="step-btn" id="btn-prev" onclick="changeStep(-1)">← Back</button>
+    <button class="step-btn" id="btn-next" onclick="changeStep(1)">Next →</button>
+    <span class="step-indicator" id="step-label">Step 1 of 6</span>
+  </div>
+
+  <div class="viz-wrap">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div class="lesson" id="lesson">The standard ledger is a circle. Everything inside gets counted.</div>
+
+  <div class="context">
+    <h2>Why the boundary is where it is</h2>
+    <div class="ctx-grid">
+      <div class="ctx-box b1">
+        <div class="ctx-title">The ledger as design</div>
+        National accounts, corporate balance sheets, household budgets — all draw a boundary. GDP counts the sale of a tree but not the loss of the forest. It counts the medical bill from pollution but not the clean air that was there before. The ledger is a measurement tool built around what can be priced in markets. That's a design choice, not a physical law.
+      </div>
+      <div class="ctx-box b2">
+        <div class="ctx-title">The pattern across centuries</div>
+        Alexander Hamilton understood stocks and flows in the financial system better than almost anyone of his era. What he didn't get — or chose not to get — was what the system was built on. He drew the ledger boundary in a place that excluded the most important costs. Greenspan did the same two hundred years later. The incomplete ledger is not a bug. It is a feature of how power protects itself.
+      </div>
+      <div class="ctx-box b3">
+        <div class="ctx-title">Why offsets don't fix it</div>
+        Carbon offsets, biodiversity credits, and similar instruments start from the assumption that damage is normal and can be compensated elsewhere. This doesn't move the ledger boundary — it adds a column for damage without ever asking whether the damage should have happened. A fuller accounting doesn't start from damage. It starts from value: what is the living system worth intact, and what is the full cost of losing it?
+      </div>
+      <div class="ctx-box b4">
+        <div class="ctx-title">The math is basic</div>
+        "The math is basic. The math has always been basic. What's not basic is asking the people who built their entire world on the incomplete ledger to be the ones who complete it." The problem isn't analytical. It's structural. Completing the ledger means recognizing costs that were previously invisible — costs that, if visible, would have changed every decision that produced the current world.
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const STEPS = [
+    {
+      label: "Step 1 of 6 — The standard ledger",
+      lesson: "<strong>The standard ledger:</strong> A boundary drawn around what markets can price. Everything inside gets counted — wages, revenue, stock prices, GDP. The boundary looks natural. It isn't.",
+      items_in: ["Wages & salaries", "Corporate revenue", "GDP / output", "Stock market value", "Priced goods & services", "Infrastructure investment"],
+      items_out: [],
+      boundary_label: "The standard economic ledger",
+      show_outside: false,
+      outside_color: null
+    },
+    {
+      label: "Step 2 of 6 — Ecological services",
+      lesson: "<strong>Outside the ledger: ecological services.</strong> Clean air, clean water, pollination, flood buffering, climate regulation, topsoil formation. These services are provided continuously by living systems. They appear in the ledger only when they fail — as disaster costs, medical bills, and infrastructure replacement. Their value intact is zero. Their loss is expensive.",
+      items_in: ["Wages & salaries", "Corporate revenue", "GDP / output", "Stock market value", "Priced goods & services", "Infrastructure investment"],
+      items_out: ["Clean air & water", "Pollination", "Flood regulation", "Climate stability", "Topsoil formation", "Biodiversity"],
+      boundary_label: "The standard economic ledger",
+      show_outside: true,
+      outside_color: '#1a6b3c'
+    },
+    {
+      label: "Step 3 of 6 — Care work and maintenance",
+      lesson: "<strong>Outside the ledger: care work.</strong> Childcare, elder care, emotional labor, community maintenance, ecological stewardship. This work is performed primarily by women and by people who care about systems beyond the next quarter. It is structurally excluded from the ledger. When it stops, the system it sustained collapses — and the collapse is then priced as an economic event.",
+      items_in: ["Wages & salaries", "Corporate revenue", "GDP / output", "Stock market value", "Priced goods & services", "Infrastructure investment"],
+      items_out: ["Clean air & water", "Pollination", "Flood regulation", "Climate stability", "Topsoil formation", "Biodiversity", "Childcare & elder care", "Emotional labor", "Community maintenance", "Ecological stewardship", "Volunteer infrastructure", "Unpaid teaching & mentoring"],
+      boundary_label: "The standard economic ledger",
+      show_outside: true,
+      outside_color: '#5b2d8e'
+    },
+    {
+      label: "Step 4 of 6 — Future generations",
+      lesson: "<strong>Outside the ledger: the future.</strong> Standard discounting treats costs deferred to the future as smaller than equivalent costs today. A harm 30 years away is priced near zero in a standard net-present-value calculation. Future generations have no purchasing power in current markets — so they have no presence in the ledger. They inherit what our accounting chose not to see.",
+      items_in: ["Wages & salaries", "Corporate revenue", "GDP / output", "Stock market value", "Priced goods & services", "Infrastructure investment"],
+      items_out: ["Clean air & water", "Pollination", "Flood regulation", "Climate stability", "Topsoil formation", "Biodiversity", "Childcare & elder care", "Emotional labor", "Community maintenance", "Ecological stewardship", "Volunteer infrastructure", "Unpaid teaching & mentoring", "Costs deferred to future", "Depleted stocks (fossil fuels, aquifers)", "Species lost to extinction", "Stable climate"],
+      boundary_label: "The standard economic ledger",
+      show_outside: true,
+      outside_color: '#7b3f00'
+    },
+    {
+      label: "Step 5 of 6 — What the ledger actually measures",
+      lesson: "<strong>The ledger always looks complete from inside it.</strong> Every item outside the boundary looks like a rounding error, an externality, a soft concern. From inside the boundary, the math checks out. The system appears to be working. The costs are real — they just aren't on this particular spreadsheet.",
+      items_in: ["Wages & salaries", "Corporate revenue", "GDP / output", "Stock market value", "Priced goods & services", "Infrastructure investment"],
+      items_out: ["Clean air & water", "Pollination", "Flood regulation", "Climate stability", "Topsoil formation", "Biodiversity", "Childcare & elder care", "Emotional labor", "Community maintenance", "Ecological stewardship", "Volunteer infrastructure", "Unpaid teaching & mentoring", "Costs deferred to future", "Depleted stocks (fossil fuels, aquifers)", "Species lost to extinction", "Stable climate"],
+      boundary_label: "The standard economic ledger",
+      show_outside: true,
+      outside_color: '#7b1a1a',
+      highlight_gap: true
+    },
+    {
+      label: "Step 6 of 6 — A fuller accounting",
+      lesson: "<strong>Moving the boundary:</strong> A fuller accounting doesn't start from damage. It starts from value — what is the living system worth intact, and what is the full cost of losing it? This isn't sentimentality. It's completing the math that was always incomplete. The items outside the boundary have been paying for the items inside it for the entire history of the ledger.",
+      items_in: ["Wages & salaries", "Corporate revenue", "GDP / output", "Stock market value", "Priced goods & services", "Infrastructure investment", "Ecological service value", "Care work value", "Restoration labor value", "Living asset appreciation", "Commons value", "Intergenerational cost accounting"],
+      items_out: [],
+      boundary_label: "A fuller accounting",
+      show_outside: false,
+      outside_color: null,
+      expanded: true
+    }
+  ];
+
+  let step = 0;
+
+  function changeStep(dir) {
+    step = Math.max(0, Math.min(STEPS.length - 1, step + dir));
+    render();
+  }
+
+  function render() {
+    const s = STEPS[step];
+    document.getElementById('step-label').textContent = s.label;
+    document.getElementById('lesson').innerHTML = s.lesson;
+    document.getElementById('btn-prev').disabled = step === 0;
+    document.getElementById('btn-next').disabled = step === STEPS.length - 1;
+    draw(s);
+  }
+
+  function draw(s) {
+    const canvas = document.getElementById('canvas');
+    const W = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.fillStyle = '#0e180e';
+    ctx.fillRect(0, 0, W, H);
+
+    const cx = W * 0.38, cy = H * 0.5;
+    const R = Math.min(W * 0.28, H * 0.38);
+    const expanded = s.expanded;
+
+    // Outside items (if any)
+    if (s.show_outside && s.items_out.length > 0) {
+      const ocol = s.outside_color || '#666';
+      ctx.fillStyle = ocol + '22';
+      ctx.fillRect(0, 0, W, H);
+
+      // Right side items
+      const startY = H * 0.08;
+      const itemH = Math.min(22, (H * 0.85) / s.items_out.length);
+      const rightX = cx + R + 28;
+
+      s.items_out.forEach((item, i) => {
+        const y = startY + i * itemH;
+        // Small dot
+        ctx.fillStyle = ocol + 'cc';
+        ctx.beginPath(); ctx.arc(rightX, y + 7, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = ocol + 'ee';
+        ctx.font = `${Math.min(11, itemH * 0.6)}px Georgia,serif`;
+        ctx.textAlign = 'left';
+        ctx.fillText(item, rightX + 10, y + 11);
+      });
+
+      // "OUTSIDE" label
+      ctx.fillStyle = ocol + 'aa';
+      ctx.font = '9px Georgia,serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('OUTSIDE THE LEDGER', rightX, H * 0.96);
+
+      if (s.highlight_gap) {
+        ctx.strokeStyle = ocol + '66';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.arc(cx, cy, R + 14, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(200,50,50,0.5)';
+        ctx.font = 'bold 10px Georgia,serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('← Everything outside this line is invisible to the ledger', cx, cy - R - 22);
+      }
+    }
+
+    // Main circle
+    const circleR = expanded ? R * 1.35 : R;
+    const circleColor = expanded ? '#1a6b3c' : '#2a5c34';
+
+    ctx.beginPath(); ctx.arc(cx, cy, circleR, 0, Math.PI * 2);
+    ctx.fillStyle = circleColor + '33';
+    ctx.fill();
+    ctx.strokeStyle = circleColor + 'cc';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Inside items
+    const items = s.items_in;
+    const startY = cy - (items.length * 16) / 2;
+    items.forEach((item, i) => {
+      const y = startY + i * 17;
+      const inExpanded = expanded && i >= 6;
+      ctx.fillStyle = inExpanded ? '#4ade80cc' : 'rgba(255,255,255,0.75)';
+      ctx.font = `${inExpanded ? 'bold ' : ''}10px Georgia,serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(item, cx, y);
+    });
+
+    // Boundary label
+    ctx.fillStyle = circleColor + 'dd';
+    ctx.font = 'bold 10px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(s.boundary_label, cx, cy - circleR - 8);
+
+    // INSIDE label
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '9px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('INSIDE THE LEDGER', cx, cy + circleR - 12);
+  }
+
+  function resize() {
+    const canvas = document.getElementById('canvas');
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = Math.round(canvas.width * 0.52);
+    render();
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  </script>
+</body>
+</html>
