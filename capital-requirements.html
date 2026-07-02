@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reserve vs. Capital Requirements</title>
+  <title>Three Banking Guardrails</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
@@ -31,7 +31,6 @@
     .explanation { background: #f0f4ff; border-left: 4px solid #1a3a6b; padding: 1rem 1.2rem; margin-bottom: 1.4rem; font-size: 0.88rem; color: #333; line-height: 1.7; min-height: 60px; }
     .explanation strong { color: #1a1a1a; }
 
-    /* balance sheet visual */
     .bs-wrap {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -44,15 +43,12 @@
     .bs-col { display: flex; flex-direction: column; align-items: center; }
     .bs-title { font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; color: #888; margin-bottom: 0.6rem; }
 
-    .bs-bar-wrap {
-      width: 160px;
-      position: relative;
-    }
+    .bs-bar-wrap { width: 160px; position: relative; }
 
     .bs-bar {
       width: 160px;
       display: flex;
-      flex-direction: column-reverse; /* bottom segments first */
+      flex-direction: column-reverse;
       border-radius: 6px;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -72,25 +68,12 @@
     .seg-label { font-size: 0.72rem; font-weight: bold; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.4); line-height: 1.2; text-align: center; }
     .seg-amount { font-size: 0.82rem; color: rgba(255,255,255,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
 
-    /* segment colors */
     .seg-reserves { background: #1a6b3c; }
+    .seg-acl      { background: #d97706; }
     .seg-loans    { background: #2d5986; }
     .seg-deposits { background: #7b5200; }
     .seg-capital  { background: #5b2d8e; }
     .seg-gap      { background: #b91c1c; }
-
-    /* axis labels */
-    .bs-scale {
-      position: absolute;
-      right: -36px;
-      top: 0;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      font-size: 0.65rem;
-      color: #aaa;
-    }
 
     .scenario-label {
       margin-top: 0.7rem;
@@ -101,7 +84,6 @@
       min-height: 1.2rem;
     }
 
-    /* warning/ok badges */
     .verdict {
       margin-top: 0.5rem;
       font-size: 0.8rem;
@@ -116,12 +98,10 @@
     .verdict.ok   { background: #d1fae5; color: #065f46; }
     .verdict.fail { background: #fee2e2; color: #991b1b; }
 
-    /* legend */
-    .legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1.2rem; font-size: 0.78rem; }
+    .legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; font-size: 0.78rem; }
     .legend-item { display: flex; align-items: center; gap: 0.4rem; }
     .lswatch { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
 
-    /* what neither covers */
     .neither { border: 2px solid #1a1a1a; border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; opacity: 0; transition: opacity 0.5s; }
     .neither.visible { opacity: 1; }
     .neither h3 { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; color: #888; margin-bottom: 0.8rem; }
@@ -130,7 +110,6 @@
     .neither-item { font-size: 0.83rem; color: #333; line-height: 1.6; }
     .neither-item strong { display: block; color: #888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
 
-    /* context */
     .context { margin-top: 2rem; border-top: 2px solid #1a1a1a; padding-top: 1.8rem; }
     .context h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 1.2rem; }
     .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -141,6 +120,8 @@
     .p2 { background: #f5f0fa; border: 1px solid #d4b8f0; } .p2 .panel-title { color: #5b2d8e; }
     .p3 { background: #fff8ed; border: 1px solid #f6d86b; } .p3 .panel-title { color: #92600a; }
     .p4 { background: #f0f9f4; border: 1px solid #c5e8d0; } .p4 .panel-title { color: #1a6b3c; }
+    .p5 { background: #fff5f5; border: 1px solid #fca5a5; } .p5 .panel-title { color: #b91c1c; }
+    .p6 { background: #f4f4f0; border: 1px solid #ddd; } .p6 .panel-title { color: #444; }
   </style>
 </head>
 <body>
@@ -148,20 +129,20 @@
     <a href="index.html">← All models</a>
     <span class="nav-sep">|</span>
     <a href="daly-economy.html">← 5</a>
-    <span class="nav-current">6 · Reserve vs. Capital</span>
+    <span class="nav-current">6 · Three Guardrails</span>
     <a href="risk-modeling.html">7 →</a>
   </nav>
 
   <header>
-    <h1>Reserve vs. Capital Requirements</h1>
-    <p class="subtitle">Two guardrails. Two different failure modes. One bank balance sheet.</p>
+    <h1>Three Banking Guardrails</h1>
+    <p class="subtitle">Reserve requirements, capital requirements, and loan loss reserves — three mechanisms protecting against three different failure modes.</p>
   </header>
 
-  <p class="intro">Both reserve requirements and capital requirements involve banks holding something "back." But what they hold, what they're measured against, and what failure they prevent are completely different. The distinction becomes visible on a bank's balance sheet.</p>
+  <p class="intro">Banks in the US are regulated by one of three agencies: the OCC (Office of the Comptroller of the Currency, part of Treasury) for nationally chartered banks, the Federal Reserve for state-chartered member banks, and the FDIC for state-chartered non-member banks. Not all banks are nationally chartered. All of them, regardless of charter, operate under three overlapping guardrail mechanisms — each designed to prevent a different kind of failure.</p>
   <p class="interactive-hint">▶ Interactive — step through each scenario.</p>
 
   <div class="controls">
-    <span class="step-counter" id="step-counter">Step 1 of 4</span>
+    <span class="step-counter" id="step-counter">Step 1 of 5</span>
     <button class="btn-primary" id="next-btn">Next →</button>
     <button class="btn-secondary" id="reset-btn">Reset</button>
   </div>
@@ -170,14 +151,14 @@
 
   <div class="legend">
     <div class="legend-item"><div class="lswatch seg-reserves"></div> Reserves (cash)</div>
-    <div class="legend-item"><div class="lswatch seg-loans"></div> Loans (assets)</div>
-    <div class="legend-item"><div class="lswatch seg-deposits"></div> Deposits (owed to customers)</div>
-    <div class="legend-item"><div class="lswatch seg-capital"></div> Capital (equity buffer)</div>
+    <div class="legend-item"><div class="lswatch seg-acl"></div> Loan Loss Reserve (ACL)</div>
+    <div class="legend-item"><div class="lswatch seg-loans"></div> Net Loans</div>
+    <div class="legend-item"><div class="lswatch seg-deposits"></div> Deposits (owed)</div>
+    <div class="legend-item"><div class="lswatch seg-capital"></div> Capital (equity)</div>
     <div class="legend-item"><div class="lswatch seg-gap"></div> Uncovered gap</div>
   </div>
 
   <div class="bs-wrap">
-    <!-- ASSETS column -->
     <div class="bs-col">
       <div class="bs-title">Assets — what the bank owns</div>
       <div class="bs-bar-wrap">
@@ -185,6 +166,10 @@
           <div class="bs-segment seg-reserves" id="seg-reserves" style="height:30px">
             <span class="seg-label">Reserves</span>
             <span class="seg-amount" id="reserves-amt">$10</span>
+          </div>
+          <div class="bs-segment seg-acl" id="seg-acl" style="height:0px;display:none">
+            <span class="seg-label">Loan Loss Reserve</span>
+            <span class="seg-amount" id="acl-amt">$3</span>
           </div>
           <div class="bs-segment seg-loans" id="seg-loans" style="height:270px">
             <span class="seg-label">Loans</span>
@@ -195,9 +180,8 @@
       <div class="scenario-label" id="assets-label"></div>
     </div>
 
-    <!-- LIABILITIES + EQUITY column -->
     <div class="bs-col">
-      <div class="bs-title">Liabilities + Equity — what the bank owes / owns</div>
+      <div class="bs-title">Liabilities + Equity — what the bank owes / holds</div>
       <div class="bs-bar-wrap">
         <div class="bs-bar" id="liab-bar">
           <div class="bs-segment seg-capital" id="seg-capital" style="height:30px">
@@ -219,47 +203,50 @@
   </div>
 
   <div class="neither" id="neither-box">
-    <h3>What neither guardrail addresses</h3>
+    <h3>What these guardrails don't address</h3>
     <div class="neither-grid">
       <div class="neither-item">
         <strong>The structural interest gap</strong>
-        Both mechanisms regulate how banks survive bad outcomes. Neither changes the fact that interest is charged on money that was never created. A well-capitalized bank with adequate reserves still operates within a system where total debt must always exceed total money in existence.
+        All three mechanisms regulate how banks survive bad outcomes — runs, defaults, and expected credit losses. None of them change the fact that interest is charged on money created as debt. A well-capitalized, fully-provisioned bank with adequate reserves still operates inside a system where total debt must always exceed total money in existence.
       </div>
       <div class="neither-item">
         <strong>What gets a loan</strong>
-        Capital requirements are calculated against risk-weighted assets — things with a price and a measurable default rate. A wetland, a forest, a decade of unpaid care work: none have a risk weight. Both guardrails are calibrated to protect the financial system; neither expands what the financial system can see.
+        Capital requirements and loan loss reserves are both calibrated against "risk-weighted assets" — things with a price and a measurable default rate. A wetland, a decade of unpaid care work, an intact watershed: none have a risk weight. All three guardrails protect the financial system from its own failures; none expand what the financial system can see.
       </div>
     </div>
   </div>
 
   <div class="context">
-    <h2>Understanding the distinction</h2>
+    <h2>Understanding the three mechanisms</h2>
     <div class="panels">
       <div class="panel p1">
-        <div class="panel-title">Liquidity vs. solvency</div>
-        Liquidity means having cash available today. Solvency means your assets exceed your liabilities. A bank can be solvent but illiquid (sound loans, but no cash for withdrawals) or liquid but insolvent (plenty of cash, but loans are worth less than deposits). Reserve requirements address liquidity. Capital requirements address solvency. The 2008 crisis involved both — illiquidity triggered by the discovery that solvency was far worse than reported.
+        <div class="panel-title">Reserve requirements — liquidity guardrail</div>
+        Reserve requirements mandate that banks hold a minimum fraction of deposits as cash. Their purpose: make sure the bank can pay customers who want their money back today. In the US, this requirement is currently 0% — eliminated in March 2020. The Federal Reserve now manages liquidity indirectly, by paying interest on reserves (IORB) to incentivize banks to hold cash voluntarily. The conceptual money multiplier (1 ÷ reserve rate) still describes the mechanism; the legal floor is now zero.
       </div>
       <div class="panel p2">
-        <div class="panel-title">Why the US moved to 0% reserve requirements</div>
-        Since 2020, the Federal Reserve controls monetary conditions through the interest rate it pays banks on reserves held at the Fed (IORB, currently ~3.65%). This incentivizes banks to hold cash without a legal mandate. The classical money multiplier (1 ÷ reserve rate) still describes the conceptual mechanism, but the enforced floor is now zero — the actual floor is set by capital requirements and banks' own liquidity management.
+        <div class="panel-title">Capital requirements — solvency guardrail</div>
+        Capital requirements mandate that banks hold a cushion of equity against their risk-weighted loan portfolio. Their purpose: if loans default, the equity absorbs losses before depositors are exposed. Under Basel III (the current international standard), banks must hold at least 4.5% Common Equity Tier 1 capital against risk-weighted assets — effectively ~7% including the conservation buffer. The weights are set by regulators using historical default rates. In 2008, mortgage-backed securities were assigned low risk weights. They defaulted at catastrophic rates. The guardrail is only as good as its model of risk.
       </div>
       <div class="panel p3">
-        <div class="panel-title">The problem with risk weights</div>
-        Capital requirements depend on "risk-weighted assets" — each loan type is assigned a weight, and the bank must hold capital proportional to it. Government bonds: near zero risk. Mortgages: moderate. The weights are set by regulators using historical default rates. In 2008, mortgage-backed securities were assigned low risk weights. They defaulted at catastrophic rates. The mechanism is only as good as its model of risk — and its model uses a past that may not resemble the future.
+        <div class="panel-title">Loan loss reserves (ACL) — credit quality guardrail</div>
+        The Allowance for Credit Losses (ACL) is a bank-specific provision for expected losses in the loan portfolio — money set aside before losses happen, based on the bank's actual risk assessment. Unlike capital requirements (a fixed percentage set by Basel III), the ACL is set by bank examiners on a per-institution basis: a bank with riskier loans must hold more. It's dynamic — adjusted as the portfolio changes, as economic conditions shift, and as regulators reassess the bank's specific exposure. This is the third guardrail, and the least visible one from the outside.
       </div>
       <div class="panel p4">
+        <div class="panel-title">Who regulates what</div>
+        The OCC (Office of the Comptroller of the Currency, part of Treasury) regulates nationally chartered banks. The Federal Reserve regulates state-chartered member banks. The FDIC regulates state-chartered non-member banks. Not all banks are nationally chartered — there are thousands of state-chartered institutions that never touch OCC oversight. The OCC charters the banks that create money through lending; the OCC itself does not create money. All three agencies use the same framework (Basel III for capital, examiner discretion for ACL) but apply it to different slices of the banking system.
+      </div>
+      <div class="panel p5">
+        <div class="panel-title">Liquidity vs. solvency vs. expected loss</div>
+        Three different failure modes, three different mechanisms. Liquidity failure: the bank has the assets but can't pay today (solved by reserves). Solvency failure: liabilities exceed assets because loans went bad (solved by capital). Expected credit loss: known risk built into the existing portfolio (managed by ACL). The 2008 crisis involved all three simultaneously — illiquidity triggered by the discovery that solvency was far worse than reported, and that ACL provisions were dramatically understated because the risk models used historical data that didn't match what was actually in the portfolios.
+      </div>
+      <div class="panel p6">
         <div class="panel-title">What this means for the other models</div>
-        Model 1 shows reserve requirements at 10% — the historical US standard, useful for teaching the multiplier mechanics, but no longer the enforced rate. Model 7 (Risk Models) extends this: capital requirements calibrated to historical risk weights may be deeply wrong in a world where climate shifts the baseline distribution of defaults, floods, and crop failures. The guardrails were designed for a stable world.
+        Model 1 shows reserve requirements at 10% — the historical US standard, useful for teaching the multiplier mechanics, but no longer the enforced rate. Model 7 (Risk Models) extends the ACL problem: loan loss reserves calibrated to historical default rates may be deeply wrong in a world where climate shifts the baseline distribution of defaults, floods, and crop failures. All three guardrails were designed for a stationary world. The structural interest gap — models 3 and 4 — operates independently of all three. A perfectly regulated bank still participates in a system that requires continuous growth to remain solvent.
       </div>
     </div>
   </div>
 
   <script>
-    // Balance sheet values in $, bar total = 300px
-    // Normal: Loans $90, Reserves $10 | Deposits $90, Capital $10
-    // Run scenario: deposits drop to $65 — need $25 reserves, only $10
-    // Default scenario: loans drop to $78 ($12 default) — capital ($10) absorbs $10, gap $2
-
     const TOTAL_PX = 300;
     const BANK = 100;
 
@@ -267,11 +254,13 @@
 
     const els = {
       reserves:    document.getElementById('seg-reserves'),
+      acl:         document.getElementById('seg-acl'),
       loans:       document.getElementById('seg-loans'),
       capital:     document.getElementById('seg-capital'),
       deposits:    document.getElementById('seg-deposits'),
       gap:         document.getElementById('seg-gap'),
       reservesAmt: document.getElementById('reserves-amt'),
+      aclAmt:      document.getElementById('acl-amt'),
       loansAmt:    document.getElementById('loans-amt'),
       capitalAmt:  document.getElementById('capital-amt'),
       depositsAmt: document.getElementById('deposits-amt'),
@@ -282,7 +271,7 @@
       neither:     document.getElementById('neither-box'),
     };
 
-    function setBar(reserves, loans, deposits, capital, gap=0, assetsNote='', liabNote='', verdictText='', verdictClass='') {
+    function setBar(reserves, acl, loans, deposits, capital, gap, assetsNote, liabNote, verdictText, verdictClass) {
       els.reserves.style.height = toPx(reserves) + 'px';
       els.loans.style.height    = toPx(loans) + 'px';
       els.capital.style.height  = toPx(capital) + 'px';
@@ -293,6 +282,15 @@
       els.depositsAmt.textContent = '$' + deposits;
       els.assetsLabel.textContent = assetsNote;
       els.liabLabel.textContent   = liabNote;
+
+      if (acl > 0) {
+        els.acl.style.display = '';
+        els.acl.style.height  = toPx(acl) + 'px';
+        els.aclAmt.textContent = '$' + acl;
+      } else {
+        els.acl.style.display = 'none';
+        els.acl.style.height  = '0px';
+      }
 
       if (gap > 0) {
         els.gap.style.display = '';
@@ -313,34 +311,42 @@
 
     const steps = [
       {
-        reserves:10, loans:90, deposits:90, capital:10, gap:0,
+        reserves:10, acl:0, loans:90, deposits:90, capital:10, gap:0,
         assetsNote:'', liabNote:'',
         verdictText:'', verdictClass:'',
         showNeither: false,
-        text: '<strong>A simplified bank balance sheet.</strong> Assets (left) must equal liabilities plus equity (right). This bank has $90 in loans and $10 in cash reserves. On the other side, it owes $90 to depositors and has $10 in capital (equity — the owners\' stake). Everything balances. The two guardrails are protecting against two completely different ways this balance can break.'
+        text: '<strong>A simplified bank balance sheet.</strong> Assets (left) must equal liabilities plus equity (right). This bank holds $90 in loans and $10 in cash reserves on the asset side. On the liability side, it owes $90 to depositors and holds $10 in capital — the owners\' equity stake. Everything balances. Three separate guardrail mechanisms protect against three different ways this balance can break.'
       },
       {
-        reserves:10, loans:90, deposits:65, capital:10, gap:15,
+        reserves:10, acl:0, loans:90, deposits:65, capital:10, gap:15,
         assetsNote:'reserves unchanged',
         liabNote:'$25 withdrawn',
         verdictText:'✗ Reserves insufficient — bank run fails', verdictClass:'fail',
         showNeither: false,
-        text: '<strong>Scenario A — bank run (liquidity crisis).</strong> Depositors lose confidence and withdraw $25 simultaneously. The bank must pay out in cash. It only has $10 in reserves. The $15 gap cannot be covered without selling loans or borrowing overnight — which may be impossible in a panic. Reserve requirements (when they existed) forced banks to hold more cash against exactly this scenario. The US eliminated this requirement in 2020.'
+        text: '<strong>Guardrail 1: Reserve requirements (liquidity).</strong> Depositors lose confidence and withdraw $25 simultaneously. The bank must pay out in cash. It only has $10 in reserves. The $15 gap cannot be covered without selling loans or borrowing overnight — which may be impossible in a panic. Reserve requirements, when they exist, force banks to hold more cash against exactly this scenario. The US eliminated this requirement in March 2020. The current liquidity floor is set by banks\' own management and the interest rate the Fed pays on reserves (IORB).'
       },
       {
-        reserves:10, loans:78, deposits:90, capital:2, gap:0,
+        reserves:10, acl:0, loans:78, deposits:90, capital:2, gap:0,
         assetsNote:'$12 in loans defaulted',
-        liabNote:'capital absorbs $8',
+        liabNote:'capital absorbs loss',
         verdictText:'✓ Capital absorbs the loss — deposits protected', verdictClass:'ok',
         showNeither: false,
-        text: '<strong>Scenario B — loan defaults (solvency crisis).</strong> $12 of the bank\'s loans default — borrowers stop repaying. Loan value drops from $90 to $78. Capital (equity) absorbs the loss: it shrinks from $10 to $2. Depositors\' $90 is still fully backed by the remaining assets. This is what capital requirements are designed for: the equity buffer takes the hit before depositors do. Basel III requires at least 4.5% CET1 capital against risk-weighted assets.'
+        text: '<strong>Guardrail 2: Capital requirements (solvency).</strong> $12 of the bank\'s loans default — borrowers stop repaying. Loan value falls from $90 to $78. Capital (equity) absorbs the loss: it shrinks from $10 to $2. Depositors\' $90 is still fully backed by remaining assets. This is what capital requirements are designed for — the equity buffer takes the hit before depositors do. Basel III requires at least 4.5% CET1 capital against risk-weighted assets (effectively ~7% with the conservation buffer). Risk weights are set by regulators using historical default data.'
       },
       {
-        reserves:10, loans:90, deposits:90, capital:10, gap:0,
+        reserves:10, acl:3, loans:87, deposits:90, capital:10, gap:0,
+        assetsNote:'$3 provisioned for expected losses',
+        liabNote:'',
+        verdictText:'', verdictClass:'',
+        showNeither: false,
+        text: '<strong>Guardrail 3: Loan loss reserves / ACL (credit quality).</strong> Before any crisis, the bank identifies loans likely to go bad and sets aside an Allowance for Credit Losses (ACL) — here, $3 against $90 in gross loans, reducing net loans to $87. Unlike capital requirements (a fixed Basel III percentage applied uniformly), the ACL is set per-bank by the bank\'s examiners — OCC for nationally chartered banks, the Fed for state member banks, FDIC for state non-member banks. A bank with riskier loans holds more. The ACL is dynamic: adjusted as the portfolio changes and as regulators reassess the bank\'s specific exposure. It\'s the third guardrail, and the least visible from the outside.'
+      },
+      {
+        reserves:10, acl:0, loans:90, deposits:90, capital:10, gap:0,
         assetsNote:'', liabNote:'',
         verdictText:'', verdictClass:'',
         showNeither: true,
-        text: '<strong>What neither guardrail addresses.</strong> Balance the sheet again and zoom out. Both mechanisms protect the financial system from internal failures — runs and defaults. Neither changes the structural interest gap (models 3 &amp; 4): money owed always exceeds money created, regardless of how well-capitalized the bank is. And neither changes what can get a loan: only things with a risk weight exist inside these calculations.'
+        text: '<strong>What all three guardrails don\'t address.</strong> Balance the sheet and zoom out. All three mechanisms protect the financial system from its internal failures: runs, defaults, and expected credit losses. None of them change the structural interest gap (models 3 &amp; 4): money owed always exceeds money created, regardless of how well-capitalized or provisioned the bank is. And none of them change what can get a loan — only things with a market price and a measurable default rate exist inside these calculations.'
       }
     ];
 
@@ -351,7 +357,7 @@
       document.getElementById('explanation').innerHTML = s.text;
       document.getElementById('step-counter').textContent = `Step ${current + 1} of ${steps.length}`;
       document.getElementById('next-btn').disabled = current >= steps.length - 1;
-      setBar(s.reserves, s.loans, s.deposits, s.capital, s.gap, s.assetsNote, s.liabNote, s.verdictText, s.verdictClass);
+      setBar(s.reserves, s.acl, s.loans, s.deposits, s.capital, s.gap, s.assetsNote, s.liabNote, s.verdictText, s.verdictClass);
       if (s.showNeither) els.neither.classList.add('visible');
       else els.neither.classList.remove('visible');
     }
