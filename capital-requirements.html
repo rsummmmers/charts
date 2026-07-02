@@ -3,24 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reserve Requirements vs. Capital Requirements</title>
+  <title>Reserve vs. Capital Requirements</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
     header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
     h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
     .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
-    .intro { font-size: 0.92rem; color: #333; line-height: 1.75; margin-bottom: 1.5rem; max-width: 700px; }
-    .intro p + p { margin-top: 0.7rem; }
+    .intro { font-size: 0.92rem; color: #333; line-height: 1.75; margin-bottom: 0.5rem; max-width: 700px; }
+    .interactive-hint { font-size: 0.8rem; color: #888; margin: 1rem 0; }
 
-    nav { margin-bottom: 1.5rem; padding: 0.6rem 0; border-bottom: 1px solid #ddd; font-size: 0.8rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    nav { margin-bottom: 1.5rem; padding: 0.6rem 0; border-bottom: 1px solid #ddd; font-size: 0.8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
     nav a { color: #888; text-decoration: none; }
     nav a:hover { color: #1a1a1a; }
-    nav .sep { color: #ddd; }
+    .nav-current { color: #1a3a6b; font-weight: bold; }
+    .nav-sep { color: #ddd; }
 
-    .interactive-hint { font-size: 0.8rem; color: #888; margin-bottom: 1.2rem; }
-
-    /* step controls */
     .controls { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap; }
     .step-counter { font-size: 0.78rem; color: #999; text-transform: uppercase; letter-spacing: 0.06em; }
     button { padding: 0.45rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 0.88rem; }
@@ -33,42 +31,104 @@
     .explanation { background: #f0f4ff; border-left: 4px solid #1a3a6b; padding: 1rem 1.2rem; margin-bottom: 1.4rem; font-size: 0.88rem; color: #333; line-height: 1.7; min-height: 60px; }
     .explanation strong { color: #1a1a1a; }
 
-    /* comparison grid */
-    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.5rem; }
-    @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+    /* balance sheet visual */
+    .bs-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 1.8rem;
+      align-items: end;
+    }
+    @media (max-width: 560px) { .bs-wrap { grid-template-columns: 1fr; } }
 
-    .compare-col { border-radius: 8px; overflow: hidden; }
+    .bs-col { display: flex; flex-direction: column; align-items: center; }
+    .bs-title { font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; color: #888; margin-bottom: 0.6rem; }
 
-    .col-header { padding: 0.8rem 1rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; }
-    .col-liquidity .col-header { background: #1a3a6b; color: white; }
-    .col-solvency  .col-header { background: #7b3f00; color: white; }
+    .bs-bar-wrap {
+      width: 160px;
+      position: relative;
+    }
 
-    .col-body { border: 1.5px solid #ddd; border-top: none; border-radius: 0 0 8px 8px; padding: 1rem; }
+    .bs-bar {
+      width: 160px;
+      display: flex;
+      flex-direction: column-reverse; /* bottom segments first */
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-    .field { margin-bottom: 0.9rem; }
-    .field-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; margin-bottom: 0.2rem; }
-    .field-value { font-size: 0.88rem; color: #1a1a1a; line-height: 1.5; }
-    .field-value.highlight-blue { color: #1a3a6b; font-weight: bold; }
-    .field-value.highlight-brown { color: #7b3f00; font-weight: bold; }
-    .field-value.muted { color: #888; font-size: 0.82rem; }
+    .bs-segment {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: height 0.6s ease;
+      overflow: hidden;
+      position: relative;
+    }
 
-    .scenario-box { background: #f5f0eb; border-radius: 6px; padding: 0.8rem 1rem; margin-top: 0.8rem; font-size: 0.82rem; color: #444; line-height: 1.6; }
-    .scenario-label { font-size: 0.68rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.3rem; }
+    .seg-label { font-size: 0.72rem; font-weight: bold; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.4); line-height: 1.2; text-align: center; }
+    .seg-amount { font-size: 0.82rem; color: rgba(255,255,255,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+
+    /* segment colors */
+    .seg-reserves { background: #1a6b3c; }
+    .seg-loans    { background: #2d5986; }
+    .seg-deposits { background: #7b5200; }
+    .seg-capital  { background: #5b2d8e; }
+    .seg-gap      { background: #b91c1c; }
+
+    /* axis labels */
+    .bs-scale {
+      position: absolute;
+      right: -36px;
+      top: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: #aaa;
+    }
+
+    .scenario-label {
+      margin-top: 0.7rem;
+      font-size: 0.75rem;
+      color: #888;
+      text-align: center;
+      font-style: italic;
+      min-height: 1.2rem;
+    }
+
+    /* warning/ok badges */
+    .verdict {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 0.3rem 0.8rem;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.4s;
+      text-align: center;
+    }
+    .verdict.visible { opacity: 1; }
+    .verdict.ok   { background: #d1fae5; color: #065f46; }
+    .verdict.fail { background: #fee2e2; color: #991b1b; }
+
+    /* legend */
+    .legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1.2rem; font-size: 0.78rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+    .lswatch { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
 
     /* what neither covers */
-    .neither { border: 2px solid #1a1a1a; border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; opacity: 0; transition: opacity 0.5s; }
+    .neither { border: 2px solid #1a1a1a; border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; opacity: 0; transition: opacity 0.5s; }
     .neither.visible { opacity: 1; }
-    .neither-header { background: #1a1a1a; color: white; padding: 0.8rem 1rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; }
-    .neither-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-    @media (max-width: 600px) { .neither-body { grid-template-columns: 1fr; } }
-    .neither-item { padding: 1rem 1.2rem; font-size: 0.85rem; color: #333; line-height: 1.6; border-right: 1px solid #eee; }
-    .neither-item:last-child { border-right: none; }
-    .neither-item strong { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 0.4rem; }
-
-    /* layers */
-    .layer { transition: opacity 0.4s; }
-    .layer.hidden { opacity: 0; pointer-events: none; }
-    .layer.visible { opacity: 1; }
+    .neither h3 { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; color: #888; margin-bottom: 0.8rem; }
+    .neither-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .neither-grid { grid-template-columns: 1fr; } }
+    .neither-item { font-size: 0.83rem; color: #333; line-height: 1.6; }
+    .neither-item strong { display: block; color: #888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
 
     /* context */
     .context { margin-top: 2rem; border-top: 2px solid #1a1a1a; padding-top: 1.8rem; }
@@ -78,114 +138,96 @@
     .panel { border-radius: 6px; padding: 1rem 1.1rem; font-size: 0.83rem; line-height: 1.65; color: #333; }
     .panel-title { font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; }
     .p1 { background: #f0f4ff; border: 1px solid #b8c8f0; } .p1 .panel-title { color: #1a3a6b; }
-    .p2 { background: #fff8ed; border: 1px solid #f6d86b; } .p2 .panel-title { color: #92600a; }
-    .p3 { background: #f5f0fa; border: 1px solid #d4b8f0; } .p3 .panel-title { color: #5b2d8e; }
+    .p2 { background: #f5f0fa; border: 1px solid #d4b8f0; } .p2 .panel-title { color: #5b2d8e; }
+    .p3 { background: #fff8ed; border: 1px solid #f6d86b; } .p3 .panel-title { color: #92600a; }
     .p4 { background: #f0f9f4; border: 1px solid #c5e8d0; } .p4 .panel-title { color: #1a6b3c; }
   </style>
 </head>
 <body>
   <nav>
     <a href="index.html">← All models</a>
-    <span class="sep">|</span>
-    <a href="money-multiplier.html">1 · Money Multiplier</a>
-    <a href="debt-copies.html">2 · Debt Copies</a>
-    <a href="interest-ratchet.html">3 · Interest Ratchet</a>
-    <a href="interest-comparison.html">4 · Interest Variable</a>
-    <a href="daly-economy.html">5 · Daly's Missing Substrate</a>
-    <a href="capital-requirements.html" style="color:#1a3a6b;font-weight:bold;">6 · Reserve vs. Capital</a>
+    <span class="nav-sep">|</span>
+    <a href="daly-economy.html">← 5</a>
+    <span class="nav-current">6 · Reserve vs. Capital</span>
+    <a href="risk-modeling.html">7 →</a>
   </nav>
 
   <header>
-    <h1>Reserve Requirements vs. Capital Requirements</h1>
-    <p class="subtitle">Two different guardrails protecting against two different failures — and what neither one addresses.</p>
+    <h1>Reserve vs. Capital Requirements</h1>
+    <p class="subtitle">Two guardrails. Two different failure modes. One bank balance sheet.</p>
   </header>
 
-  <p class="intro">The money multiplier model shows a <strong>reserve requirement</strong> — the fraction of deposits a bank must hold as cash. In the United States this is currently 0%. But banks are not unregulated: a different mechanism, the <strong>capital requirement</strong>, is now the primary regulatory tool. These are often conflated, but they address completely different problems.</p>
-  <p class="interactive-hint">▶ Interactive — step through to reveal each layer.</p>
+  <p class="intro">Both reserve requirements and capital requirements involve banks holding something "back." But what they hold, what they're measured against, and what failure they prevent are completely different. The distinction becomes visible on a bank's balance sheet.</p>
+  <p class="interactive-hint">▶ Interactive — step through each scenario.</p>
 
   <div class="controls">
-    <span class="step-counter" id="step-counter">Step 1 of 3</span>
+    <span class="step-counter" id="step-counter">Step 1 of 4</span>
     <button class="btn-primary" id="next-btn">Next →</button>
     <button class="btn-secondary" id="reset-btn">Reset</button>
   </div>
 
   <div class="explanation" id="explanation"></div>
 
-  <div class="compare-grid">
-    <!-- LIQUIDITY column -->
-    <div class="compare-col col-liquidity">
-      <div class="col-header">Reserve Requirement — Liquidity</div>
-      <div class="col-body">
-        <div class="field">
-          <div class="field-label">What it is</div>
-          <div class="field-value">Cash or deposits held at the Federal Reserve</div>
-        </div>
-        <div class="field">
-          <div class="field-label">Measured against</div>
-          <div class="field-value">Customer deposits (checking &amp; savings accounts)</div>
-        </div>
-        <div class="field">
-          <div class="field-label">Protects against</div>
-          <div class="field-value highlight-blue">Bank runs — customers demanding cash at once</div>
-        </div>
-        <div class="field">
-          <div class="field-label">US rate (2024)</div>
-          <div class="field-value highlight-blue">0% — eliminated March 2020</div>
-        </div>
-        <div class="field layer hidden" id="liq-scenario">
-          <div class="scenario-label">Scenario it handles</div>
-          <div class="scenario-box">100 depositors want their money back at the same time. If the bank has no reserves, it cannot pay them without selling assets or borrowing overnight. Reserve requirements (when they existed) ensured a cash buffer was always on hand.</div>
-        </div>
-        <div class="field layer hidden" id="liq-limit">
-          <div class="scenario-label">What it doesn't cover</div>
-          <div class="scenario-box">Whether the bank's loans are sound. A bank can have adequate reserves and still be technically insolvent — it has enough cash for today but its loan portfolio is worth less than what it owes.</div>
+  <div class="legend">
+    <div class="legend-item"><div class="lswatch seg-reserves"></div> Reserves (cash)</div>
+    <div class="legend-item"><div class="lswatch seg-loans"></div> Loans (assets)</div>
+    <div class="legend-item"><div class="lswatch seg-deposits"></div> Deposits (owed to customers)</div>
+    <div class="legend-item"><div class="lswatch seg-capital"></div> Capital (equity buffer)</div>
+    <div class="legend-item"><div class="lswatch seg-gap"></div> Uncovered gap</div>
+  </div>
+
+  <div class="bs-wrap">
+    <!-- ASSETS column -->
+    <div class="bs-col">
+      <div class="bs-title">Assets — what the bank owns</div>
+      <div class="bs-bar-wrap">
+        <div class="bs-bar" id="assets-bar">
+          <div class="bs-segment seg-reserves" id="seg-reserves" style="height:30px">
+            <span class="seg-label">Reserves</span>
+            <span class="seg-amount" id="reserves-amt">$10</span>
+          </div>
+          <div class="bs-segment seg-loans" id="seg-loans" style="height:270px">
+            <span class="seg-label">Loans</span>
+            <span class="seg-amount" id="loans-amt">$90</span>
+          </div>
         </div>
       </div>
+      <div class="scenario-label" id="assets-label"></div>
     </div>
 
-    <!-- SOLVENCY column -->
-    <div class="compare-col col-solvency">
-      <div class="col-header">Capital Requirement — Solvency</div>
-      <div class="col-body">
-        <div class="field">
-          <div class="field-label">What it is</div>
-          <div class="field-value">Equity — the bank's net worth (assets minus liabilities)</div>
-        </div>
-        <div class="field">
-          <div class="field-label">Measured against</div>
-          <div class="field-value">Risk-weighted loans and investments</div>
-        </div>
-        <div class="field">
-          <div class="field-label">Protects against</div>
-          <div class="field-value highlight-brown">Loan defaults — borrowers who never repay</div>
-        </div>
-        <div class="field">
-          <div class="field-label">Basel III CET1 minimum (2024)</div>
-          <div class="field-value highlight-brown">4.5% of risk-weighted assets</div>
-        </div>
-        <div class="field layer hidden" id="sol-scenario">
-          <div class="scenario-label">Scenario it handles</div>
-          <div class="scenario-box">A bank lends $100M in mortgages. 5% default — $5M in losses. Capital requirements ensure the bank has enough equity buffer to absorb that $5M without becoming insolvent. The losses come out of equity, not depositor funds.</div>
-        </div>
-        <div class="field layer hidden" id="sol-limit">
-          <div class="scenario-label">What it doesn't cover</div>
-          <div class="scenario-box">Whether the risk-weights assigned to assets are correct. In 2008, mortgage-backed securities were weighted as low-risk. Capital requirements said the banks were fine. They were not.</div>
+    <!-- LIABILITIES + EQUITY column -->
+    <div class="bs-col">
+      <div class="bs-title">Liabilities + Equity — what the bank owes / owns</div>
+      <div class="bs-bar-wrap">
+        <div class="bs-bar" id="liab-bar">
+          <div class="bs-segment seg-capital" id="seg-capital" style="height:30px">
+            <span class="seg-label">Capital</span>
+            <span class="seg-amount" id="capital-amt">$10</span>
+          </div>
+          <div class="bs-segment seg-deposits" id="seg-deposits" style="height:270px">
+            <span class="seg-label">Deposits</span>
+            <span class="seg-amount" id="deposits-amt">$90</span>
+          </div>
+          <div class="bs-segment seg-gap" id="seg-gap" style="height:0px;display:none">
+            <span class="seg-label" id="gap-label">Gap</span>
+          </div>
         </div>
       </div>
+      <div class="scenario-label" id="liab-label"></div>
+      <div class="verdict" id="verdict"></div>
     </div>
   </div>
 
-  <!-- What neither covers -->
   <div class="neither" id="neither-box">
-    <div class="neither-header">What neither guardrail addresses</div>
-    <div class="neither-body">
+    <h3>What neither guardrail addresses</h3>
+    <div class="neither-grid">
       <div class="neither-item">
-        <strong>The interest gap (models 3 &amp; 4)</strong>
-        Both mechanisms regulate bank safety — how banks survive bad outcomes. Neither addresses the structural fact that interest is charged on money that was never created. Reserve requirements and capital requirements are about who loses when loans go bad. They say nothing about the system-level growth imperative that interest creates.
+        <strong>The structural interest gap</strong>
+        Both mechanisms regulate how banks survive bad outcomes. Neither changes the fact that interest is charged on money that was never created. A well-capitalized bank with adequate reserves still operates within a system where total debt must always exceed total money in existence.
       </div>
       <div class="neither-item">
-        <strong>What gets a loan (model 5)</strong>
-        Capital requirements are calculated against "risk-weighted assets" — things with a market price and a measurable default probability. A wetland has no risk weight. A decade of unpaid care work has no risk weight. Ecological infrastructure does not appear in any capital ratio. The guardrails regulate what happens inside the model; they do not expand what the model can see.
+        <strong>What gets a loan</strong>
+        Capital requirements are calculated against risk-weighted assets — things with a price and a measurable default rate. A wetland, a forest, a decade of unpaid care work: none have a risk weight. Both guardrails are calibrated to protect the financial system; neither expands what the financial system can see.
       </div>
     </div>
   </div>
@@ -194,38 +236,111 @@
     <h2>Understanding the distinction</h2>
     <div class="panels">
       <div class="panel p1">
-        <div class="panel-title">Liquidity vs. solvency — the core difference</div>
-        Liquidity is about cash flow: can the bank pay its obligations today? Solvency is about net worth: is the bank worth more than it owes? A business can be solvent but illiquid (valuable assets, no cash) or liquid but insolvent (plenty of cash, but debts exceed assets). Banks can fail from either. The 2008 crisis involved both: illiquidity triggered by solvency concerns no one had properly measured.
+        <div class="panel-title">Liquidity vs. solvency</div>
+        Liquidity means having cash available today. Solvency means your assets exceed your liabilities. A bank can be solvent but illiquid (sound loans, but no cash for withdrawals) or liquid but insolvent (plenty of cash, but loans are worth less than deposits). Reserve requirements address liquidity. Capital requirements address solvency. The 2008 crisis involved both — illiquidity triggered by the discovery that solvency was far worse than reported.
       </div>
       <div class="panel p2">
         <div class="panel-title">Why the US moved to 0% reserve requirements</div>
-        The Federal Reserve now controls monetary conditions through interest rates, not reserve ratios. By paying banks interest on reserves held at the Fed (currently ~3.65% IORB), it can incentivize banks to hold more or less cash without a legal mandate. This is a more flexible tool, but it means the money multiplier as classically taught (deposit × 1/reserve rate) is no longer mechanically enforced — it is now a policy choice expressed through price rather than quantity.
+        Since 2020, the Federal Reserve controls monetary conditions through the interest rate it pays banks on reserves held at the Fed (IORB, currently ~3.65%). This incentivizes banks to hold cash without a legal mandate. The classical money multiplier (1 ÷ reserve rate) still describes the conceptual mechanism, but the enforced floor is now zero — the actual floor is set by capital requirements and banks' own liquidity management.
       </div>
       <div class="panel p3">
         <div class="panel-title">The problem with risk weights</div>
-        Capital requirements depend on "risk-weighted assets" — each type of loan or investment is assigned a risk weight, and the bank must hold capital proportional to that weight. Government bonds are weighted near zero (assumed safe). Mortgages are weighted lower than business loans. The weights are set by regulators and rating agencies. In 2008, the weights were wrong. The mechanism is only as good as its model of risk — and its model of risk uses historical data from a world that no longer exists.
+        Capital requirements depend on "risk-weighted assets" — each loan type is assigned a weight, and the bank must hold capital proportional to it. Government bonds: near zero risk. Mortgages: moderate. The weights are set by regulators using historical default rates. In 2008, mortgage-backed securities were assigned low risk weights. They defaulted at catastrophic rates. The mechanism is only as good as its model of risk — and its model uses a past that may not resemble the future.
       </div>
       <div class="panel p4">
         <div class="panel-title">What this means for the other models</div>
-        Model 1 (Money Multiplier) shows reserve requirements controlling the deposit cascade. That mechanism still operates conceptually — the cascade exists — but the enforced floor is now 0%. The real floor is set by capital requirements and by banks' own liquidity management. Models 3 and 4 (interest ratchet and interest variable) are unchanged by either guardrail: both mechanisms assume loans are repaid, and the structural interest gap exists regardless of how well-capitalized the bank is.
+        Model 1 shows reserve requirements at 10% — the historical US standard, useful for teaching the multiplier mechanics, but no longer the enforced rate. Model 7 (Risk Models) extends this: capital requirements calibrated to historical risk weights may be deeply wrong in a world where climate shifts the baseline distribution of defaults, floods, and crop failures. The guardrails were designed for a stable world.
       </div>
     </div>
   </div>
 
   <script>
+    // Balance sheet values in $, bar total = 300px
+    // Normal: Loans $90, Reserves $10 | Deposits $90, Capital $10
+    // Run scenario: deposits drop to $65 — need $25 reserves, only $10
+    // Default scenario: loans drop to $78 ($12 default) — capital ($10) absorbs $10, gap $2
+
+    const TOTAL_PX = 300;
+    const BANK = 100;
+
+    function toPx(dollars) { return Math.round((dollars / BANK) * TOTAL_PX); }
+
+    const els = {
+      reserves:    document.getElementById('seg-reserves'),
+      loans:       document.getElementById('seg-loans'),
+      capital:     document.getElementById('seg-capital'),
+      deposits:    document.getElementById('seg-deposits'),
+      gap:         document.getElementById('seg-gap'),
+      reservesAmt: document.getElementById('reserves-amt'),
+      loansAmt:    document.getElementById('loans-amt'),
+      capitalAmt:  document.getElementById('capital-amt'),
+      depositsAmt: document.getElementById('deposits-amt'),
+      gapLabel:    document.getElementById('gap-label'),
+      assetsLabel: document.getElementById('assets-label'),
+      liabLabel:   document.getElementById('liab-label'),
+      verdict:     document.getElementById('verdict'),
+      neither:     document.getElementById('neither-box'),
+    };
+
+    function setBar(reserves, loans, deposits, capital, gap=0, assetsNote='', liabNote='', verdictText='', verdictClass='') {
+      els.reserves.style.height = toPx(reserves) + 'px';
+      els.loans.style.height    = toPx(loans) + 'px';
+      els.capital.style.height  = toPx(capital) + 'px';
+      els.deposits.style.height = toPx(deposits) + 'px';
+      els.reservesAmt.textContent = '$' + reserves;
+      els.loansAmt.textContent    = '$' + loans;
+      els.capitalAmt.textContent  = '$' + capital;
+      els.depositsAmt.textContent = '$' + deposits;
+      els.assetsLabel.textContent = assetsNote;
+      els.liabLabel.textContent   = liabNote;
+
+      if (gap > 0) {
+        els.gap.style.display = '';
+        els.gap.style.height  = toPx(gap) + 'px';
+        els.gapLabel.textContent = 'Gap $' + gap;
+      } else {
+        els.gap.style.display = 'none';
+        els.gap.style.height  = '0px';
+      }
+
+      if (verdictText) {
+        els.verdict.textContent = verdictText;
+        els.verdict.className = 'verdict visible ' + verdictClass;
+      } else {
+        els.verdict.className = 'verdict';
+      }
+    }
+
     const steps = [
       {
-        show: [],
-        text: '<strong>Two mechanisms, two problems.</strong> The left column covers liquidity — the bank\'s ability to pay depositors on demand. The right column covers solvency — the bank\'s ability to survive loan losses. They are often confused because both involve holding money "in reserve." But the money is different, the measurement is different, and the risk they protect against is completely different.'
+        reserves:10, loans:90, deposits:90, capital:10, gap:0,
+        assetsNote:'', liabNote:'',
+        verdictText:'', verdictClass:'',
+        showNeither: false,
+        text: '<strong>A simplified bank balance sheet.</strong> Assets (left) must equal liabilities plus equity (right). This bank has $90 in loans and $10 in cash reserves. On the other side, it owes $90 to depositors and has $10 in capital (equity — the owners\' stake). Everything balances. The two guardrails are protecting against two completely different ways this balance can break.'
       },
       {
-        show: ['liq-scenario', 'sol-scenario'],
-        text: '<strong>The scenarios each mechanism handles.</strong> Reserve requirements (when they existed) protected against bank runs — a crisis of confidence where depositors withdraw simultaneously. Capital requirements protect against default cascades — a crisis of reality where loans simply don\'t get repaid. The 2008 financial crisis was both: panic triggered by the discovery that loan books were far worse than reported.'
+        reserves:10, loans:90, deposits:65, capital:10, gap:15,
+        assetsNote:'reserves unchanged',
+        liabNote:'$25 withdrawn',
+        verdictText:'✗ Reserves insufficient — bank run fails', verdictClass:'fail',
+        showNeither: false,
+        text: '<strong>Scenario A — bank run (liquidity crisis).</strong> Depositors lose confidence and withdraw $25 simultaneously. The bank must pay out in cash. It only has $10 in reserves. The $15 gap cannot be covered without selling loans or borrowing overnight — which may be impossible in a panic. Reserve requirements (when they existed) forced banks to hold more cash against exactly this scenario. The US eliminated this requirement in 2020.'
       },
       {
-        show: ['liq-scenario', 'sol-scenario', 'liq-limit', 'sol-limit'],
-        text: '<strong>The limits of each — and what neither covers.</strong> Each mechanism has a structural blind spot. Reserve requirements don\'t assess loan quality. Capital requirements depend on risk weights that can be wrong. And crucially: neither mechanism addresses the interest gap (why money owed always exceeds money created) or the question of what kinds of activity can get a loan at all.',
-        showNeither: true
+        reserves:10, loans:78, deposits:90, capital:2, gap:0,
+        assetsNote:'$12 in loans defaulted',
+        liabNote:'capital absorbs $8',
+        verdictText:'✓ Capital absorbs the loss — deposits protected', verdictClass:'ok',
+        showNeither: false,
+        text: '<strong>Scenario B — loan defaults (solvency crisis).</strong> $12 of the bank\'s loans default — borrowers stop repaying. Loan value drops from $90 to $78. Capital (equity) absorbs the loss: it shrinks from $10 to $2. Depositors\' $90 is still fully backed by the remaining assets. This is what capital requirements are designed for: the equity buffer takes the hit before depositors do. Basel III requires at least 4.5% CET1 capital against risk-weighted assets.'
+      },
+      {
+        reserves:10, loans:90, deposits:90, capital:10, gap:0,
+        assetsNote:'', liabNote:'',
+        verdictText:'', verdictClass:'',
+        showNeither: true,
+        text: '<strong>What neither guardrail addresses.</strong> Balance the sheet again and zoom out. Both mechanisms protect the financial system from internal failures — runs and defaults. Neither changes the structural interest gap (models 3 &amp; 4): money owed always exceeds money created, regardless of how well-capitalized the bank is. And neither changes what can get a loan: only things with a risk weight exist inside these calculations.'
       }
     ];
 
@@ -236,18 +351,9 @@
       document.getElementById('explanation').innerHTML = s.text;
       document.getElementById('step-counter').textContent = `Step ${current + 1} of ${steps.length}`;
       document.getElementById('next-btn').disabled = current >= steps.length - 1;
-
-      const allLayers = ['liq-scenario', 'sol-scenario', 'liq-limit', 'sol-limit'];
-      allLayers.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (s.show.includes(id)) { el.classList.remove('hidden'); el.classList.add('visible'); }
-        else { el.classList.remove('visible'); el.classList.add('hidden'); }
-      });
-
-      const neitherEl = document.getElementById('neither-box');
-      if (s.showNeither) neitherEl.classList.add('visible');
-      else neitherEl.classList.remove('visible');
+      setBar(s.reserves, s.loans, s.deposits, s.capital, s.gap, s.assetsNote, s.liabNote, s.verdictText, s.verdictClass);
+      if (s.showNeither) els.neither.classList.add('visible');
+      else els.neither.classList.remove('visible');
     }
 
     document.getElementById('next-btn').addEventListener('click', () => {
