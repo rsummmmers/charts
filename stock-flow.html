@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock vs. Flow: Two Ways Water Can Fail</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 980px; margin: 0 auto; line-height: 1.6; }
+    header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
+    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
+    .intro { font-size: 0.88rem; color: #555; line-height: 1.75; margin-bottom: 1.5rem; max-width: 720px; }
+
+    nav { margin-bottom: 1.5rem; padding: 0.6rem 0; border-bottom: 1px solid #ddd; font-size: 0.8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: #888; text-decoration: none; }
+    nav a:hover { color: #1a1a1a; }
+
+    /* step controls */
+    .step-controls { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .step-btn { padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-radius: 4px; }
+    .step-btn:hover { background: #1a1a1a; color: white; }
+    .step-indicator { font-size: 0.8rem; color: #888; }
+
+    /* two-panel grid */
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    @media (max-width: 620px) { .panels { grid-template-columns: 1fr; } }
+
+    .panel { border-radius: 8px; overflow: hidden; }
+    .panel-header { padding: 0.75rem 1rem; font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; }
+    .flow-header { background: #1a3a6b; color: white; }
+    .stock-header { background: #1a5c3a; color: white; }
+    .panel-sub { font-size: 0.65rem; opacity: 0.75; font-weight: normal; text-transform: none; letter-spacing: 0; }
+
+    canvas { display: block; width: 100%; }
+
+    /* explanation strips below each canvas */
+    .panel-explain { padding: 0.8rem 1rem; font-size: 0.8rem; line-height: 1.6; color: #444; border: 1.5px solid #ddd; border-top: none; border-radius: 0 0 8px 8px; min-height: 72px; }
+
+    /* shared lesson */
+    .lesson { margin-top: 0.5rem; padding: 1rem 1.2rem; border-left: 4px solid #7b3f00; background: #fff8ed; font-size: 0.87rem; line-height: 1.7; color: #333; }
+    .lesson strong { color: #1a1a1a; }
+
+    /* term definitions */
+    .terms { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    @media (max-width: 560px) { .terms { grid-template-columns: 1fr; } }
+    .term-box { background: #f4f4f0; border-radius: 6px; padding: 0.85rem 1rem; font-size: 0.82rem; line-height: 1.6; }
+    .term-name { font-weight: bold; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; color: #666; }
+    .term-def { color: #333; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">← All models</a>
+    <span style="color:#ddd">|</span>
+    <span style="font-weight:bold;color:#1a1a1a;">8 · Stock vs. Flow</span>
+  </nav>
+
+  <header>
+    <h1>Stock vs. Flow: Two Ways Water Can Fail</h1>
+    <p class="subtitle">The Colorado River (flow-dependent) and the Quabbin Reservoir (managed stock) — same resource, different failure modes.</p>
+  </header>
+
+  <p class="intro">In systems thinking, a <em>flow</em> is a rate — water moving through a river right now. A <em>stock</em> is an accumulated quantity — water stored in a reservoir. These two types of resource have fundamentally different dynamics, different vulnerabilities, and different collapse patterns. Step through to see how each one fails under pressure.</p>
+
+  <div class="step-controls">
+    <button class="step-btn" id="btn-prev" onclick="changeStep(-1)">← Back</button>
+    <button class="step-btn" id="btn-next" onclick="changeStep(1)">Next →</button>
+    <span class="step-indicator" id="step-label">Step 1 of 5</span>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-header flow-header">
+        Flow system: Colorado River
+        <div class="panel-sub">Seven states, 40 million people, 5.5 million acres of farmland</div>
+      </div>
+      <canvas id="canvas-flow" height="260"></canvas>
+      <div class="panel-explain" id="explain-flow">The Colorado River is a flow system: its usability depends entirely on how much water is moving through it right now. If the flow drops, downstream users immediately lose access — there is no buffer.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-header stock-header">
+        Stock system: Quabbin Reservoir
+        <div class="panel-sub">412 billion gallons · supplies greater Boston since 1939</div>
+      </div>
+      <canvas id="canvas-stock" height="260"></canvas>
+      <div class="panel-explain" id="explain-stock">The Quabbin Reservoir is a stock system: it accumulates water over years and can supply cities even during dry stretches. But stocks have a ceiling — and once drawn down, recharge can take decades.</div>
+    </div>
+  </div>
+
+  <div class="lesson" id="lesson-text">
+    Stocks and flows fail differently. A flow system can fail instantly — cut the supply, lose the resource. A stock system fails slowly, then suddenly: the drawdown seems manageable until it isn't. Both failures are invisible until they arrive.
+  </div>
+
+  <div class="terms">
+    <div class="term-box">
+      <div class="term-name">Flow</div>
+      <div class="term-def">A rate of change over time. Measured in volume-per-time (acre-feet/year, gallons/day). Stops when the source stops. Examples: river discharge, rainfall, solar radiation, interest income, wage income.</div>
+    </div>
+    <div class="term-box">
+      <div class="term-name">Stock</div>
+      <div class="term-def">An accumulated quantity. Measured in volume (acre-feet, gallons). Persists when inflow stops — but depletes if outflow exceeds inflow. Examples: reservoir storage, groundwater, topsoil, a savings account, biodiversity.</div>
+    </div>
+    <div class="term-box">
+      <div class="term-name">Flow failure</div>
+      <div class="term-def">Immediate: when the source is stressed (drought, diversion), downstream users feel it at once. The Colorado's compact allocates more water than flows — any shortfall is instantly visible.</div>
+    </div>
+    <div class="term-box">
+      <div class="term-name">Stock failure</div>
+      <div class="term-def">Gradual, then sudden: a reservoir can absorb years of deficit before the level becomes critical. When it crosses a threshold, the collapse can be rapid. The gap between "drawing down" and "crisis" masks the problem.</div>
+    </div>
+  </div>
+
+  <script>
+  const STEPS = [
+    {
+      label: "Step 1 of 5 — Baseline conditions",
+      flow: { scenario: 'normal', title: 'Normal year: ~14 MAF discharge' },
+      stock: { level: 0.82, title: 'Healthy storage: ~82% full' },
+      explainFlow: "Under normal conditions, the Colorado carries roughly 14–15 million acre-feet (MAF) past Lee Ferry each year. Seven states draw from this under a 1922 compact — which allocated 17.5 MAF, more than the river actually carries in most years.",
+      explainStock: "At healthy storage levels (~82% full), the Quabbin holds enough water to supply greater Boston for several years even without significant inflow. This buffer is the core advantage of a managed stock system.",
+      lesson: "<strong>The baseline difference:</strong> A flow system must always be producing. A stock system can coast on accumulated surplus. Both feel safe when conditions are normal."
+    },
+    {
+      label: "Step 2 of 5 — Stress begins",
+      flow: { scenario: 'stress', title: 'Drought year: flow drops 30%' },
+      stock: { level: 0.65, title: 'Drawdown begins: 65% full' },
+      explainFlow: "In a drought year, the Colorado's discharge can drop to 10–11 MAF — well below the 17.5 MAF already promised. States immediately face mandatory cuts. Arizona and Nevada, junior rights holders, absorb the first reductions. This is visible immediately in water allocations.",
+      explainStock: "The Quabbin doesn't feel a drought year the same way. Inflow drops, but the reservoir absorbs the shortfall from stored surplus. Water managers notice the trend, but service continues uninterrupted. The stock buys time.",
+      lesson: "<strong>Stress reveals the asymmetry:</strong> Flow failure is immediate and obvious. Stock failure is deferred and invisible. The Quabbin's apparent stability during drought can mask a multi-year drawdown trajectory."
+    },
+    {
+      label: "Step 3 of 5 — Sustained pressure",
+      flow: { scenario: 'sustained', title: 'Multi-year drought: flow at 60% of normal' },
+      stock: { level: 0.41, title: 'Drawdown: 41% full after several dry years' },
+      explainFlow: "After several dry years, the Colorado compact collapses into tiers of crisis. Lake Mead and Lake Powell — the river's two giant storage buffers — drop toward dead pool. States face Tier 2 and Tier 3 cuts. Las Vegas restricts outdoor water use. Arizona farms fallow. The crisis is visible, in the news, politically contentious.",
+      explainStock: "The Quabbin at 41% is getting attention from water managers, but Boston residents don't feel it yet. Supply is normal. This is the deceptive middle phase of stock failure: the system is working, drawdown is documented in reports, but there is no signal of crisis at the service level.",
+      lesson: "<strong>The visibility gap:</strong> Flow systems fail publicly. Stock systems fail quietly in reports and dashboards while service continues normally. Political attention arrives at very different times."
+    },
+    {
+      label: "Step 4 of 5 — Critical threshold",
+      flow: { scenario: 'critical', title: 'Crisis: flow at 40% — downstream collapse' },
+      stock: { level: 0.18, title: 'Critical: 18% — recharge timeline decades' },
+      explainFlow: "At deep drought, flow-dependent rivers can reach dead pool — the point where water is too low to pass through dams or reach intakes. For the Colorado, this threatens power generation at Hoover and Glen Canyon, municipal supply, and the ability to sustain any agriculture. The crisis point arrives fast once flow drops below minimum operating levels.",
+      explainStock: "At 18% capacity, the Quabbin has crossed a threshold where water quality degrades (shallow water warms, algae blooms), and even modest demand cannot be sustained. More critically: recharging from 18% to 82% takes years of above-average rainfall. The buffer that made the stock seem resilient is now its vulnerability — it takes a long time to rebuild.",
+      lesson: "<strong>Thresholds and recovery:</strong> Both systems have a point of rapid deterioration. But flow systems can recover quickly if rain returns. Stocks take years or decades to recharge — drawdown is much harder to reverse than flow reduction."
+    },
+    {
+      label: "Step 5 of 5 — What the systems reveal about the economy",
+      flow: { scenario: 'recovery', title: 'Flow: recovers quickly if conditions change' },
+      stock: { level: 0.28, title: 'Stock: slow recharge — still years from normal' },
+      explainFlow: "A flow system is like wage income: it must keep arriving to sustain spending. Cut the flow, the household immediately feels it. But restore the flow, and the household recovers at the same speed. This is why economic models focus on GDP (a flow) — it changes fast enough to measure quarterly.",
+      explainStock: "A stock system is like savings, topsoil, biodiversity, or a fishery: accumulated over long periods, drawn down quietly, and slow to rebuild. Most ecological systems are stocks. Economic models that treat them as flows — or ignore them entirely — miss the characteristic failure mode: the long invisible drawdown before sudden collapse.",
+      lesson: "<strong>The economic parallel:</strong> Income is a flow; wealth is a stock. Ecosystem services are drawn from stocks (topsoil, biodiversity, groundwater, climate stability) but are priced as if they were flows — always available, always renewing. The Quabbin at 18% and a depleted aquifer feel identical from a distance: both still supply water today. Neither will next decade."
+    }
+  ];
+
+  let step = 0;
+
+  function changeStep(dir) {
+    step = Math.max(0, Math.min(STEPS.length - 1, step + dir));
+    render();
+  }
+
+  function render() {
+    const s = STEPS[step];
+    document.getElementById('step-label').textContent = s.label;
+    document.getElementById('explain-flow').textContent = s.explainFlow;
+    document.getElementById('explain-stock').textContent = s.explainStock;
+    document.getElementById('lesson-text').innerHTML = s.lesson;
+    document.getElementById('btn-prev').disabled = step === 0;
+    document.getElementById('btn-next').disabled = step === STEPS.length - 1;
+    drawFlow(s.flow);
+    drawStock(s.stock);
+  }
+
+  // ---- FLOW CANVAS ----
+  function drawFlow(cfg) {
+    const canvas = document.getElementById('canvas-flow');
+    const W = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,W,H);
+
+    // background
+    ctx.fillStyle = '#0d1f33';
+    ctx.fillRect(0,0,W,H);
+
+    const scenarios = {
+      normal:    [0.92,0.95,0.9,0.88,0.93,0.91,0.96,0.89,0.92,0.94,0.9,0.93,0.91,0.95,0.89,0.92,0.88,0.94,0.90,0.93],
+      stress:    [0.9,0.82,0.76,0.68,0.72,0.65,0.70,0.67,0.63,0.69,0.71,0.66,0.70,0.68,0.72,0.69,0.65,0.71,0.68,0.70],
+      sustained: [0.7,0.62,0.55,0.50,0.48,0.52,0.47,0.44,0.50,0.45,0.42,0.48,0.46,0.43,0.50,0.47,0.44,0.41,0.45,0.42],
+      critical:  [0.48,0.42,0.38,0.33,0.36,0.31,0.28,0.32,0.30,0.27,0.33,0.29,0.26,0.30,0.27,0.24,0.28,0.25,0.22,0.20],
+      recovery:  [0.20,0.30,0.42,0.55,0.65,0.72,0.80,0.75,0.82,0.78,0.85,0.80,0.78,0.84,0.80,0.87,0.83,0.86,0.88,0.91]
+    };
+
+    const vals = scenarios[cfg.scenario] || scenarios.normal;
+    const NORM = 0.93; // normal flow = 14MAF normalized
+
+    // Draw river channel background
+    const ry = H * 0.55, rh = H * 0.28;
+    ctx.fillStyle = '#0a2540';
+    ctx.fillRect(0, ry, W, rh);
+
+    // Draw flow bars (time-series style)
+    const barW = (W - 40) / vals.length;
+    const maxH = ry - 20;
+    for (let i = 0; i < vals.length; i++) {
+      const v = vals[i];
+      const bH = Math.round(v * maxH * 0.65);
+      const x = 20 + i * barW;
+      const y = ry - bH;
+
+      // Color by stress level
+      let col;
+      if (v >= 0.8) col = '#3b82f6';
+      else if (v >= 0.6) col = '#f59e0b';
+      else if (v >= 0.4) col = '#ef4444';
+      else col = '#7f1d1d';
+
+      ctx.fillStyle = col;
+      ctx.fillRect(x + 1, y, barW - 2, bH);
+    }
+
+    // Normal line
+    const normY = ry - Math.round(NORM * (ry-20) * 0.65);
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.setLineDash([5,5]);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(20, normY); ctx.lineTo(W-20, normY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '10px Georgia,serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('normal flow', W-22, normY - 4);
+
+    // River water effect
+    for (let i = 0; i < 3; i++) {
+      ctx.fillStyle = `rgba(30,100,180,${0.2 - i*0.05})`;
+      ctx.fillRect(0, ry + i*10, W, 10);
+    }
+
+    // Label
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '10px Georgia,serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Annual discharge — 20 year window', 20, H - 8);
+
+    // Title strip
+    ctx.fillStyle = 'rgba(26,58,107,0.9)';
+    ctx.fillRect(0,0,W,28);
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 11px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(cfg.title, W/2, 18);
+  }
+
+  // ---- STOCK CANVAS ----
+  function drawStock(cfg) {
+    const canvas = document.getElementById('canvas-stock');
+    const W = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,W,H);
+
+    // dark bg
+    ctx.fillStyle = '#0d1f14';
+    ctx.fillRect(0,0,W,H);
+
+    const level = cfg.level; // 0–1
+
+    // Reservoir shape (trapezoid)
+    const tx = W*0.12, tw = W*0.76;
+    const top = 34, bottom = H - 50;
+    const totalH = bottom - top;
+
+    // Empty reservoir outline
+    ctx.fillStyle = '#1a2e20';
+    ctx.beginPath();
+    ctx.moveTo(tx, top);
+    ctx.lineTo(tx + tw, top);
+    ctx.lineTo(tx + tw*0.85, bottom);
+    ctx.lineTo(tx + tw*0.15, bottom);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#3a5a40';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Water fill
+    const waterH = Math.round(level * totalH);
+    const waterTop = bottom - waterH;
+
+    // taper: reservoir widens toward top
+    const taper = (y) => {
+      const frac = (bottom - y) / totalH;
+      return { lx: tx + tw*0.15 + frac*tw*0.35, rx: tx + tw*0.85 - frac*tw*0.35 };
+    };
+
+    if (waterH > 2) {
+      const wt = taper(waterTop);
+      const wb = { lx: tx + tw*0.15, rx: tx + tw*0.85 };
+      ctx.beginPath();
+      ctx.moveTo(wt.lx, waterTop);
+      ctx.lineTo(wt.rx, waterTop);
+      ctx.lineTo(wb.rx, bottom);
+      ctx.lineTo(wb.lx, bottom);
+      ctx.closePath();
+
+      let waterColor;
+      if (level > 0.7) waterColor = '#1d6fa8';
+      else if (level > 0.45) waterColor = '#2a7a5c';
+      else if (level > 0.25) waterColor = '#6b8c3a';
+      else waterColor = '#8b6914';
+      ctx.fillStyle = waterColor;
+      ctx.fill();
+
+      // water surface shimmer
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(wt.lx, waterTop);
+      ctx.lineTo(wt.rx, waterTop);
+      ctx.stroke();
+    }
+
+    // Threshold lines
+    const thresholds = [
+      { frac: 0.85, label: '85% — operational target', col: 'rgba(100,200,130,0.5)' },
+      { frac: 0.50, label: '50% — watch level', col: 'rgba(240,200,60,0.5)' },
+      { frac: 0.25, label: '25% — critical', col: 'rgba(220,80,60,0.5)' }
+    ];
+
+    thresholds.forEach(t => {
+      const y = bottom - Math.round(t.frac * totalH);
+      const pt = taper(y);
+      ctx.strokeStyle = t.col;
+      ctx.setLineDash([4,4]);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pt.lx, y);
+      ctx.lineTo(pt.rx, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = t.col;
+      ctx.font = '9px Georgia,serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(t.label, pt.lx - 3, y + 3);
+    });
+
+    // % label in water
+    if (waterH > 30) {
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.font = `bold ${Math.min(22, Math.round(waterH * 0.25))}px Georgia,serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(Math.round(level * 100) + '%', W/2, Math.min(bottom - 14, waterTop + waterH * 0.55));
+    }
+
+    // Inflow arrow (top)
+    ctx.strokeStyle = 'rgba(100,180,255,0.6)';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(W*0.5, 5); ctx.lineTo(W*0.5, top-2); ctx.stroke();
+    ctx.fillStyle = 'rgba(100,180,255,0.6)';
+    ctx.beginPath(); ctx.moveTo(W*0.5-5, top-8); ctx.lineTo(W*0.5+5, top-8); ctx.lineTo(W*0.5, top); ctx.closePath(); ctx.fill();
+    ctx.font = '9px Georgia,serif'; ctx.textAlign = 'center'; ctx.fillStyle='rgba(255,255,255,0.4)';
+    ctx.fillText('inflow', W*0.5, 10);
+
+    // Outflow arrow (bottom)
+    ctx.strokeStyle = 'rgba(100,180,255,0.4)';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(W*0.5, bottom+2); ctx.lineTo(W*0.5, H-6); ctx.stroke();
+    ctx.fillStyle = 'rgba(100,180,255,0.4)';
+    ctx.beginPath(); ctx.moveTo(W*0.5-5, H-14); ctx.lineTo(W*0.5+5, H-14); ctx.lineTo(W*0.5, H-6); ctx.closePath(); ctx.fill();
+    ctx.font = '9px Georgia,serif'; ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.textAlign='center';
+    ctx.fillText('outflow (supply)', W*0.5, H-2);
+
+    // Title strip
+    ctx.fillStyle = 'rgba(26,92,58,0.9)';
+    ctx.fillRect(0,0,W,28);
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 11px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(cfg.title, W/2, 18);
+  }
+
+  function resizeCanvases() {
+    ['canvas-flow','canvas-stock'].forEach(id => {
+      const c = document.getElementById(id);
+      const w = c.parentElement.clientWidth;
+      c.width = w;
+      c.height = Math.round(w * 0.58);
+    });
+    render();
+  }
+
+  window.addEventListener('resize', resizeCanvases);
+  resizeCanvases();
+  </script>
+</body>
+</html>
