@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Threshold Failure</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 980px; margin: 0 auto; line-height: 1.6; }
+    header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
+    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
+    .intro { font-size: 0.88rem; color: #555; line-height: 1.75; margin-bottom: 1.5rem; max-width: 720px; }
+    nav { margin-bottom: 1.5rem; padding: 0.6rem 0; border-bottom: 1px solid #ddd; font-size: 0.8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: #888; text-decoration: none; }
+    nav a:hover { color: #1a1a1a; }
+
+    .slider-row { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .slider-group { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 220px; }
+    .slider-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: #888; }
+    .slider-val { font-size: 1.4rem; font-weight: bold; color: #7b3f00; }
+    input[type=range] { width: 100%; accent-color: #7b3f00; }
+
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem; }
+    @media (max-width: 600px) { .panels { grid-template-columns: 1fr; } }
+    .panel { border-radius: 8px; overflow: hidden; }
+    .ph { padding: 0.65rem 1rem; font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; color: white; }
+    .ph-linear { background: #1a3a6b; }
+    .ph-threshold { background: #7b1a1a; }
+    .ph-sub { font-size: 0.62rem; opacity: 0.75; font-weight: normal; text-transform: none; letter-spacing: 0; margin-top: 0.1rem; }
+    canvas { display: block; width: 100%; }
+    .pe { padding: 0.8rem 1rem; font-size: 0.8rem; line-height: 1.6; color: #444; border: 1.5px solid #ddd; border-top: none; border-radius: 0 0 8px 8px; min-height: 68px; }
+
+    .lesson { padding: 1rem 1.2rem; border-left: 4px solid #7b3f00; background: #fff8ed; font-size: 0.87rem; line-height: 1.7; color: #333; margin-bottom: 1.5rem; }
+    .lesson strong { color: #1a1a1a; }
+
+    .examples { margin-top: 1.5rem; border-top: 2px solid #1a1a1a; padding-top: 1.5rem; }
+    .examples h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 1rem; font-weight: normal; }
+    .ex-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .ex-grid { grid-template-columns: 1fr; } }
+    .ex { background: #f4f4f0; border-radius: 6px; padding: 0.85rem 1rem; font-size: 0.81rem; line-height: 1.6; }
+    .ex-title { font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: #7b1a1a; margin-bottom: 0.3rem; }
+    .ex-body { color: #333; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← All models</a>
+    <span style="color:#ddd">|</span>
+    <span style="font-weight:bold;color:#1a1a1a;">10 · Threshold Failure</span>
+  </nav>
+
+  <header>
+    <h1>Threshold Failure</h1>
+    <p class="subtitle">Two systems under the same pressure — one degrades proportionally, one holds and then collapses.</p>
+  </header>
+
+  <p class="intro">Most people manage systems as if stress produces proportional response: apply a little pressure, get a little damage; remove it, recover. Many physical systems work this way. Most living systems don't. They hold a stable state until a threshold is crossed, then shift rapidly to a new lower state — and the path back is not the reverse of the path down. Drag the pressure slider to see the difference.</p>
+
+  <div class="slider-row">
+    <div class="slider-group">
+      <div class="slider-label">Pressure on the system</div>
+      <input type="range" id="pressure" min="0" max="100" value="0">
+      <div class="slider-val"><span id="pval">0</span>%</div>
+    </div>
+    <div style="font-size:0.82rem;color:#888;max-width:280px;line-height:1.6;">Drag right to increase pressure (extraction, pollution, drought, overuse). Watch how each system responds — and how each recovers when pressure is reduced.</div>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="ph ph-linear">Linear system<div class="ph-sub">proportional response · continuous feedback · reversible</div></div>
+      <canvas id="c-linear"></canvas>
+      <div class="pe" id="e-linear">At zero pressure, a linear system is at full health. Damage is proportional to stress — you always know roughly where you stand.</div>
+    </div>
+    <div class="panel">
+      <div class="ph ph-threshold">Threshold system<div class="ph-sub">stable until it isn't · non-linear collapse · hard to reverse</div></div>
+      <canvas id="c-threshold"></canvas>
+      <div class="pe" id="e-threshold">A threshold system holds its stable state under moderate stress. From the outside it looks fine — until it doesn't.</div>
+    </div>
+  </div>
+
+  <div class="lesson" id="lesson">
+    Move the slider to apply pressure and watch how each system responds.
+  </div>
+
+  <div class="examples">
+    <h2>Where threshold failure actually shows up</h2>
+    <div class="ex-grid">
+      <div class="ex">
+        <div class="ex-title">Fisheries</div>
+        <div class="ex-body">A healthy fishery maintains population through reproduction. Moderate overfishing is absorbed. Past a threshold — typically when the breeding population drops too low — reproduction can't keep up and the population crashes. The Grand Banks cod collapse (1992) happened after decades of "sustainable" harvest. Recovery has not occurred thirty years later.</div>
+      </div>
+      <div class="ex">
+        <div class="ex-title">Topsoil structure</div>
+        <div class="ex-body">Healthy soil holds water, resists erosion, and supports plant roots through its biological structure. Tillage, compaction, and drought each degrade it incrementally. Past a threshold, the soil structure itself collapses — it can no longer hold water or host the organisms that maintain it. What took 500 years to build washes away in one hard rain.</div>
+      </div>
+      <div class="ex">
+        <div class="ex-title">Coral reef bleaching</div>
+        <div class="ex-body">Coral reefs tolerate temperature variation within a range. A few degrees above the threshold, coral expels its symbiotic algae (bleaching) and dies. A bleached reef can recover if the temperature drops quickly. Repeated bleaching events — now routine in warming oceans — prevent recovery. A living reef becomes rubble on a timescale of years.</div>
+      </div>
+      <div class="ex">
+        <div class="ex-title">Shallow lakes</div>
+        <div class="ex-body">A clear shallow lake with rooted plants can absorb significant nutrient loading. Past a phosphorus threshold, the system flips to turbid algae-dominated state. The algae block light, rooted plants die, and the new state is self-reinforcing. Reducing nutrient inputs to pre-flip levels often doesn't restore the original state — the system has a memory the pressure slider doesn't.</div>
+      </div>
+      <div class="ex">
+        <div class="ex-title">Permafrost</div>
+        <div class="ex-body">Permafrost in the Arctic has remained frozen through cycles of warming and cooling for millennia. Past a thermal threshold, it thaws and releases stored methane and CO₂ — which warms the atmosphere further, thawing more permafrost. This feedback loop is not reversible on human timescales. The tipping point, once crossed, runs on its own momentum.</div>
+      </div>
+      <div class="ex">
+        <div class="ex-title">The wrong mental model</div>
+        <div class="ex-body">Linear thinking applied to threshold systems produces late, surprised, insufficient response. "It was fine last year" is true and irrelevant. "We'll reduce pressure when we see a problem" doesn't work when the problem is invisible until the collapse. The absence of warning signals IS the warning signal — and most institutions are not designed to act on absence.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const pressureEl = document.getElementById('pressure');
+  const pvalEl = document.getElementById('pval');
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  // Threshold curve: stable above threshold, collapses below
+  // State: once collapsed (pressure > threshold), need to go well below to recover (hysteresis)
+  let collapsed = false;
+  let prevPressure = 0;
+  const THRESHOLD = 68;
+  const RECOVERY = 35;
+
+  function linearHealth(p) {
+    return clamp(1 - p / 100, 0, 1);
+  }
+
+  function thresholdHealth(p) {
+    if (p >= THRESHOLD) { collapsed = true; }
+    if (p <= RECOVERY && collapsed) { collapsed = false; }
+    if (collapsed) {
+      // In collapsed state: low health, slight improvement as pressure reduces
+      return clamp(0.08 + (RECOVERY - p) / RECOVERY * 0.15, 0, 0.22);
+    } else {
+      // In stable state: slow linear decline until near threshold
+      if (p < THRESHOLD * 0.6) return clamp(1 - (p / THRESHOLD) * 0.18, 0.82, 1);
+      // Near threshold: steeper decline
+      return clamp(1 - (p / THRESHOLD) * 0.25, 0.5, 1);
+    }
+  }
+
+  function drawPanel(id, health, isThreshold, pressure) {
+    const canvas = document.getElementById(id);
+    const W = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    const bg = isThreshold ? '#1f0d0d' : '#0d1221';
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    const PAD = { top: 32, right: 28, bottom: 36, left: 50 };
+    const cw = W - PAD.left - PAD.right;
+    const ch = H - PAD.top - PAD.bottom;
+
+    // Draw historical curve (last 80 pressure values simulated from 0 to current)
+    const pts = [];
+    const steps = 60;
+    let col = false; // track collapse state for sim
+    for (let i = 0; i <= steps; i++) {
+      const p = (pressure / steps) * i;
+      let h;
+      if (isThreshold) {
+        if (p >= THRESHOLD) col = true;
+        if (col) {
+          h = clamp(0.08 + (RECOVERY - p) / RECOVERY * 0.15, 0, 0.22);
+        } else {
+          if (p < THRESHOLD * 0.6) h = clamp(1 - (p / THRESHOLD) * 0.18, 0.82, 1);
+          else h = clamp(1 - (p / THRESHOLD) * 0.25, 0.5, 1);
+        }
+      } else {
+        h = clamp(1 - p / 100, 0, 1);
+      }
+      pts.push({ x: PAD.left + (i / steps) * cw, y: PAD.top + ch - h * ch });
+    }
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = PAD.top + (i / 4) * ch;
+      ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(W - PAD.right, y); ctx.stroke();
+      const label = i === 0 ? '100%' : i === 4 ? '0%' : '';
+      if (label) {
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.font = '9px Georgia,serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(label, PAD.left - 4, y + 3);
+      }
+    }
+
+    // Y axis label
+    ctx.save();
+    ctx.translate(12, PAD.top + ch / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '9px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('system health', 0, 0);
+    ctx.restore();
+
+    // Threshold line for threshold panel
+    if (isThreshold && pressure > 0) {
+      const tx = PAD.left + (THRESHOLD / 100) * cw;
+      if (tx <= PAD.left + cw) {
+        ctx.strokeStyle = 'rgba(220,80,60,0.45)';
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(tx, PAD.top); ctx.lineTo(tx, PAD.top + ch); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(220,80,60,0.6)';
+        ctx.font = '9px Georgia,serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('threshold', tx, PAD.top - 4);
+      }
+    }
+
+    // Shaded area under curve
+    if (pts.length > 1) {
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, PAD.top + ch);
+      for (const p of pts) ctx.lineTo(p.x, p.y);
+      ctx.lineTo(pts[pts.length - 1].x, PAD.top + ch);
+      ctx.closePath();
+      const grad = ctx.createLinearGradient(0, PAD.top, 0, PAD.top + ch);
+      if (isThreshold) {
+        grad.addColorStop(0, 'rgba(180,40,40,0.25)');
+        grad.addColorStop(1, 'rgba(180,40,40,0.05)');
+      } else {
+        grad.addColorStop(0, 'rgba(40,100,200,0.25)');
+        grad.addColorStop(1, 'rgba(40,100,200,0.05)');
+      }
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Curve line
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (const p of pts) ctx.lineTo(p.x, p.y);
+      ctx.strokeStyle = isThreshold ? '#ef4444' : '#60a5fa';
+      ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      // Endpoint dot
+      const last = pts[pts.length - 1];
+      ctx.fillStyle = isThreshold ? '#ef4444' : '#60a5fa';
+      ctx.beginPath(); ctx.arc(last.x, last.y, 5, 0, Math.PI * 2); ctx.fill();
+
+      // Health label at endpoint
+      const healthPct = Math.round(health * 100);
+      ctx.fillStyle = health > 0.5 ? '#4ade80' : health > 0.25 ? '#fbbf24' : '#ef4444';
+      ctx.font = 'bold 12px Georgia,serif';
+      ctx.textAlign = 'left';
+      const labelX = Math.min(last.x + 8, W - PAD.right - 40);
+      ctx.fillText(healthPct + '%', labelX, last.y + 4);
+    }
+
+    // X axis
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '9px Georgia,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('pressure →', PAD.left + cw / 2, H - 4);
+    ctx.textAlign = 'left';
+    ctx.fillText('none', PAD.left, H - 4);
+    ctx.textAlign = 'right';
+    ctx.fillText('maximum', W - PAD.right, H - 4);
+
+    // Collapse label
+    if (isThreshold && collapsed) {
+      ctx.fillStyle = 'rgba(239,68,68,0.85)';
+      ctx.font = 'bold 11px Georgia,serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('COLLAPSED — new stable state', PAD.left + cw / 2, PAD.top + 18);
+    }
+  }
+
+  function update() {
+    const p = parseInt(pressureEl.value);
+    pvalEl.textContent = p;
+    prevPressure = p;
+
+    const lh = linearHealth(p);
+    const th = thresholdHealth(p);
+
+    drawPanel('c-linear', lh, false, p);
+    drawPanel('c-threshold', th, true, p);
+
+    // Explanatory text
+    const lPct = Math.round(lh * 100);
+    const tPct = Math.round(th * 100);
+
+    let eLinear, eThreshold, lesson;
+
+    if (p === 0) {
+      eLinear = "At zero pressure, a linear system is at full health. Damage is proportional to stress — you always know roughly where you stand.";
+      eThreshold = "At zero pressure, a threshold system is also at full health. From the outside, the two systems look identical. The difference only becomes visible under stress.";
+      lesson = "Move the slider to apply pressure and watch how each system responds.";
+    } else if (p < 35) {
+      eLinear = `At ${p}% pressure, the linear system is at ${lPct}% health. Proportional, predictable — damage tracks stress in real time. Remove the pressure and it recovers at the same rate.`;
+      eThreshold = `At ${p}% pressure, the threshold system is at ${tPct}% health — barely changed. It's absorbing the stress without visible degradation. This looks like resilience. It might be. Or it might be silence before a threshold.`;
+      lesson = "<strong>Early stage:</strong> The two systems look almost the same. Linear gives continuous feedback. Threshold gives almost none. Managing both the same way will work fine — until it doesn't.";
+    } else if (p < THRESHOLD) {
+      eLinear = `At ${p}% pressure, the linear system is at ${lPct}% health. Clearly degraded, clearly measurable, clearly responding to the pressure applied.`;
+      eThreshold = `At ${p}% pressure, the threshold system is at ${tPct}% health — still relatively stable. The internal structure is stressed but holding. There are no strong external signals of crisis.`;
+      lesson = "<strong>Mid stage:</strong> The linear system is visibly suffering — easy to monitor, easy to manage. The threshold system looks okay. Standard monitoring will flag the linear system as the problem. The threshold system will appear fine.";
+    } else if (p >= THRESHOLD && tPct < 25) {
+      eLinear = `At ${p}% pressure, the linear system is at ${lPct}% health. Very degraded but proportionally so — the system is still responding to the pressure in a predictable way.`;
+      eThreshold = `<strong>The threshold has been crossed.</strong> The system is now at ${tPct}% health — a sudden drop from apparent stability. The stable state that held for decades collapsed over a short period. This is the regime shift.`;
+      lesson = "<strong>Threshold crossed:</strong> The linear system is in bad shape but predictably so. The threshold system just collapsed from apparent stability. If you were monitoring both the same way, you had almost no warning for the one that needed it most.";
+    } else {
+      eLinear = `At maximum pressure, the linear system is at ${lPct}% health — fully degraded but in a way that tracked the pressure proportionally the whole way down.`;
+      eThreshold = `At maximum pressure, the threshold system is at ${tPct}% — collapsed into a new stable state. Reducing pressure now will not restore the original state. The system has memory that the pressure slider doesn't.`;
+      lesson = "<strong>Critical difference — recovery:</strong> Reduce the pressure on a linear system and it recovers. Reduce the pressure on a collapsed threshold system and it stays collapsed — the new state is self-reinforcing. This is why the wrong mental model produces irreversible harm.";
+    }
+
+    document.getElementById('e-linear').textContent = eLinear;
+    document.getElementById('e-threshold').innerHTML = eThreshold;
+    document.getElementById('lesson').innerHTML = lesson;
+  }
+
+  function resize() {
+    ['c-linear', 'c-threshold'].forEach(id => {
+      const c = document.getElementById(id);
+      c.width = c.parentElement.clientWidth;
+      c.height = Math.round(c.width * 0.5);
+    });
+    update();
+  }
+
+  pressureEl.addEventListener('input', update);
+  window.addEventListener('resize', resize);
+  resize();
+  </script>
+</body>
+</html>
