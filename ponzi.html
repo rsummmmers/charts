@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Ponzi Comparison</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
+    header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
+    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
+    .intro { font-size: 0.88rem; color: #555; line-height: 1.75; margin-bottom: 1.5rem; max-width: 700px; }
+    nav { margin-bottom: 1.5rem; padding: 0.6rem 0; border-bottom: 1px solid #ddd; font-size: 0.8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: #888; text-decoration: none; }
+    nav a:hover { color: #1a1a1a; }
+
+    .step-controls { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .step-btn { padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-radius: 4px; }
+    .step-btn:hover { background: #1a1a1a; color: white; }
+    .step-btn:disabled { opacity: 0.35; cursor: default; }
+    .step-indicator { font-size: 0.8rem; color: #888; }
+
+    .viz { border-radius: 8px; border: 1.5px solid #ddd; background: #f8f8f4; margin-bottom: 1rem; overflow: hidden; }
+    canvas { display: block; width: 100%; }
+
+    .lesson { padding: 1rem 1.2rem; border-left: 4px solid #7b3f00; background: #fff8ed; font-size: 0.87rem; line-height: 1.7; color: #333; margin-bottom: 1.5rem; }
+    .lesson strong { color: #1a1a1a; }
+
+    .compare { margin-top: 1.5rem; border-top: 2px solid #1a1a1a; padding-top: 1.5rem; }
+    .compare h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 1rem; font-weight: normal; }
+    .cg { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    @media (max-width: 620px) { .cg { grid-template-columns: 1fr; } }
+    .cb { border-radius: 6px; padding: 0.9rem 1rem; font-size: 0.8rem; line-height: 1.65; }
+    .cb-title { font-weight: bold; font-size: 0.73rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+    .r { background: #fff5f5; border: 1px solid #fca5a5; } .r .cb-title { color: #b91c1c; }
+    .y { background: #fff8ed; border: 1px solid #fcd34d; } .y .cb-title { color: #92600a; }
+    .g { background: #f0f9f4; border: 1px solid #86efac; } .g .cb-title { color: #1a6b3c; }
+
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+    @media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } }
+    .n { background: #f4f4f0; border: 1px solid #ddd; } .n .cb-title { color: #444; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← All models</a>
+    <span style="color:#ddd">|</span>
+    <span style="font-weight:bold;color:#1a1a1a;">13 · The Ponzi Comparison</span>
+  </nav>
+
+  <header>
+    <h1>The Ponzi Comparison</h1>
+    <p class="subtitle">How a Ponzi scheme works, why the interest-bearing banking system has similar structural properties, and where the comparison breaks down — and where it doesn't.</p>
+  </header>
+
+  <p class="intro">A Ponzi scheme pays early investors with money from new investors, not from actual returns. The banking system requires continuous new debt to service existing debt — a structural parallel that is real, important, and often overstated. Step through the mechanics of each, then examine the similarities and differences carefully.</p>
+
+  <div class="step-controls">
+    <button class="step-btn" id="btn-prev" onclick="changeStep(-1)">← Back</button>
+    <button class="step-btn" id="btn-next" onclick="changeStep(1)">Next →</button>
+    <span class="step-indicator" id="step-label">Step 1 of 7</span>
+  </div>
+
+  <div class="viz"><canvas id="canvas"></canvas></div>
+  <div class="lesson" id="lesson"></div>
+
+  <div class="compare">
+    <h2>The comparison, carefully</h2>
+    <div class="cg">
+      <div class="cb r">
+        <div class="cb-title">What Ponzi schemes and the banking system share</div>
+        Both require continuous growth to remain functional. In a Ponzi: new investors must keep arriving to pay existing ones. In the interest-bearing banking system: new lending must keep occurring to create the money needed to pay interest on existing loans. Both systems experience stress when growth slows. In both, the underlying obligation exceeds the underlying assets at any given moment.
+      </div>
+      <div class="cb y">
+        <div class="cb-title">Where they differ: intent and production</div>
+        A Ponzi scheme is deliberate fraud — the operator knows there are no real returns and conceals this. The banking system's growth requirement is a structural consequence of interest-bearing money creation, not a conspiracy. More importantly: economic growth (ideally) produces real goods and services. New loans fund factories, farms, and houses — real things that exist. A Ponzi scheme produces nothing. The money from new investors is just paid to old investors.
+      </div>
+      <div class="cb g">
+        <div class="cb-title">Where the distinction starts to blur</div>
+        At ecological limits, the comparison becomes less comfortable. When the "real production" that justifies new debt increasingly comes from extracting ecological capital — depleting aquifers, mining topsoil, burning fossil carbon, collapsing fisheries — the production is real in the short term but is being paid for by destroying the substrate that makes future production possible. At that point the system is paying current obligations by drawing down a stock that won't recharge. That is structurally closer to Ponzi than the standard defense admits.
+      </div>
+    </div>
+    <div class="row2">
+      <div class="cb n">
+        <div class="cb-title">Social Security is not a Ponzi scheme</div>
+        Critics call Social Security a Ponzi scheme because current benefits are paid from current contributions, not from a invested fund. But Social Security is not fraudulent — it is a transparent intergenerational social contract. It can be adjusted (contribution rates, benefit levels, eligibility age) without collapsing. A Ponzi scheme cannot be adjusted — it can only continue recruiting or fail. The Ponzi label is politically motivated, not analytically accurate.
+      </div>
+      <div class="cb n">
+        <div class="cb-title">What makes a Ponzi collapse</div>
+        Recruitment slows. When new money coming in can no longer cover promised returns to existing investors, the gap becomes visible. The operator either flees, the scheme unravels, or — in the case of Bernie Madoff — it persists for decades because redemptions stay low and auditors don't look closely. The banking system equivalent: if new lending stopped entirely, existing debt could not be serviced from existing money. Growth is not optional — it is built into the structure.
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const STEPS = [
+    {
+      label: "Step 1 of 7 — How a Ponzi starts",
+      scene: 'ponzi_start',
+      lesson: "An operator promises high returns. Early investors put money in. The operator has no actual investment producing those returns — but early investors don't know this. In the early phase, the scheme works perfectly: the operator has money, can pay early investors, and word spreads."
+    },
+    {
+      label: "Step 2 of 7 — The Ponzi engine",
+      scene: 'ponzi_engine',
+      lesson: "<strong>The engine:</strong> Money from new investors pays returns to existing investors. No real production occurs. The scheme grows because paid investors become testimonials that attract more investors. The gap between what's owed and what actually exists grows with every cycle — but it's invisible as long as recruitment continues."
+    },
+    {
+      label: "Step 3 of 7 — The Ponzi collapses",
+      scene: 'ponzi_collapse',
+      lesson: "<strong>When recruitment slows, the scheme fails.</strong> The operator can no longer cover promised returns. Investors who try to withdraw find their money isn't there. The whole system was an obligation stack with no underlying assets — only the flow of new money made it look real."
+    },
+    {
+      label: "Step 4 of 7 — The banking system: same structure?",
+      scene: 'banking_engine',
+      lesson: "<strong>Now look at the interest-bearing banking system.</strong> A bank lends $1,000. Only the principal is created — not the interest. The interest must come from somewhere else: other people's income, or new lending that creates more money. New lending is required to service existing debt. The system requires continuous growth in the money supply — which means continuous new lending."
+    },
+    {
+      label: "Step 5 of 7 — The key difference: real production",
+      scene: 'banking_production',
+      lesson: "<strong>The critical difference:</strong> Bank loans fund real production. A loan for a factory produces goods. A mortgage produces housing. A farm loan produces food. The new money created by new lending isn't just paying old investors — it's funding real economic activity that creates genuine value. This is why the banking system isn't simply a Ponzi scheme: the underlying production is real, not fictional."
+    },
+    {
+      label: "Step 6 of 7 — Where the comparison holds: ecological limits",
+      scene: 'ecological',
+      lesson: "<strong>But at ecological limits, the comparison becomes uncomfortable.</strong> When growth requires depleting topsoil, draining aquifers, burning stored carbon, and collapsing fisheries, the 'real production' is being financed by drawing down stocks that took thousands of years to accumulate. The production is real today. But the stock it runs on is finite. At that point the system is paying current obligations by consuming assets that won't be replaced — which is structurally closer to Ponzi than the standard defense allows."
+    },
+    {
+      label: "Step 7 of 7 — The structural comparison",
+      scene: 'comparison',
+      lesson: "<strong>The Ponzi comparison is a useful lens, not a complete description.</strong> Useful: both systems require continuous growth; both experience collapse when that growth stops; both create invisible gaps between obligations and assets. Not complete: the banking system is not fraudulent by design, and its growth (when not ecologically destructive) creates real value. The question permanomics asks is: when the growth required to service existing debt can only be generated by consuming ecological capital, what is the honest name for that?"
+    }
+  ];
+
+  let step = 0;
+  function changeStep(dir) {
+    step = Math.max(0, Math.min(STEPS.length - 1, step + dir));
+    render();
+  }
+
+  function render() {
+    const s = STEPS[step];
+    document.getElementById('step-label').textContent = s.label;
+    document.getElementById('lesson').innerHTML = s.lesson;
+    document.getElementById('btn-prev').disabled = step === 0;
+    document.getElementById('btn-next').disabled = step === STEPS.length - 1;
+    draw(s.scene);
+  }
+
+  function draw(scene) {
+    const canvas = document.getElementById('canvas');
+    const W = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#f8f8f4';
+    ctx.fillRect(0, 0, W, H);
+
+    if (scene === 'ponzi_start') drawPonziStart(ctx, W, H);
+    else if (scene === 'ponzi_engine') drawPonziEngine(ctx, W, H);
+    else if (scene === 'ponzi_collapse') drawPonziCollapse(ctx, W, H);
+    else if (scene === 'banking_engine') drawBankingEngine(ctx, W, H);
+    else if (scene === 'banking_production') drawBankingProduction(ctx, W, H);
+    else if (scene === 'ecological') drawEcological(ctx, W, H);
+    else if (scene === 'comparison') drawComparison(ctx, W, H);
+  }
+
+  function label(ctx, text, x, y, opts = {}) {
+    ctx.font = opts.bold ? `bold ${opts.size||10}px Georgia,serif` : `${opts.size||10}px Georgia,serif`;
+    ctx.fillStyle = opts.color || '#1a1a1a';
+    ctx.textAlign = opts.align || 'center';
+    ctx.fillText(text, x, y);
+  }
+
+  function box(ctx, x, y, w, h, fill, stroke, r=4) {
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill(); ctx.stroke();
+  }
+
+  function arrow(ctx, x1, y1, x2, y2, color='#666', dashed=false) {
+    ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+    if (dashed) ctx.setLineDash([4,3]); else ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.setLineDash([]);
+    // arrowhead
+    const a = Math.atan2(y2-y1, x2-x1);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 8*Math.cos(a-0.4), y2 - 8*Math.sin(a-0.4));
+    ctx.lineTo(x2 - 8*Math.cos(a+0.4), y2 - 8*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function person(ctx, x, y, color='#555', size=14) {
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y-size, size*0.4, 0, Math.PI*2); ctx.fill();
+    ctx.fillRect(x-size*0.4, y-size*0.65, size*0.8, size*0.9);
+  }
+
+  function drawPonziStart(ctx, W, H) {
+    const cx = W*0.5, cy = H*0.5;
+    // Operator
+    box(ctx, cx-50, cy-60, 100, 40, '#fef3c7', '#92600a');
+    label(ctx,'OPERATOR',cx,cy-35,{bold:true,color:'#92600a'});
+    // Promise
+    label(ctx,'"guaranteed 15% returns"',cx,cy+10,{color:'#b91c1c',size:11});
+    // Early investors
+    for (let i=0; i<3; i++) {
+      const ix = cx - 80 + i*80, iy = cy+55;
+      person(ctx, ix, iy, '#1a3a6b');
+      label(ctx,'$'+((i+1)*5)+'k in',ix,iy+22,{size:9,color:'#1a3a6b'});
+    }
+    arrow(ctx, cx-70, cy+40, cx-40, cy-25, '#1a3a6b');
+    arrow(ctx, cx, cy+35, cx, cy-25, '#1a3a6b');
+    arrow(ctx, cx+70, cy+40, cx+40, cy-25, '#1a3a6b');
+    label(ctx,'Early phase: scheme is fully funded from new investors',cx,H-12,{color:'#666',size:9});
+  }
+
+  function drawPonziEngine(ctx, W, H) {
+    const cx = W*0.5, cy = H*0.42;
+    box(ctx, cx-55, cy-28, 110, 44, '#fef3c7', '#92600a');
+    label(ctx,'OPERATOR',cx,cy-10,{bold:true,color:'#92600a'});
+    label(ctx,'(no real assets)',cx,cy+8,{size:9,color:'#b91c1c'});
+
+    // New investors in
+    const ni = [[cx-160,cy-10],[cx-130,cy+30]];
+    ni.forEach(([x,y],i) => {
+      person(ctx,x,y,'#3a5c8a',12);
+      label(ctx,'new $',x,y+18,{size:8,color:'#3a5c8a'});
+    });
+    arrow(ctx,cx-120,cy,cx-55,cy,'#3a5c8a');
+
+    // Old investors out
+    const oi = [[cx+140,cy-20],[cx+160,cy+20]];
+    oi.forEach(([x,y],i) => {
+      person(ctx,x,y,'#1a6b3c',12);
+      label(ctx,'+ returns',x,y+18,{size:8,color:'#1a6b3c'});
+    });
+    arrow(ctx,cx+55,cy,cx+120,cy,'#1a6b3c');
+
+    // Gap
+    label(ctx,'OBLIGATION GAP',cx,cy+60,{bold:true,color:'#b91c1c',size:9});
+    label(ctx,'(what is owed) > (what exists)',cx,cy+74,{color:'#b91c1c',size:9});
+    // Gap bar
+    ctx.fillStyle='rgba(180,40,40,0.15)';
+    ctx.fillRect(cx-100,cy+82,200,12);
+    ctx.fillStyle='rgba(180,40,40,0.5)';
+    ctx.fillRect(cx-100,cy+82,130,12);
+    label(ctx,'owed',cx-35,cy+92,{size:8,color:'#b91c1c'});
+    label(ctx,'exists',cx+60,cy+92,{size:8,color:'#555'});
+
+    label(ctx,'New investor money flows straight through to old investors — no production',cx,H-12,{color:'#666',size:9});
+  }
+
+  function drawPonziCollapse(ctx, W, H) {
+    const cx = W*0.5, cy = H*0.38;
+    box(ctx, cx-55, cy-28, 110, 44, '#fee2e2', '#b91c1c');
+    label(ctx,'OPERATOR',cx,cy-10,{bold:true,color:'#b91c1c'});
+    label(ctx,'COLLAPSED',cx,cy+8,{bold:true,size:9,color:'#b91c1c'});
+
+    // No new investors
+    label(ctx,'recruitment slows',cx-130,cy,{color:'#888',size:9});
+    ctx.strokeStyle='rgba(180,40,40,0.4)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx-90,cy-15); ctx.lineTo(cx-60,cy+15); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-60,cy-15); ctx.lineTo(cx-90,cy+15); ctx.stroke();
+
+    // Investors trying to withdraw
+    const oi = [[cx+120,cy-20],[cx+150,cy+10],[cx+110,cy+40]];
+    oi.forEach(([x,y],i) => {
+      person(ctx,x,y,'#b91c1c',12);
+      label(ctx,'?',x,y+18,{size:10,color:'#b91c1c',bold:true});
+    });
+    label(ctx,'investors',cx+130,cy+55,{size:8,color:'#b91c1c'});
+    label(ctx,'can\'t withdraw',cx+130,cy+66,{size:8,color:'#b91c1c'});
+
+    // Gap now visible
+    label(ctx,'GAP NOW VISIBLE',cx,cy+90,{bold:true,color:'#b91c1c'});
+    const bx=cx-110, bw=220, by=cy+100;
+    ctx.fillStyle='rgba(180,40,40,0.2)'; ctx.fillRect(bx,by,bw,16);
+    ctx.fillStyle='rgba(30,90,60,0.5)'; ctx.fillRect(bx,by,bw*0.35,16);
+    label(ctx,'exists (35%)',bx+bw*0.17,by+12,{size:8,color:'#1a6b3c'});
+    label(ctx,'owed (100%)',bx+bw*0.7,by+12,{size:8,color:'#b91c1c'});
+
+    label(ctx,'The gap that was always there becomes visible when the flow of new money stops',cx,H-12,{color:'#666',size:9});
+  }
+
+  function drawBankingEngine(ctx, W, H) {
+    const bx=W*0.18, mx=W*0.5, ex=W*0.82;
+    const y=H*0.38;
+
+    box(ctx,bx-50,y-24,100,44,'#e8f4ee','#2a5c34');
+    label(ctx,'BANK',bx,y-6,{bold:true,color:'#2a5c34'});
+    label(ctx,'lends $1,000',bx,y+10,{size:9,color:'#2a5c34'});
+
+    box(ctx,mx-55,y-24,110,44,'#eef2fa','#1a3a6b');
+    label(ctx,'BORROWER',mx,y-6,{bold:true,color:'#1a3a6b'});
+    label(ctx,'must repay $1,080',mx,y+10,{size:9,color:'#b91c1c'});
+
+    arrow(ctx,bx+50,y,'$1,000 created',0);
+    ctx.font='9px Georgia,serif'; ctx.fillStyle='#2a5c34'; ctx.textAlign='center';
+    ctx.fillText('$1,000 created',mx-80,y-30);
+    arrow(ctx,bx+50,y-2,mx-55,y-2,'#2a5c34');
+
+    arrow(ctx,mx-55,y+10,bx+50,y+10,'#b91c1c');
+    ctx.font='9px Georgia,serif'; ctx.fillStyle='#b91c1c'; ctx.textAlign='center';
+    ctx.fillText('$1,080 owed',mx-80,y+28);
+
+    // The $80 gap
+    const gy=H*0.72;
+    box(ctx,mx-80,gy-22,160,40,'#fff5f5','#b91c1c');
+    label(ctx,'$80 INTEREST GAP',mx,gy-5,{bold:true,color:'#b91c1c',size:10});
+    label(ctx,'never created — must come from new lending',mx,gy+12,{size:8,color:'#b91c1c'});
+
+    arrow(ctx,mx,y+22,mx,gy-22,'#b91c1c',true);
+
+    label(ctx,'Interest was never created — requires new money from somewhere else',mx,H-12,{color:'#666',size:9});
+  }
+
+  function drawBankingProduction(ctx, W, H) {
+    const lx=W*0.2, cx=W*0.5, rx=W*0.8;
+    const y=H*0.35;
+
+    // Ponzi (left)
+    box(ctx,lx-55,y-28,110,50,'#fff5f5','#b91c1c');
+    label(ctx,'PONZI',lx,y-10,{bold:true,color:'#b91c1c'});
+    label(ctx,'no production',lx,y+8,{size:9,color:'#b91c1c'});
+    // circular arrow
+    ctx.strokeStyle='#b91c1c'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(lx,y+45,20,Math.PI*0.2,Math.PI*1.8); ctx.stroke();
+    label(ctx,'new → old',lx,y+52,{size:8,color:'#b91c1c'});
+
+    // Banking (right)
+    box(ctx,rx-55,y-28,110,50,'#e8f4ee','#2a5c34');
+    label(ctx,'BANKING',rx,y-10,{bold:true,color:'#2a5c34'});
+    label(ctx,'funds production',rx,y+8,{size:9,color:'#2a5c34'});
+    // production output
+    const prods = ['factory','farm','housing'];
+    prods.forEach((p,i) => {
+      const px=rx-40+i*40, py=y+65;
+      ctx.fillStyle='#d4f0e0'; ctx.strokeStyle='#2a5c34'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.roundRect(px-18,py-10,36,20,3); ctx.fill(); ctx.stroke();
+      label(ctx,p,px,py+4,{size:8,color:'#1a6b3c'});
+    });
+    arrow(ctx,rx,y+22,rx,y+52,'#2a5c34');
+
+    // Key difference
+    box(ctx,cx-90,H*0.82-16,180,30,'#fefce8','#92600a',4);
+    label(ctx,'KEY DIFFERENCE: banking creates real things',cx,H*0.82,{bold:true,color:'#92600a',size:9});
+
+    label(ctx,'A Ponzi pays old investors with new investor money. A bank loan funds a farm, a house, a business.',cx,H-12,{color:'#666',size:9});
+  }
+
+  function drawEcological(ctx, W, H) {
+    const cx=W*0.5;
+
+    // Two columns
+    const lx=W*0.27, rx=W*0.73;
+    const ty=H*0.12;
+
+    label(ctx,'HEALTHY GROWTH',lx,ty,{bold:true,color:'#2a5c34',size:10});
+    label(ctx,'new debt → real production',lx,ty+16,{size:9,color:'#2a5c34'});
+    label(ctx,'backed by renewable flows',lx,ty+30,{size:9,color:'#2a5c34'});
+    label(ctx,'(solar, labor, managed land)',lx,ty+44,{size:9,color:'#555'});
+
+    // Healthy loop
+    ctx.strokeStyle='#2a5c34'; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.arc(lx, ty+95, 38, 0, Math.PI*2);
+    ctx.stroke();
+    label(ctx,'production',lx,ty+88,{size:8,color:'#2a5c34',bold:true});
+    label(ctx,'→ repayment',lx,ty+102,{size:8,color:'#2a5c34'});
+
+    label(ctx,'ECOLOGICAL LIMIT GROWTH',rx,ty,{bold:true,color:'#b91c1c',size:10});
+    label(ctx,'new debt → production',rx,ty+16,{size:9,color:'#b91c1c'});
+    label(ctx,'backed by drawing down stocks',rx,ty+30,{size:9,color:'#b91c1c'});
+    label(ctx,'(topsoil, aquifers, fisheries, carbon)',rx,ty+44,{size:9,color:'#555'});
+
+    // Declining stock bar
+    const stocks = ['topsoil','groundwater','fisheries','stable climate'];
+    stocks.forEach((s,i) => {
+      const sy = ty+65+i*22;
+      const fill = 0.9 - i*0.12;
+      ctx.fillStyle='#fee2e2'; ctx.fillRect(rx-70,sy,140,14);
+      ctx.fillStyle='rgba(180,40,40,0.5)'; ctx.fillRect(rx-70,sy,140*fill,14);
+      label(ctx,s,rx-66,sy+10,{size:8,color:'#7f1d1d',align:'left'});
+      label(ctx,'↓ depleting',rx+30,sy+10,{size:8,color:'#b91c1c',align:'left'});
+    });
+
+    // Arrow pointing to Ponzi similarity
+    label(ctx,'→ structurally closer to Ponzi',rx,ty+160,{bold:true,color:'#b91c1c',size:9});
+    label(ctx,'(paying present obligations by consuming',rx,ty+174,{size:9,color:'#b91c1c'});
+    label(ctx,'non-renewable stocks)',rx,ty+188,{size:9,color:'#b91c1c'});
+
+    label(ctx,'When growth requires depleting ecological stocks, the real/fictional distinction narrows',cx,H-12,{color:'#666',size:9});
+  }
+
+  function drawComparison(ctx, W, H) {
+    const headers=['',  'Ponzi scheme','Banking system','Banking at ecological limits'];
+    const rows=[
+      ['intent','deliberate fraud','structural consequence','structural consequence'],
+      ['production','none','real goods & services','real goods, depleting stocks'],
+      ['growth required?','yes — always','yes — structurally','yes — increasingly destructive'],
+      ['gap (owed vs exists)','always, hidden','always, managed','always, growing'],
+      ['collapses when...','recruitment stops','growth stops','stocks collapse'],
+      ['reversible?','no','partially','often no (threshold)'],
+    ];
+    const col=[W*0.12, W*0.34, W*0.58, W*0.82];
+    const rowH=H*0.115;
+    const startY=H*0.08;
+
+    // Headers
+    headers.forEach((h,i) => {
+      const colors=['#444','#b91c1c','#2a5c34','#92600a'];
+      label(ctx,h,col[i],startY,{bold:true,color:colors[i],size:9});
+    });
+
+    rows.forEach((row,ri) => {
+      const y=startY+rowH*(ri+1);
+      if(ri%2===0) { ctx.fillStyle='rgba(0,0,0,0.03)'; ctx.fillRect(0,y-rowH*0.7,W,rowH); }
+      row.forEach((cell,ci) => {
+        const color = ci===0?'#666':ci===1?'#b91c1c':ci===2?'#2a5c34':'#92600a';
+        label(ctx,cell,col[ci],y,{size:ci===0?8:9,color,bold:ci===0});
+      });
+    });
+  }
+
+  function resize() {
+    const c=document.getElementById('canvas');
+    c.width=c.parentElement.clientWidth;
+    c.height=Math.round(c.width*0.46);
+    render();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  </script>
+</body>
+</html>
