@@ -165,7 +165,7 @@
   }
 
   function label(ctx, text, x, y, opts = {}) {
-    ctx.font = opts.bold ? `bold ${opts.size||10}px Georgia,serif` : `${opts.size||10}px Georgia,serif`;
+    ctx.font = opts.bold ? `bold ${opts.size||13}px Georgia,serif` : `${opts.size||13}px Georgia,serif`;
     ctx.fillStyle = opts.color || '#1a1a1a';
     ctx.textAlign = opts.align || 'center';
     ctx.fillText(text, x, y);
@@ -205,30 +205,30 @@
     box(ctx, cx-50, cy-60, 100, 40, '#fef3c7', '#92600a');
     label(ctx,'OPERATOR',cx,cy-35,{bold:true,color:'#92600a'});
     // Promise
-    label(ctx,'"guaranteed 15% returns"',cx,cy+10,{color:'#b91c1c',size:11});
+    label(ctx,'"guaranteed 15% returns"',cx,cy+10,{color:'#b91c1c',size:14});
     // Early investors
     for (let i=0; i<3; i++) {
       const ix = cx - 80 + i*80, iy = cy+55;
       person(ctx, ix, iy, '#1a3a6b');
-      label(ctx,'$'+((i+1)*5)+'k in',ix,iy+22,{size:9,color:'#1a3a6b'});
+      label(ctx,'$'+((i+1)*5)+'k in',ix,iy+22,{size:12,color:'#1a3a6b'});
     }
     arrow(ctx, cx-70, cy+40, cx-40, cy-25, '#1a3a6b');
     arrow(ctx, cx, cy+35, cx, cy-25, '#1a3a6b');
     arrow(ctx, cx+70, cy+40, cx+40, cy-25, '#1a3a6b');
-    label(ctx,'Early phase: scheme is fully funded from new investors',cx,H-12,{color:'#666',size:9});
+    label(ctx,'Early phase: scheme is fully funded from new investors',cx,H-12,{color:'#666',size:12});
   }
 
   function drawPonziEngine(ctx, W, H) {
     const cx = W*0.5, cy = H*0.42;
     box(ctx, cx-55, cy-28, 110, 44, '#fef3c7', '#92600a');
     label(ctx,'OPERATOR',cx,cy-10,{bold:true,color:'#92600a'});
-    label(ctx,'(no real assets)',cx,cy+8,{size:9,color:'#b91c1c'});
+    label(ctx,'(no real assets)',cx,cy+8,{size:12,color:'#b91c1c'});
 
     // New investors in
     const ni = [[cx-160,cy-10],[cx-130,cy+30]];
     ni.forEach(([x,y],i) => {
       person(ctx,x,y,'#3a5c8a',12);
-      label(ctx,'new $',x,y+18,{size:8,color:'#3a5c8a'});
+      label(ctx,'new $',x,y+18,{size:11,color:'#3a5c8a'});
     });
     arrow(ctx,cx-120,cy,cx-55,cy,'#3a5c8a');
 
@@ -236,32 +236,32 @@
     const oi = [[cx+140,cy-20],[cx+160,cy+20]];
     oi.forEach(([x,y],i) => {
       person(ctx,x,y,'#1a6b3c',12);
-      label(ctx,'+ returns',x,y+18,{size:8,color:'#1a6b3c'});
+      label(ctx,'+ returns',x,y+18,{size:11,color:'#1a6b3c'});
     });
     arrow(ctx,cx+55,cy,cx+120,cy,'#1a6b3c');
 
     // Gap
-    label(ctx,'OBLIGATION GAP',cx,cy+60,{bold:true,color:'#b91c1c',size:9});
-    label(ctx,'(what is owed) > (what exists)',cx,cy+74,{color:'#b91c1c',size:9});
+    label(ctx,'OBLIGATION GAP',cx,cy+60,{bold:true,color:'#b91c1c',size:12});
+    label(ctx,'(what is owed) > (what exists)',cx,cy+74,{color:'#b91c1c',size:12});
     // Gap bar
     ctx.fillStyle='rgba(180,40,40,0.15)';
     ctx.fillRect(cx-100,cy+82,200,12);
     ctx.fillStyle='rgba(180,40,40,0.5)';
     ctx.fillRect(cx-100,cy+82,130,12);
-    label(ctx,'owed',cx-35,cy+92,{size:8,color:'#b91c1c'});
-    label(ctx,'exists',cx+60,cy+92,{size:8,color:'#555'});
+    label(ctx,'owed',cx-35,cy+92,{size:11,color:'#b91c1c'});
+    label(ctx,'exists',cx+60,cy+92,{size:11,color:'#555'});
 
-    label(ctx,'New investor money flows straight through to old investors — no production',cx,H-12,{color:'#666',size:9});
+    label(ctx,'New investor money flows straight through to old investors — no production',cx,H-12,{color:'#666',size:12});
   }
 
   function drawPonziCollapse(ctx, W, H) {
     const cx = W*0.5, cy = H*0.38;
     box(ctx, cx-55, cy-28, 110, 44, '#fee2e2', '#b91c1c');
     label(ctx,'OPERATOR',cx,cy-10,{bold:true,color:'#b91c1c'});
-    label(ctx,'COLLAPSED',cx,cy+8,{bold:true,size:9,color:'#b91c1c'});
+    label(ctx,'COLLAPSED',cx,cy+8,{bold:true,size:12,color:'#b91c1c'});
 
     // No new investors
-    label(ctx,'recruitment slows',cx-130,cy,{color:'#888',size:9});
+    label(ctx,'recruitment slows',cx-130,cy,{color:'#888',size:12});
     ctx.strokeStyle='rgba(180,40,40,0.4)'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(cx-90,cy-15); ctx.lineTo(cx-60,cy+15); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cx-60,cy-15); ctx.lineTo(cx-90,cy+15); ctx.stroke();
@@ -270,115 +270,115 @@
     const oi = [[cx+120,cy-20],[cx+150,cy+10],[cx+110,cy+40]];
     oi.forEach(([x,y],i) => {
       person(ctx,x,y,'#b91c1c',12);
-      label(ctx,'?',x,y+18,{size:10,color:'#b91c1c',bold:true});
+      label(ctx,'?',x,y+18,{size:13,color:'#b91c1c',bold:true});
     });
-    label(ctx,'investors',cx+130,cy+55,{size:8,color:'#b91c1c'});
-    label(ctx,'can\'t withdraw',cx+130,cy+66,{size:8,color:'#b91c1c'});
+    label(ctx,'investors',cx+130,cy+55,{size:11,color:'#b91c1c'});
+    label(ctx,'can\'t withdraw',cx+130,cy+66,{size:11,color:'#b91c1c'});
 
     // Gap now visible
     label(ctx,'GAP NOW VISIBLE',cx,cy+90,{bold:true,color:'#b91c1c'});
     const bx=cx-110, bw=220, by=cy+100;
     ctx.fillStyle='rgba(180,40,40,0.2)'; ctx.fillRect(bx,by,bw,16);
     ctx.fillStyle='rgba(30,90,60,0.5)'; ctx.fillRect(bx,by,bw*0.35,16);
-    label(ctx,'exists (35%)',bx+bw*0.17,by+12,{size:8,color:'#1a6b3c'});
-    label(ctx,'owed (100%)',bx+bw*0.7,by+12,{size:8,color:'#b91c1c'});
+    label(ctx,'exists (35%)',bx+bw*0.17,by+12,{size:11,color:'#1a6b3c'});
+    label(ctx,'owed (100%)',bx+bw*0.7,by+12,{size:11,color:'#b91c1c'});
 
-    label(ctx,'The gap that was always there becomes visible when the flow of new money stops',cx,H-12,{color:'#666',size:9});
+    label(ctx,'The gap that was always there becomes visible when the flow of new money stops',cx,H-12,{color:'#666',size:12});
   }
 
   function drawBankingEngine(ctx, W, H) {
-    label(ctx,'Interest-Bearing Banking System',W*0.5,H*0.07,{bold:true,color:'#2a5c34',size:12});
+    label(ctx,'Interest-Bearing Banking System',W*0.5,H*0.07,{bold:true,color:'#2a5c34',size:15});
     const bx=W*0.18, mx=W*0.5, ex=W*0.82;
     const y=H*0.42;
 
     box(ctx,bx-50,y-24,100,44,'#e8f4ee','#2a5c34');
     label(ctx,'BANK',bx,y-6,{bold:true,color:'#2a5c34'});
-    label(ctx,'lends $1,000',bx,y+10,{size:9,color:'#2a5c34'});
+    label(ctx,'lends $1,000',bx,y+10,{size:12,color:'#2a5c34'});
 
     box(ctx,mx-55,y-24,110,44,'#eef2fa','#1a3a6b');
     label(ctx,'BORROWER',mx,y-6,{bold:true,color:'#1a3a6b'});
-    label(ctx,'must repay $1,080',mx,y+10,{size:9,color:'#b91c1c'});
+    label(ctx,'must repay $1,080',mx,y+10,{size:12,color:'#b91c1c'});
 
     arrow(ctx,bx+50,y,'$1,000 created',0);
-    ctx.font='9px Georgia,serif'; ctx.fillStyle='#2a5c34'; ctx.textAlign='center';
+    ctx.font='12px Georgia,serif'; ctx.fillStyle='#2a5c34'; ctx.textAlign='center';
     ctx.fillText('$1,000 created',mx-80,y-30);
     arrow(ctx,bx+50,y-2,mx-55,y-2,'#2a5c34');
 
     arrow(ctx,mx-55,y+10,bx+50,y+10,'#b91c1c');
-    ctx.font='9px Georgia,serif'; ctx.fillStyle='#b91c1c'; ctx.textAlign='center';
+    ctx.font='12px Georgia,serif'; ctx.fillStyle='#b91c1c'; ctx.textAlign='center';
     ctx.fillText('$1,080 owed',mx-80,y+28);
 
     // The $80 gap
     const gy=H*0.72;
     box(ctx,mx-80,gy-22,160,40,'#fff5f5','#b91c1c');
-    label(ctx,'$80 INTEREST GAP',mx,gy-5,{bold:true,color:'#b91c1c',size:10});
-    label(ctx,'never created — must come from new lending',mx,gy+12,{size:8,color:'#b91c1c'});
+    label(ctx,'$80 INTEREST GAP',mx,gy-5,{bold:true,color:'#b91c1c',size:13});
+    label(ctx,'never created — must come from new lending',mx,gy+12,{size:11,color:'#b91c1c'});
 
     arrow(ctx,mx,y+22,mx,gy-22,'#b91c1c',true);
 
-    label(ctx,'Interest was never created — requires new money from somewhere else',mx,H-12,{color:'#666',size:9});
+    label(ctx,'Interest was never created — requires new money from somewhere else',mx,H-12,{color:'#666',size:12});
   }
 
   function drawBankingProduction(ctx, W, H) {
-    label(ctx,'Ponzi vs. Banking: the production difference',W*0.5,H*0.07,{bold:true,color:'#444',size:12});
+    label(ctx,'Ponzi vs. Banking: the production difference',W*0.5,H*0.07,{bold:true,color:'#444',size:15});
     const lx=W*0.2, cx=W*0.5, rx=W*0.8;
     const y=H*0.38;
 
     // Ponzi (left)
     box(ctx,lx-55,y-28,110,50,'#fff5f5','#b91c1c');
     label(ctx,'PONZI',lx,y-10,{bold:true,color:'#b91c1c'});
-    label(ctx,'no production',lx,y+8,{size:9,color:'#b91c1c'});
+    label(ctx,'no production',lx,y+8,{size:12,color:'#b91c1c'});
     // circular arrow
     ctx.strokeStyle='#b91c1c'; ctx.lineWidth=1.5;
     ctx.beginPath(); ctx.arc(lx,y+45,20,Math.PI*0.2,Math.PI*1.8); ctx.stroke();
-    label(ctx,'new → old',lx,y+52,{size:8,color:'#b91c1c'});
+    label(ctx,'new → old',lx,y+52,{size:11,color:'#b91c1c'});
 
     // Banking (right)
     box(ctx,rx-55,y-28,110,50,'#e8f4ee','#2a5c34');
     label(ctx,'BANKING',rx,y-10,{bold:true,color:'#2a5c34'});
-    label(ctx,'funds production',rx,y+8,{size:9,color:'#2a5c34'});
+    label(ctx,'funds production',rx,y+8,{size:12,color:'#2a5c34'});
     // production output
     const prods = ['factory','farm','housing'];
     prods.forEach((p,i) => {
       const px=rx-40+i*40, py=y+65;
       ctx.fillStyle='#d4f0e0'; ctx.strokeStyle='#2a5c34'; ctx.lineWidth=1;
       ctx.beginPath(); ctx.roundRect(px-18,py-10,36,20,3); ctx.fill(); ctx.stroke();
-      label(ctx,p,px,py+4,{size:8,color:'#1a6b3c'});
+      label(ctx,p,px,py+4,{size:11,color:'#1a6b3c'});
     });
     arrow(ctx,rx,y+22,rx,y+52,'#2a5c34');
 
     // Key difference
     box(ctx,cx-90,H*0.82-16,180,30,'#fefce8','#92600a',4);
-    label(ctx,'KEY DIFFERENCE: banking creates real things',cx,H*0.82,{bold:true,color:'#92600a',size:9});
+    label(ctx,'KEY DIFFERENCE: banking creates real things',cx,H*0.82,{bold:true,color:'#92600a',size:12});
 
-    label(ctx,'A Ponzi pays old investors with new investor money. A bank loan funds a farm, a house, a business.',cx,H-12,{color:'#666',size:9});
+    label(ctx,'A Ponzi pays old investors with new investor money. A bank loan funds a farm, a house, a business.',cx,H-12,{color:'#666',size:12});
   }
 
   function drawEcological(ctx, W, H) {
     const cx=W*0.5;
-    label(ctx,'Banking System at Ecological Limits',cx,H*0.06,{bold:true,color:'#b91c1c',size:12});
+    label(ctx,'Banking System at Ecological Limits',cx,H*0.06,{bold:true,color:'#b91c1c',size:15});
 
     // Two columns
     const lx=W*0.27, rx=W*0.73;
     const ty=H*0.14;
 
-    label(ctx,'HEALTHY GROWTH',lx,ty,{bold:true,color:'#2a5c34',size:10});
-    label(ctx,'new debt → real production',lx,ty+16,{size:9,color:'#2a5c34'});
-    label(ctx,'backed by renewable flows',lx,ty+30,{size:9,color:'#2a5c34'});
-    label(ctx,'(solar, labor, managed land)',lx,ty+44,{size:9,color:'#555'});
+    label(ctx,'HEALTHY GROWTH',lx,ty,{bold:true,color:'#2a5c34',size:13});
+    label(ctx,'new debt → real production',lx,ty+16,{size:12,color:'#2a5c34'});
+    label(ctx,'backed by renewable flows',lx,ty+30,{size:12,color:'#2a5c34'});
+    label(ctx,'(solar, labor, managed land)',lx,ty+44,{size:12,color:'#555'});
 
     // Healthy loop
     ctx.strokeStyle='#2a5c34'; ctx.lineWidth=1.5;
     ctx.beginPath();
     ctx.arc(lx, ty+95, 38, 0, Math.PI*2);
     ctx.stroke();
-    label(ctx,'production',lx,ty+88,{size:8,color:'#2a5c34',bold:true});
-    label(ctx,'→ repayment',lx,ty+102,{size:8,color:'#2a5c34'});
+    label(ctx,'production',lx,ty+88,{size:11,color:'#2a5c34',bold:true});
+    label(ctx,'→ repayment',lx,ty+102,{size:11,color:'#2a5c34'});
 
-    label(ctx,'ECOLOGICAL LIMIT GROWTH',rx,ty,{bold:true,color:'#b91c1c',size:10});
-    label(ctx,'new debt → production',rx,ty+16,{size:9,color:'#b91c1c'});
-    label(ctx,'backed by drawing down stocks',rx,ty+30,{size:9,color:'#b91c1c'});
-    label(ctx,'(topsoil, aquifers, fisheries, carbon)',rx,ty+44,{size:9,color:'#555'});
+    label(ctx,'ECOLOGICAL LIMIT GROWTH',rx,ty,{bold:true,color:'#b91c1c',size:13});
+    label(ctx,'new debt → production',rx,ty+16,{size:12,color:'#b91c1c'});
+    label(ctx,'backed by drawing down stocks',rx,ty+30,{size:12,color:'#b91c1c'});
+    label(ctx,'(topsoil, aquifers, fisheries, carbon)',rx,ty+44,{size:12,color:'#555'});
 
     // Declining stock bar
     const stocks = ['topsoil','groundwater','fisheries','stable climate'];
@@ -387,16 +387,16 @@
       const fill = 0.9 - i*0.12;
       ctx.fillStyle='#fee2e2'; ctx.fillRect(rx-70,sy,140,14);
       ctx.fillStyle='rgba(180,40,40,0.5)'; ctx.fillRect(rx-70,sy,140*fill,14);
-      label(ctx,s,rx-66,sy+10,{size:8,color:'#7f1d1d',align:'left'});
-      label(ctx,'↓ depleting',rx+30,sy+10,{size:8,color:'#b91c1c',align:'left'});
+      label(ctx,s,rx-66,sy+10,{size:11,color:'#7f1d1d',align:'left'});
+      label(ctx,'↓ depleting',rx+30,sy+10,{size:11,color:'#b91c1c',align:'left'});
     });
 
     // Arrow pointing to Ponzi similarity
-    label(ctx,'→ structurally closer to Ponzi',rx,ty+160,{bold:true,color:'#b91c1c',size:9});
-    label(ctx,'(paying present obligations by consuming',rx,ty+174,{size:9,color:'#b91c1c'});
-    label(ctx,'non-renewable stocks)',rx,ty+188,{size:9,color:'#b91c1c'});
+    label(ctx,'→ structurally closer to Ponzi',rx,ty+160,{bold:true,color:'#b91c1c',size:12});
+    label(ctx,'(paying present obligations by consuming',rx,ty+174,{size:12,color:'#b91c1c'});
+    label(ctx,'non-renewable stocks)',rx,ty+188,{size:12,color:'#b91c1c'});
 
-    label(ctx,'When growth requires depleting ecological stocks, the real/fictional distinction narrows',cx,H-12,{color:'#666',size:9});
+    label(ctx,'When growth requires depleting ecological stocks, the real/fictional distinction narrows',cx,H-12,{color:'#666',size:12});
   }
 
   function drawComparison(ctx, W, H) {
@@ -416,7 +416,7 @@
     // Headers
     headers.forEach((h,i) => {
       const colors=['#444','#b91c1c','#2a5c34','#92600a'];
-      label(ctx,h,col[i],startY,{bold:true,color:colors[i],size:11});
+      label(ctx,h,col[i],startY,{bold:true,color:colors[i],size:14});
     });
 
     rows.forEach((row,ri) => {
