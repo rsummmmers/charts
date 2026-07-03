@@ -249,8 +249,8 @@
     // ── WHO BEARS IT ──
     if (show.includes('bearers')) {
       const bearers = [
-        { layer: 'fossil', y: fosY + 16 + fosH * 0.72, text: 'borne by: atmosphere · future generations · communities near extraction', color: '#92600a' },
-        { layer: 'care',   y: careY + 2 + careH * 0.72, text: 'borne by: women (globally ~75% of unpaid care)', color: '#7b4dae' },
+        { layer: 'fossil', y: fosY + 16 + fosH - 10, text: 'borne by: atmosphere · future generations · communities near extraction', color: '#92600a' },
+        { layer: 'care',   y: careY + 2 + careH - 10, text: 'borne by: women (globally ~75% of unpaid care)', color: '#7b4dae' },
         { layer: 'eco',    y: ecoY + 2 + ecoH * 0.75,  text: 'borne by: living systems · species · watersheds · future users', color: '#2a8a4c' },
       ];
       bearers.forEach(b => {
