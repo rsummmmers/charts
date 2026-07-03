@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Hidden Foundation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
+    header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
+    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
+    .intro { font-size: 0.88rem; color: #555; line-height: 1.75; margin-bottom: 1.5rem; max-width: 700px; }
+    nav { margin-bottom: 1.5rem; padding: 0.6rem 0; border-bottom: 1px solid #ddd; font-size: 0.8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: #888; text-decoration: none; }
+    nav a:hover { color: #1a1a1a; }
+
+    .step-controls { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .step-btn { padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-radius: 4px; }
+    .step-btn:hover { background: #1a1a1a; color: white; }
+    .step-btn:disabled { opacity: 0.35; cursor: default; }
+    .step-indicator { font-size: 0.8rem; color: #888; }
+
+    .viz-wrap { border-radius: 8px; border: 1.5px solid #ddd; background: #f8f8f4; margin-bottom: 1rem; overflow: hidden; }
+    canvas { display: block; width: 100%; }
+
+    .lesson { padding: 1rem 1.2rem; border-left: 4px solid #5b2d8e; background: #f5f0fa; font-size: 0.87rem; line-height: 1.7; color: #333; margin-bottom: 1.5rem; }
+    .lesson strong { color: #1a1a1a; }
+
+    .context { border-top: 2px solid #1a1a1a; padding-top: 1.5rem; margin-top: 1rem; }
+    .context h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 1rem; font-weight: normal; }
+    .ctx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .ctx-grid { grid-template-columns: 1fr; } }
+    .ctx-box { border-radius: 6px; padding: 0.85rem 1rem; font-size: 0.81rem; line-height: 1.65; color: #333; }
+    .ctx-title { font-weight: bold; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+    .b1 { background: #fff8ed; border: 1px solid #f0d89a; } .b1 .ctx-title { color: #7b3f00; }
+    .b2 { background: #f5f0fa; border: 1px solid #d4b8f0; } .b2 .ctx-title { color: #5b2d8e; }
+    .b3 { background: #f0f9f4; border: 1px solid #b8dfc6; } .b3 .ctx-title { color: #1a6b3c; }
+    .b4 { background: #f4f4f0; border: 1px solid #ddd; } .b4 .ctx-title { color: #444; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← All models</a>
+    <span style="color:#ddd">|</span>
+    <span style="font-weight:bold;color:#5b2d8e;">14 · The Hidden Foundation</span>
+  </nav>
+
+  <header>
+    <h1>The Hidden Foundation</h1>
+    <p class="subtitle">The price of things is low because most of the cost isn't in the price.</p>
+  </header>
+
+  <p class="intro">The standard economy prices what it can capture: labor that's waged, energy that's extracted, goods that are sold. But a large fraction of what makes production possible — care work that reproduces the workforce, ecological services that supply clean inputs, and fossil energy representing hundreds of millions of years of stored solar work — is priced at zero or near zero. The cheapness of things is not efficiency. It is a transfer.</p>
+
+  <div class="step-controls">
+    <button class="step-btn" id="btn-prev" onclick="changeStep(-1)">← Back</button>
+    <button class="step-btn" id="btn-next" onclick="changeStep(1)">Next →</button>
+    <button class="step-btn" onclick="step=0;render()">Reset</button>
+    <span class="step-indicator" id="step-label">Step 1 of 6</span>
+  </div>
+
+  <div class="viz-wrap">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div class="lesson" id="lesson">Loading...</div>
+
+  <div class="context">
+    <h2>The three hidden inputs</h2>
+    <div class="ctx-grid">
+      <div class="ctx-box b1">
+        <div class="ctx-title">Fossil energy: 300 million years, extraction price</div>
+        Coal, oil, and gas are ancient sunlight — solar energy captured by living systems over hundreds of millions of years and stored in chemical form. The market prices fossil fuels at extraction cost: the labor and capital to get them out of the ground. It does not price the time it took to form them, the impossibility of replacement, or the full damage from burning them. The result: energy appears cheaper than it is by any meaningful measure of what it actually costs.
+      </div>
+      <div class="ctx-box b2">
+        <div class="ctx-title">Unpaid care work: ~$10–39 trillion/year globally</div>
+        Every worker who shows up to a waged job was fed, clothed, raised, educated, and emotionally sustained by someone — usually women, usually unpaid. Care work, domestic labor, and community maintenance reproduce the workforce. Without it, no waged economy functions. The ILO estimates unpaid care work at 10–39% of global GDP, depending on methodology. None of it appears in GDP. It doesn't show up in prices. It is the substrate on which the priced economy sits.
+      </div>
+      <div class="ctx-box b3">
+        <div class="ctx-title">Ecological services: ~$125–145 trillion/year (Costanza et al.)</div>
+        The economy takes clean water, clean air, stable climate, pollination, flood regulation, and soil fertility as given. These are not free — they are produced continuously by living systems. Costanza et al. estimated global ecosystem services at $125–145 trillion per year in 2014, larger than global GDP at the time. When these services degrade, costs appear — as disaster, as medical bills, as infrastructure replacement — but the value intact never appears in any price.
+      </div>
+      <div class="ctx-box b4">
+        <div class="ctx-title">The permanomics question</div>
+        These three inputs share a structure: they are real, they are finite or degradable, they are consumed by the economy, and they are not in the price. The economy looks productive because it doesn't pay for the most important things it uses. Permanomics asks what the system would look like if it did — not by taxing damage after the fact, but by starting from the full value of what's being used and not used up.
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const STEPS = [
+    {
+      label: "Step 1 of 6 — The visible economy",
+      lesson: "<strong>The market economy — what the price system can see.</strong> Wages, capital, priced goods and services. GDP captures transactions. Everything looks self-contained: firms pay workers, workers buy goods, money circulates. From inside this picture, prices appear to reflect costs. They reflect some costs.",
+      show: []
+    },
+    {
+      label: "Step 2 of 6 — Fossil energy enters",
+      lesson: "<strong>Fossil energy: 300 million years of stored solar work, priced at extraction cost.</strong> Oil, gas, and coal are not 'resources' in the way timber or fish are. They are ancient accumulated biology — solar energy captured and stored over geological time. The price at the pump covers drilling, refining, transport. It does not cover the 300 million years of formation, the impossibility of replacement, or the atmospheric cost of combustion. This gap is a subsidy from deep time.",
+      show: ['fossil']
+    },
+    {
+      label: "Step 3 of 6 — Unpaid labor enters",
+      lesson: "<strong>Unpaid care work: the labor that isn't counted.</strong> Every worker the economy employs was raised, fed, educated, and sustained by someone — primarily women, primarily unpaid. Care work, domestic labor, elder care, and community maintenance are the reproductive foundation of the waged workforce. The ILO estimates this at $10–39 trillion per year globally. None of it is in GDP. It doesn't appear in wages or prices. The economy consumes it without accounting for it.",
+      show: ['fossil', 'care']
+    },
+    {
+      label: "Step 4 of 6 — Ecological services enter",
+      lesson: "<strong>Ecological services: what living systems provide for free.</strong> Clean water, breathable air, stable climate, pollination, flood buffering, soil fertility — the economy treats these as free inputs. They are not free. They are produced by living systems that can be degraded. Costanza et al. estimated global ecosystem services at $125–145 trillion per year — larger than global GDP. None of this value appears in any price until the service fails, at which point it appears as a cost.",
+      show: ['fossil', 'care', 'eco']
+    },
+    {
+      label: "Step 5 of 6 — The ratio",
+      lesson: "<strong>The visible economy is a small fraction of what it runs on.</strong> The priced economy — all of global GDP — sits on a foundation of unpriced inputs that, by reasonable estimates, exceed it in value. This is not a rounding error or an externality at the margins. It is the structure. Prices are low not because production is efficient but because most of the cost is borne by someone or something that isn't in the room.",
+      show: ['fossil', 'care', 'eco', 'ratio']
+    },
+    {
+      label: "Step 6 of 6 — Who bears the cost",
+      lesson: "<strong>Every unpriced input has a bearer.</strong> Fossil energy's true cost is borne by the atmosphere, by future generations, and by communities near extraction. Unpaid care work is borne overwhelmingly by women. Ecological services are borne by living systems that absorb degradation without compensation. The market doesn't make these costs disappear — it moves them. Permanomics asks: move them where? To whom? And what does the full accounting look like when you name who pays?",
+      show: ['fossil', 'care', 'eco', 'ratio', 'bearers']
+    }
+  ];
+
+  let step = 0;
+  let canvas, ctx, W, H;
+
+  function changeStep(dir) {
+    step = Math.max(0, Math.min(STEPS.length - 1, step + dir));
+    render();
+  }
+
+  function render() {
+    const s = STEPS[step];
+    document.getElementById('step-label').textContent = s.label;
+    document.getElementById('lesson').innerHTML = s.lesson;
+    document.getElementById('btn-prev').disabled = step === 0;
+    document.getElementById('btn-next').disabled = step === STEPS.length - 1;
+    draw(s);
+  }
+
+  function lbl(text, x, y, opts = {}) {
+    ctx.save();
+    ctx.font = `${opts.bold ? 'bold ' : ''}${opts.size || 12}px Georgia,serif`;
+    ctx.fillStyle = opts.color || '#1a1a1a';
+    ctx.textAlign = opts.align || 'center';
+    ctx.globalAlpha = opts.alpha || 1;
+    ctx.fillText(text, x, y);
+    ctx.restore();
+  }
+
+  function rect(x, y, w, h, fill, stroke, r = 0) {
+    ctx.save();
+    ctx.fillStyle = fill;
+    ctx.beginPath();
+    if (r) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h);
+    ctx.fill();
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.stroke(); }
+    ctx.restore();
+  }
+
+  function draw(s) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#f8f8f4';
+    ctx.fillRect(0, 0, W, H);
+
+    const show = s.show;
+
+    // Layout constants
+    const marginL = W * 0.04;
+    const blockW = W * 0.92;
+    const cx = W * 0.5;
+
+    // Heights of each layer (proportional to estimated relative size)
+    // GDP ~$100T; fossil subsidy ~$5T+ extracted value gap; care ~$15T; eco services ~$130T
+    // Shown as approximate relative heights
+    const visH  = H * 0.14;   // visible/priced economy
+    const fosH  = H * 0.14;   // fossil energy subsidy
+    const careH = H * 0.18;   // care work
+    const ecoH  = H * 0.30;   // ecological services (largest)
+
+    // Start Y positions (stacked from top)
+    const padTop = H * 0.04;
+    const visY   = padTop;
+    const fosY   = visY + visH + 2;
+    const careY  = fosY + fosH + 2;
+    const ecoY   = careY + careH + 2;
+
+    const labelX = marginL + 12;
+
+    // ── VISIBLE ECONOMY (always shown) ──
+    rect(marginL, visY, blockW, visH, '#dce8f5', '#1a3a6b', 4);
+    lbl('PRICED ECONOMY', cx, visY + visH * 0.38, { bold: true, size: 13, color: '#1a3a6b' });
+    lbl('GDP · wages · goods · services · capital', cx, visY + visH * 0.38 + 18, { size: 11, color: '#2d5986' });
+
+    if (show.includes('ratio')) {
+      lbl('↑ all of this is ~$100 trillion/year globally', cx, visY + visH * 0.38 + 34, { size: 10, color: '#6b8ab0' });
+    }
+
+    // ── DIVIDING LINE ──
+    ctx.save();
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(marginL, fosY);
+    ctx.lineTo(marginL + blockW, fosY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    if (step > 0 || show.length > 0) {
+      lbl('↑ visible to markets', cx, fosY - 5, { size: 10, color: '#888', align: 'center' });
+      lbl('↓ not in any price', cx, fosY + 10, { size: 10, color: '#888', align: 'center' });
+    }
+
+    // ── FOSSIL ENERGY ──
+    if (show.includes('fossil')) {
+      rect(marginL, fosY + 16, blockW, fosH - 14, '#fff0d4', '#7b3f00', 4);
+      lbl('FOSSIL ENERGY', labelX, fosY + 16 + fosH * 0.40, { bold: true, size: 13, color: '#7b3f00', align: 'left' });
+      lbl('300 million years of stored solar work · priced at extraction cost', labelX, fosY + 16 + fosH * 0.40 + 17, { size: 11, color: '#92600a', align: 'left' });
+      if (show.includes('ratio')) {
+        lbl('~$5T+/yr unpriced gap (excl. climate damage)', W - marginL - 8, fosY + 16 + fosH * 0.55, { size: 10, color: '#b08030', align: 'right' });
+      }
+    }
+
+    // ── CARE WORK ──
+    if (show.includes('care')) {
+      rect(marginL, careY + 2, blockW, careH - 2, '#f0ebfa', '#5b2d8e', 4);
+      lbl('UNPAID CARE WORK', labelX, careY + 2 + careH * 0.36, { bold: true, size: 13, color: '#5b2d8e', align: 'left' });
+      lbl('childcare · elder care · domestic labor · community maintenance', labelX, careY + 2 + careH * 0.36 + 17, { size: 11, color: '#7b4dae', align: 'left' });
+      lbl('borne predominantly by women · invisible to GDP', labelX, careY + 2 + careH * 0.36 + 33, { size: 11, color: '#9b6dce', align: 'left' });
+      if (show.includes('ratio')) {
+        lbl('$10–39T/yr (ILO estimate)', W - marginL - 8, careY + 2 + careH * 0.55, { size: 10, color: '#9b6dce', align: 'right' });
+      }
+    }
+
+    // ── ECOLOGICAL SERVICES ──
+    if (show.includes('eco')) {
+      rect(marginL, ecoY + 2, blockW, ecoH, '#e4f5ec', '#1a6b3c', 4);
+      lbl('ECOLOGICAL SERVICES', labelX, ecoY + 2 + ecoH * 0.28, { bold: true, size: 13, color: '#1a6b3c', align: 'left' });
+      lbl('clean water · clean air · stable climate · pollination · soil fertility · flood buffering', labelX, ecoY + 2 + ecoH * 0.28 + 18, { size: 11, color: '#2a8a4c', align: 'left' });
+      lbl('produced by living systems · priced only when they fail', labelX, ecoY + 2 + ecoH * 0.28 + 35, { size: 11, color: '#4aaa6c', align: 'left' });
+      if (show.includes('ratio')) {
+        lbl('$125–145T/yr (Costanza et al. 2014)', W - marginL - 8, ecoY + 2 + ecoH * 0.55, { size: 10, color: '#4aaa6c', align: 'right' });
+      }
+    }
+
+    // ── WHO BEARS IT ──
+    if (show.includes('bearers')) {
+      const bearers = [
+        { layer: 'fossil', y: fosY + 16 + fosH * 0.72, text: 'borne by: atmosphere · future generations · communities near extraction', color: '#92600a' },
+        { layer: 'care',   y: careY + 2 + careH * 0.72, text: 'borne by: women (globally ~75% of unpaid care)', color: '#7b4dae' },
+        { layer: 'eco',    y: ecoY + 2 + ecoH * 0.75,  text: 'borne by: living systems · species · watersheds · future users', color: '#2a8a4c' },
+      ];
+      bearers.forEach(b => {
+        lbl('→ ' + b.text, labelX, b.y, { size: 10, color: b.color, align: 'left' });
+      });
+    }
+  }
+
+  function resize() {
+    canvas = document.getElementById('canvas');
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = Math.round(canvas.width * 0.62);
+    W = canvas.width;
+    H = canvas.height;
+    ctx = canvas.getContext('2d');
+    render();
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  </script>
+</body>
+</html>
