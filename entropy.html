@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entropy: Why Things Only Go One Way</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; min-height: 4.5em; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+    button { font-family: 'Georgia', serif; font-size: 0.82rem; padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; cursor: pointer; border-radius: 3px; }
+    button:hover { background: #1a1a1a; color: #faf8f5; }
+    button:disabled { opacity: 0.3; cursor: default; }
+    .step-ct { font-size: 0.78rem; color: #aaa; margin-left: auto; }
+  </style>
+</head>
+<body>
+  <h1>Entropy: Why Things Only Go One Way</h1>
+  <p class="subtitle">Smash a Lego castle. Wait a billion years. Still a pile of bricks.</p>
+  <canvas id="c" height="340"></canvas>
+  <p class="desc" id="desc"></p>
+  <nav>
+    <button id="prev">← Back</button>
+    <button id="next">Next →</button>
+    <span class="step-ct" id="ct"></span>
+  </nav>
+
+  <script>
+  (function () {
+    var canvas = document.getElementById('c');
+    var ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    var W = canvas.width, H = canvas.height;
+
+    // ── helpers ──────────────────────────────────────────────────────────────
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight || 'normal') + ' ' + (o.size || 13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function arr(x1, y1, x2, y2, color, lw) {
+      color = color || '#1a1a1a'; lw = lw || 1.5;
+      var ang = Math.atan2(y2 - y1, x2 - x1), hl = 10;
+      ctx.save();
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - hl * Math.cos(ang - 0.4), y2 - hl * Math.sin(ang - 0.4));
+      ctx.lineTo(x2 - hl * Math.cos(ang + 0.4), y2 - hl * Math.sin(ang + 0.4));
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+      else ctx.rect(x, y, w, h);
+    }
+
+    // ── castle drawing ───────────────────────────────────────────────────────
+
+    var BRICK_COLORS = ['#c03828', '#d04030', '#b82c20', '#cc3828', '#d84838'];
+
+    function castle(cx, cy, sc, alpha) {
+      sc = sc || 1; alpha = alpha !== undefined ? alpha : 1;
+      ctx.save(); ctx.globalAlpha = alpha;
+
+      var tw = 78 * sc, th = 108 * sc;
+      var tx = cx - tw / 2, ty = cy - th;
+      var rh = 14 * sc, cw = 20 * sc; // row height, column width
+
+      // Draw brick rows (clip to tower rectangle)
+      ctx.save(); ctx.beginPath(); ctx.rect(tx, ty, tw, th); ctx.clip();
+      for (var row = 0; row * rh < th; row++) {
+        var off = row % 2 === 0 ? 0 : cw / 2;
+        for (var col = -1; col < Math.ceil(tw / cw) + 1; col++) {
+          var bx = tx + col * cw - off;
+          var by = ty + row * rh;
+          ctx.fillStyle = BRICK_COLORS[(row + col * 3) % BRICK_COLORS.length];
+          ctx.fillRect(bx + 1, by + 1, cw - 2, rh - 2);
+        }
+      }
+      ctx.restore();
+
+      // Battlements (3 merlons on top)
+      var mw = 20 * sc, mh = 18 * sc, mgap = 9 * sc;
+      var totalM = 3 * mw + 2 * mgap;
+      for (var m = 0; m < 3; m++) {
+        var mx = cx - totalM / 2 + m * (mw + mgap);
+        ctx.fillStyle = BRICK_COLORS[m % BRICK_COLORS.length];
+        ctx.fillRect(mx, ty - mh, mw, mh);
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)'; ctx.lineWidth = 1;
+        ctx.strokeRect(mx + 0.5, ty - mh + 0.5, mw - 1, mh - 1);
+      }
+
+      // Window
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(cx - 9 * sc, ty + th * 0.28, 18 * sc, 24 * sc);
+
+      // Gate arch
+      ctx.fillStyle = '#1a1a1a';
+      ctx.beginPath();
+      ctx.arc(cx, ty + th, 15 * sc, Math.PI, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillRect(cx - 15 * sc, ty + th - 22 * sc, 30 * sc, 22 * sc);
+
+      ctx.restore();
+    }
+
+    // ── scattered bricks (deterministic positions) ───────────────────────────
+
+    var BRICKS = (function () {
+      var seed = 42;
+      function rng() { seed = (seed * 1664525 + 1013904223) & 0x7fffffff; return seed / 0x7fffffff; }
+      var list = [];
+      for (var i = 0; i < 26; i++) {
+        list.push({
+          fx: 0.04 + rng() * 0.92,
+          fy: 0.12 + rng() * 0.78,
+          rot: (rng() - 0.5) * Math.PI * 1.8,
+          ci: Math.floor(rng() * BRICK_COLORS.length),
+          fw: 0.038 + rng() * 0.018,
+          fh: 0.024 + rng() * 0.008
+        });
+      }
+      return list;
+    })();
+
+    function drawBricks(alpha, region) {
+      // region: {x,y,w,h} in 0-1 fractions; omit for full canvas
+      alpha = alpha !== undefined ? alpha : 1;
+      BRICKS.forEach(function (b) {
+        var bx = b.fx, by = b.fy;
+        if (region) {
+          bx = region.x + b.fx * region.w;
+          by = region.y + b.fy * region.h;
+        }
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(bx * W, by * H);
+        ctx.rotate(b.rot);
+        var bw = b.fw * W, bh = b.fh * H;
+        ctx.fillStyle = BRICK_COLORS[b.ci];
+        ctx.fillRect(-bw / 2, -bh / 2, bw, bh);
+        ctx.strokeStyle = 'rgba(0,0,0,0.18)'; ctx.lineWidth = 1;
+        ctx.strokeRect(-bw / 2, -bh / 2, bw, bh);
+        // stud
+        ctx.fillStyle = BRICK_COLORS[(b.ci + 1) % BRICK_COLORS.length];
+        ctx.beginPath(); ctx.arc(0, -bh / 2 - 2, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    // Motion-line bricks for the "smash" frame
+    function drawSmash(cx, cy) {
+      BRICKS.slice(0, 18).forEach(function (b, i) {
+        var angle = (i / 18) * Math.PI * 2 + 0.2;
+        var dist = (0.12 + b.fx * 0.22);
+        var bx = cx + Math.cos(angle) * dist * W;
+        var by = cy + Math.sin(angle) * dist * H * 0.6;
+        ctx.save();
+        ctx.globalAlpha = 0.85;
+        ctx.translate(bx, by);
+        ctx.rotate(b.rot);
+        var bw = b.fw * W * 0.8, bh = b.fh * H * 0.8;
+        ctx.fillStyle = BRICK_COLORS[b.ci];
+        ctx.fillRect(-bw / 2, -bh / 2, bw, bh);
+        // motion line
+        ctx.globalAlpha = 0.35;
+        ctx.strokeStyle = BRICK_COLORS[b.ci]; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-Math.cos(angle) * 22, -Math.sin(angle) * 14);
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    // ── steps ────────────────────────────────────────────────────────────────
+
+    function step1() {
+      clear();
+      castle(W / 2, H * 0.78, 1.15);
+      txt('The Castle', W / 2, H * 0.1, { size: 15, weight: 'bold' });
+      txt('Organized. Structured.', W / 2, H * 0.17, { size: 12, color: '#555' });
+      txt('Took time and energy to arrange each brick just right.', W / 2, H * 0.17 + 18, { size: 12, color: '#555' });
+
+      // Bracket labels
+      ctx.save(); ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1.5;
+      var tx = W / 2 - 52, ty = H * 0.28;
+      ctx.beginPath(); ctx.moveTo(tx - 6, ty); ctx.lineTo(tx - 14, ty); ctx.lineTo(tx - 14, H * 0.76); ctx.lineTo(tx - 6, H * 0.76); ctx.stroke();
+      ctx.restore();
+      txt('organized', tx - 28, H * 0.52, { size: 11, color: '#aaa', align: 'center' });
+      txt('matter', tx - 28, H * 0.52 + 15, { size: 11, color: '#aaa', align: 'center' });
+    }
+
+    function step2() {
+      clear();
+      // Ghost castle fading
+      castle(W / 2, H * 0.78, 1.15, 0.12);
+
+      // Flying bricks radiating out
+      drawSmash(W / 2, H * 0.62);
+
+      // Impact star
+      ctx.save(); ctx.strokeStyle = '#e05030'; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.7;
+      for (var i = 0; i < 8; i++) {
+        var a = (i / 8) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(W / 2 + Math.cos(a) * 14, H * 0.62 + Math.sin(a) * 10);
+        ctx.lineTo(W / 2 + Math.cos(a) * 30, H * 0.62 + Math.sin(a) * 22);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      txt('SMASH', W / 2, H * 0.08, { size: 22, weight: 'bold', color: '#c03020' });
+      txt('The same bricks — now completely rearranged.', W / 2, H * 0.15, { size: 12, color: '#555' });
+    }
+
+    function step3() {
+      clear();
+      drawBricks(0.88);
+      txt('The Pile', W / 2, H * 0.08, { size: 15, weight: 'bold' });
+
+      // Count label
+      ctx.save(); ctx.fillStyle = 'rgba(250,248,245,0.88)'; ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W * 0.15, H * 0.4, W * 0.7, H * 0.22, 6); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      txt('All the bricks are still here. Every single one.', W / 2, H * 0.48, { size: 13, color: '#444' });
+      txt('But the castle is gone.', W / 2, H * 0.48 + 22, { size: 13, color: '#c03020', weight: 'bold' });
+    }
+
+    function step4() {
+      clear();
+      txt('The One-Way Rule', W / 2, H * 0.08, { size: 15, weight: 'bold' });
+
+      var row1y = H * 0.33, row2y = H * 0.72;
+      var lx = W * 0.18, rx = W * 0.80;
+
+      // ── Row 1: castle → bricks (always) ──
+      ctx.save(); ctx.fillStyle = '#f0fff4'; ctx.strokeStyle = '#2a7a2a'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(W * 0.03, H * 0.19, W * 0.94, H * 0.26, 8); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      castle(lx, row1y + H * 0.06, 0.52, 1);
+      arr(lx + 38, row1y, rx - 38, row1y, '#2a7a2a', 2);
+      drawBricks(0.85, { x: rx / W - 0.1, y: row1y / H - 0.12, w: 0.18, h: 0.24 });
+      txt('✓ always happens', W / 2, row1y - 26, { size: 12, color: '#2a7a2a', weight: 'bold' });
+
+      // ── Row 2: bricks → castle (never) ──
+      ctx.save(); ctx.fillStyle = '#fff4f4'; ctx.strokeStyle = '#c03020'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(W * 0.03, H * 0.58, W * 0.94, H * 0.26, 8); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      drawBricks(0.85, { x: lx / W - 0.1, y: row2y / H - 0.12, w: 0.18, h: 0.24 });
+      arr(lx + 38, row2y, rx - 38, row2y, '#c03020', 2);
+      castle(rx, row2y + H * 0.06, 0.52, 1);
+
+      // Big X crossing the arrow
+      txt('✗', W / 2, row2y, { size: 36, color: '#c03020', weight: 'bold' });
+      txt('✗ never happens on its own', W / 2, row2y - 26, { size: 12, color: '#c03020', weight: 'bold' });
+      txt('(wait a billion years — still a pile)', W / 2, row2y + 34, { size: 11, color: '#aaa', weight: 'italic' });
+    }
+
+    function step5() {
+      clear();
+      txt('Order Can Be Rebuilt — But It Costs', W / 2, H * 0.08, { size: 14, weight: 'bold' });
+
+      // Person rebuilding
+      var px = W * 0.32, py = H * 0.45;
+      ctx.save(); ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(px, py, 14, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px, py + 14); ctx.lineTo(px, py + 52); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px - 22, py + 30); ctx.lineTo(px + 22, py + 30); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px, py + 52); ctx.lineTo(px - 16, py + 80); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px, py + 52); ctx.lineTo(px + 16, py + 80); ctx.stroke();
+      ctx.restore();
+      txt('you', px, py + 96, { size: 11, color: '#555' });
+
+      // Rebuilt castle
+      castle(W * 0.72, H * 0.72, 0.85, 1);
+      arr(px + 24, py + 30, W * 0.72 - 42, H * 0.72 - 50, '#2a7a2a', 2);
+      txt('can rebuild', (px + 24 + W * 0.72 - 42) / 2, (py + 30 + H * 0.72 - 50) / 2 - 14, { size: 12, color: '#2a7a2a' });
+
+      // BUT arrows showing cost
+      // Food → person
+      arr(px - 70, py + 10, px - 18, py + 10, '#c8892a', 1.5);
+      ctx.save(); ctx.fillStyle = '#5a9e3a'; ctx.strokeStyle = '#3a7a20'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(px - 110, py - 4, 38, 28, 4); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('food', px - 91, py + 10, { size: 11, color: '#fff' });
+
+      // Heat out from person
+      for (var i = 0; i < 3; i++) {
+        ctx.save(); ctx.strokeStyle = '#e05050'; ctx.globalAlpha = 0.6 - i * 0.1; ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(px - 6 + i * 10, py - 18);
+        ctx.quadraticCurveTo(px - 2 + i * 10, py - 32, px - 6 + i * 10, py - 46);
+        ctx.quadraticCurveTo(px - 10 + i * 10, py - 60, px - 6 + i * 10, py - 72);
+        ctx.stroke(); ctx.restore();
+      }
+      txt('heat lost', px, py - 84, { size: 11, color: '#e05050' });
+
+      txt('You can put the castle back together.', W / 2, H * 0.88, { size: 12, color: '#555' });
+      txt('But every act of organizing uses energy that becomes disorder somewhere else.', W / 2, H * 0.88 + 17, { size: 11.5, color: '#888', weight: 'italic' });
+    }
+
+    function step6() {
+      clear();
+      txt("The Economy's Assumption", W / 2, H * 0.08, { size: 15, weight: 'bold' });
+
+      var mid = W / 2;
+      var pad = 12;
+
+      // Left panel — Lego castle (can rebuild)
+      ctx.save(); ctx.fillStyle = '#f0fff4'; ctx.strokeStyle = '#2a7a2a'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(pad, H * 0.17, mid - pad - 8, H * 0.6, 8); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      txt('Lego Castle', pad + (mid - pad - 8) / 2, H * 0.24, { size: 12, color: '#2a7a2a', weight: 'bold' });
+      castle(pad + (mid - pad - 8) / 2, H * 0.66, 0.7);
+      txt('✓ smash it, rebuild it', pad + (mid - pad - 8) / 2, H * 0.73, { size: 11, color: '#2a7a2a' });
+      txt('costs energy, but possible', pad + (mid - pad - 8) / 2, H * 0.73 + 15, { size: 10, color: '#888' });
+
+      // Right panel — living systems (may not rebuild)
+      ctx.save(); ctx.fillStyle = '#fff4f4'; ctx.strokeStyle = '#c03020'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(mid + 8, H * 0.17, W - mid - pad - 8, H * 0.6, 8); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      var rx = mid + 8 + (W - mid - pad - 8) / 2;
+      txt('Topsoil / Reef / Species', rx, H * 0.24, { size: 11, color: '#c03020', weight: 'bold' });
+
+      var items = [
+        { label: 'topsoil', note: '500 yrs to form' },
+        { label: 'coral reef', note: 'bleached → gone' },
+        { label: 'extinct species', note: 'no path back' },
+      ];
+      items.forEach(function (item, i) {
+        var iy = H * 0.37 + i * H * 0.12;
+        txt(item.label, rx, iy, { size: 12, color: '#c03020' });
+        txt(item.note, rx, iy + 16, { size: 10, color: '#aaa', weight: 'italic' });
+      });
+      txt('✗ often can\'t be rebuilt', rx, H * 0.73, { size: 11, color: '#c03020' });
+
+      txt('The economy treats both columns the same.', W / 2, H * 0.86, { size: 12, color: '#555' });
+      txt('Entropy and ecology say they\'re very different.', W / 2, H * 0.86 + 17, { size: 12, color: '#1a1a1a', weight: 'bold' });
+    }
+
+    // ── step data ────────────────────────────────────────────────────────────
+
+    var STEPS = [
+      {
+        draw: step1,
+        desc: 'Here\'s a Lego castle. Someone built it by picking up bricks and placing each one in the right spot. It took time and energy to create that specific arrangement. The castle has a shape, a structure — it can do things a pile of bricks can\'t, like be a castle.'
+      },
+      {
+        draw: step2,
+        desc: 'Knock it over. The bricks go flying. Every single brick is still here — nothing disappeared, nothing was destroyed. But the arrangement is completely gone. This is the key: the pieces are all present, but the organization is not.'
+      },
+      {
+        draw: step3,
+        desc: 'Now you have a pile. Count them — same bricks, same colors, same number. Matter is conserved, just like physics says it should be. But the castle is gone. A pile of bricks and a Lego castle are very different things, even when made of the exact same pieces.'
+      },
+      {
+        draw: step4,
+        desc: 'Here\'s the rule: a castle can become a pile by itself (gravity, accident, time). A pile never becomes a castle by itself. Ever. This is entropy — the law that says disorder naturally increases and never spontaneously decreases. The arrow of time goes one way.'
+      },
+      {
+        draw: step5,
+        desc: 'You can pick up the bricks and rebuild. But that takes your energy, which came from food, which took the sun\'s energy to grow. Rebuilding uses energy from outside the system — and some of that energy becomes waste heat that can\'t be used again. Order can be restored locally, but total disorder in the universe always goes up.'
+      },
+      {
+        draw: step6,
+        desc: 'Here\'s why this matters. The economy assumes you can always rebuild what you\'ve used up — as if everything works like a Lego set. But some things don\'t. Topsoil takes 500 years to form. Bleached coral may not recover. Extinct species don\'t return. The economy assigns prices as if these were all Lego castles. Entropy — and ecology — say otherwise.'
+      },
+    ];
+
+    // ── navigation ───────────────────────────────────────────────────────────
+
+    var step = 0;
+    var descEl = document.getElementById('desc');
+    var prevBtn = document.getElementById('prev');
+    var nextBtn = document.getElementById('next');
+    var ctEl   = document.getElementById('ct');
+
+    function render() {
+      STEPS[step].draw();
+      descEl.textContent = STEPS[step].desc;
+      prevBtn.disabled = step === 0;
+      nextBtn.disabled = step === STEPS.length - 1;
+      ctEl.textContent = (step + 1) + ' of ' + STEPS.length;
+    }
+
+    prevBtn.addEventListener('click', function () { if (step > 0) { step--; render(); } });
+    nextBtn.addEventListener('click', function () { if (step < STEPS.length - 1) { step++; render(); } });
+
+    render();
+
+    window.addEventListener('resize', function () {
+      canvas.width = canvas.offsetWidth;
+      W = canvas.width;
+      render();
+    });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
