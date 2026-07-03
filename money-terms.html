@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What the Words Mean</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; min-height: 4.5em; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+    button { font-family: 'Georgia', serif; font-size: 0.82rem; padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; cursor: pointer; border-radius: 3px; }
+    button:hover { background: #1a1a1a; color: #faf8f5; }
+    button:disabled { opacity: 0.3; cursor: default; }
+    .step-ct { font-size: 0.78rem; color: #aaa; margin-left: auto; }
+  </style>
+</head>
+<body>
+  <h1>What the Words Mean</h1>
+  <p class="subtitle">Money, wealth, capital, value, debt, credit, asset — with real examples</p>
+  <canvas id="c" height="320"></canvas>
+  <p class="desc" id="desc"></p>
+  <nav>
+    <button id="prev">← Back</button>
+    <button id="next">Next →</button>
+    <span class="step-ct" id="ct"></span>
+  </nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    const C = {
+      value:  '#2a7a2a',
+      wealth: '#6a5a10',
+      money:  '#1a4a8a',
+      capital:'#7a3a10',
+      asset:  '#4a1a7a',
+      debt:   '#8a1a1a',
+      credit: '#1a6a6a',
+    };
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight || 'normal') + ' ' + (o.size || 13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function arr(x1, y1, x2, y2, color, lw) {
+      color = color || '#888'; lw = lw || 1.5;
+      const ang = Math.atan2(y2 - y1, x2 - x1), hl = 9;
+      ctx.save();
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - hl * Math.cos(ang - 0.4), y2 - hl * Math.sin(ang - 0.4));
+      ctx.lineTo(x2 - hl * Math.cos(ang + 0.4), y2 - hl * Math.sin(ang + 0.4));
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+      else ctx.rect(x, y, w, h);
+    }
+
+    function banner(label, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath(); rr(0, 0, W, 50, 0); ctx.fill();
+      ctx.font = 'bold 20px Georgia,serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, W / 2, 25);
+      ctx.restore();
+    }
+
+    function notebox(text1, text2, color, y) {
+      y = y || H * 0.78;
+      ctx.save();
+      ctx.fillStyle = color + '18';
+      ctx.strokeStyle = color + '55';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W * 0.05, y, W * 0.9, text2 ? 46 : 30, 5); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      if (text2) {
+        txt(text1, W / 2, y + 14, { size: 11.5, color: color, weight: 'bold' });
+        txt(text2, W / 2, y + 31, { size: 11, color: '#555' });
+      } else {
+        txt(text1, W / 2, y + 15, { size: 11.5, color: '#555' });
+      }
+    }
+
+    function tomato(cx, cy, r) {
+      r = r || 16;
+      ctx.save();
+      ctx.fillStyle = '#d04030';
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#a02010'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = '#3a8a2a';
+      ctx.beginPath(); ctx.moveTo(cx, cy - r);
+      ctx.bezierCurveTo(cx + r * 0.5, cy - r * 1.4, cx + r * 0.8, cy - r * 0.6, cx, cy - r * 0.4);
+      ctx.bezierCurveTo(cx - r * 0.8, cy - r * 0.6, cx - r * 0.5, cy - r * 1.4, cx, cy - r);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function figure(px, py, sc) {
+      sc = sc || 1;
+      ctx.save(); ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2 * sc;
+      ctx.beginPath(); ctx.arc(px, py, 13 * sc, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px, py + 13 * sc); ctx.lineTo(px, py + 50 * sc); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px - 20 * sc, py + 28 * sc); ctx.lineTo(px + 20 * sc, py + 28 * sc); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px, py + 50 * sc); ctx.lineTo(px - 15 * sc, py + 76 * sc); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px, py + 50 * sc); ctx.lineTo(px + 15 * sc, py + 76 * sc); ctx.stroke();
+      ctx.restore();
+    }
+
+    // ── step 1: VALUE ─────────────────────────────────────────────────────────
+    function drawValue() {
+      clear(); banner('VALUE', C.value);
+
+      // Tomato plant
+      const px = W * 0.25, py = H * 0.58;
+      ctx.save(); ctx.strokeStyle = '#5a3a1a'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(px, py + 8); ctx.lineTo(px, py - 55); ctx.stroke();
+      ctx.fillStyle = '#3a8a2a';
+      ctx.beginPath(); ctx.ellipse(px - 22, py - 35, 20, 9, -0.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(px + 20, py - 44, 20, 9, 0.5, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      tomato(px - 8, py - 72, 15);
+      tomato(px + 16, py - 62, 12);
+      tomato(px - 22, py - 55, 11);
+      txt('a tomato plant', px, py + 26, { size: 11, color: '#888' });
+
+      arr(px + 42, py - 56, W * 0.53, H * 0.46, C.value, 2);
+      txt('useful to', W * 0.6, H * 0.37, { size: 11, color: C.value });
+      txt('someone', W * 0.6, H * 0.37 + 16, { size: 11, color: C.value });
+
+      figure(W * 0.76, H * 0.38, 0.85);
+
+      notebox('Value ≠ price.  Price is what someone pays.  Value is what a thing actually does.',
+        'Value exists even when no money changes hands.', C.value);
+    }
+
+    // ── step 2: WEALTH ────────────────────────────────────────────────────────
+    function drawWealth() {
+      clear(); banner('WEALTH', C.wealth);
+
+      const cy = H * 0.52;
+
+      // Jars
+      const jarColors = ['#c84028', '#c89028', '#4a8a2a', '#2a5a9a', '#8a4a1a'];
+      [W*0.16, W*0.28, W*0.40, W*0.52, W*0.64].forEach((jx, i) => {
+        ctx.save();
+        ctx.fillStyle = jarColors[i]; ctx.globalAlpha = 0.75;
+        ctx.beginPath(); rr(jx - 14, cy - 44, 28, 46, 4); ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = '#777'; ctx.globalAlpha = 1;
+        ctx.beginPath(); rr(jx - 16, cy - 52, 32, 10, 2); ctx.fill();
+        ctx.restore();
+      });
+      txt('preserved food', W * 0.4, cy + 14, { size: 11, color: '#888' });
+
+      // Garden beds
+      [W*0.22, W*0.50, W*0.78].forEach(bx => {
+        ctx.save(); ctx.fillStyle = '#5a3a1a'; ctx.globalAlpha = 0.7;
+        ctx.beginPath(); rr(bx - 40, cy + 42, 80, 24, 4); ctx.fill();
+        ctx.fillStyle = '#4a8a2a'; ctx.globalAlpha = 0.85;
+        for (let i = 0; i < 4; i++) {
+          ctx.beginPath(); ctx.arc(bx - 28 + i * 18, cy + 38, 7, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+      });
+      txt('productive garden beds', W * 0.5, cy + 80, { size: 11, color: '#888' });
+
+      // Time arrow
+      arr(W * 0.07, H * 0.84, W * 0.93, H * 0.84, C.wealth, 1.5);
+      txt('accumulated over time', W / 2, H * 0.84 + 15, { size: 11, color: C.wealth });
+
+      notebox('Wealth is stored-up value. You can have a lot of wealth with very little money.',
+        null, C.wealth, H * 0.88);
+    }
+
+    // ── step 3: MONEY ─────────────────────────────────────────────────────────
+    function drawMoney() {
+      clear(); banner('MONEY', C.money);
+
+      // Bill
+      const bx = W * 0.08, by = H * 0.2, bw = W * 0.36, bh = H * 0.38;
+      ctx.save();
+      ctx.fillStyle = '#e8f0e8'; ctx.strokeStyle = C.money; ctx.lineWidth = 2;
+      ctx.beginPath(); rr(bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = 'rgba(26,74,138,0.2)'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(bx + 5, by + 5, bw - 10, bh - 10, 3); ctx.stroke();
+      ctx.restore();
+      txt('$20', bx + bw / 2, by + bh * 0.38, { size: 28, weight: 'bold', color: C.money });
+      txt('A SHARED PROMISE', bx + bw / 2, by + bh * 0.68, { size: 10, weight: 'bold', color: '#888' });
+      txt('accepted by agreement', bx + bw / 2, by + bh * 0.68 + 15, { size: 10, color: '#aaa' });
+
+      // Trade arrows
+      const midX = W * 0.57;
+      arr(bx + bw + 6, by + bh * 0.45, midX - 20, by + bh * 0.45, C.money, 2);
+      arr(midX - 20, by + bh * 0.55, bx + bw + 6, by + bh * 0.55, '#aaa', 1.5);
+
+      tomato(midX + 26, by + bh * 0.5, 24);
+      txt('tomato', midX + 26, by + bh * 0.5 + 36, { size: 11, color: '#888' });
+
+      // Two figures
+      figure(W * 0.78, H * 0.3, 0.75);
+      figure(W * 0.90, H * 0.3, 0.75);
+
+      notebox('Money only works because everyone agrees it does.',
+        'It is not wealth — you cannot eat it. It is a claim that value exists somewhere.', C.money);
+    }
+
+    // ── step 4: CAPITAL ───────────────────────────────────────────────────────
+    function drawCapital() {
+      clear(); banner('CAPITAL', C.capital);
+
+      const cy = H * 0.48;
+
+      // Capital items on left
+      const tools = [
+        { label: 'hoe', x: W * 0.13 },
+        { label: 'seeds', x: W * 0.26 },
+        { label: 'irrigation', x: W * 0.39 },
+      ];
+      tools.forEach(t => {
+        ctx.save(); ctx.fillStyle = C.capital; ctx.globalAlpha = 0.8;
+        ctx.beginPath(); rr(t.x - 26, cy - 32, 52, 40, 5); ctx.fill();
+        ctx.restore();
+        txt(t.label, t.x, cy - 12, { size: 12, color: '#fff', weight: 'bold' });
+        txt('capital', t.x, cy + 20, { size: 10, color: '#888' });
+      });
+
+      arr(W * 0.51, cy - 12, W * 0.62, cy - 12, C.capital, 2.5);
+      txt('produces', W * 0.565, cy - 28, { size: 11, color: C.capital });
+
+      // Tomatoes output
+      [
+        [W*0.70, cy-24, 18], [W*0.82, cy-28, 15],
+        [W*0.76, cy+2, 13],  [W*0.67, cy+6, 11],
+        [W*0.85, cy+4, 10],
+      ].forEach(([tx, ty, r]) => tomato(tx, ty, r));
+      txt('more value', W * 0.76, cy + 36, { size: 11, color: '#888' });
+
+      notebox('Capital makes MORE value. Wealth is value stored. An apple is wealth.',
+        'An apple tree is capital — it keeps producing next year and the year after.', C.capital);
+    }
+
+    // ── step 5: ASSET ─────────────────────────────────────────────────────────
+    function drawAsset() {
+      clear(); banner('ASSET', C.asset);
+
+      const items = [
+        { label: 'Land',     sub: 'holds value · can produce', color: C.value },
+        { label: 'House',    sub: 'shelter · equity',          color: C.money },
+        { label: 'Tools',    sub: 'produces more value',       color: C.capital },
+        { label: 'Savings',  sub: 'claim on future value',     color: '#555' },
+      ];
+      const cw = W * 0.38, ch = H * 0.25;
+      const sx = W * 0.08, sy = H * 0.19;
+      items.forEach((item, i) => {
+        const col = i % 2, row = Math.floor(i / 2);
+        const cx = sx + col * (cw + W * 0.12) + cw / 2;
+        const cy = sy + row * (ch + H * 0.05) + ch / 2;
+        ctx.save();
+        ctx.fillStyle = item.color; ctx.globalAlpha = 0.1;
+        ctx.beginPath(); rr(cx - cw / 2, cy - ch / 2, cw, ch, 8); ctx.fill();
+        ctx.globalAlpha = 0.55; ctx.strokeStyle = item.color; ctx.lineWidth = 1.5;
+        ctx.beginPath(); rr(cx - cw / 2, cy - ch / 2, cw, ch, 8); ctx.stroke();
+        ctx.restore();
+        txt(item.label, cx, cy - 8, { size: 14, weight: 'bold', color: item.color });
+        txt(item.sub, cx, cy + 12, { size: 10, color: '#888' });
+      });
+
+      notebox('An asset is anything you own that has value. Not all assets are capital:',
+        'Gold holds value but makes no more gold. An orchard is both an asset and capital.', C.asset);
+    }
+
+    // ── step 6: DEBT ──────────────────────────────────────────────────────────
+    function drawDebt() {
+      clear(); banner('DEBT', C.debt);
+
+      const cx = W / 2, fy = H * 0.48;
+      const armLen = W * 0.3, tip = 0.13;
+
+      // Fulcrum
+      ctx.save(); ctx.fillStyle = '#888';
+      ctx.beginPath(); ctx.moveTo(cx, fy + 16); ctx.lineTo(cx - 18, fy + 38); ctx.lineTo(cx + 18, fy + 38); ctx.closePath(); ctx.fill();
+      ctx.fillRect(cx - 32, fy + 38, 64, 7);
+      ctx.restore();
+
+      // Tilted arm
+      const lx = cx - armLen * Math.cos(tip), ly = fy - armLen * Math.sin(tip);
+      const rx = cx + armLen * Math.cos(tip), ry = fy + armLen * Math.sin(tip);
+      ctx.save(); ctx.strokeStyle = '#888'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(rx, ry); ctx.stroke();
+      // strings
+      ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx, ly + 22); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx, ry + 22); ctx.stroke();
+      ctx.restore();
+
+      // Left pan: what you got
+      ctx.save(); ctx.fillStyle = '#e8f4e8'; ctx.strokeStyle = C.value; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(lx - 54, ly + 22, 108, 46, 5); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('$500 borrowed', lx, ly + 38, { size: 12, weight: 'bold', color: C.value });
+      txt('(seeds + tools)', lx, ly + 55, { size: 10, color: '#888' });
+
+      // Right pan: what you owe
+      ctx.save(); ctx.fillStyle = '#fce8e8'; ctx.strokeStyle = C.debt; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(rx - 58, ry + 22, 116, 46, 5); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('$550 owed back', rx, ry + 38, { size: 12, weight: 'bold', color: C.debt });
+      txt('(+ interest)', rx, ry + 55, { size: 10, color: '#888' });
+
+      notebox('Debt is borrowed value you must pay back — usually with extra (interest).',
+        'You owe back more than you received. This gap is why debt-based economies must keep growing.', C.debt);
+    }
+
+    // ── step 7: CREDIT ────────────────────────────────────────────────────────
+    function drawCredit() {
+      clear(); banner('CREDIT', C.credit);
+
+      const cx = W / 2, cy = H * 0.54, r = H * 0.27;
+
+      // Track
+      ctx.save(); ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 20;
+      ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 0); ctx.stroke();
+
+      // Color zones
+      [
+        { a0: Math.PI,      a1: Math.PI * 1.35, color: '#c03020' },
+        { a0: Math.PI * 1.35, a1: Math.PI * 1.58, color: '#d08020' },
+        { a0: Math.PI * 1.58, a1: Math.PI * 1.78, color: '#b0b020' },
+        { a0: Math.PI * 1.78, a1: Math.PI * 2,    color: '#2a8a2a' },
+      ].forEach(z => {
+        ctx.strokeStyle = z.color; ctx.lineWidth = 20; ctx.globalAlpha = 0.7;
+        ctx.beginPath(); ctx.arc(cx, cy, r, z.a0, z.a1); ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      // Needle
+      const na = Math.PI * 1.82;
+      ctx.save(); ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(na) * (r - 12), cy + Math.sin(na) * (r - 12));
+      ctx.stroke();
+      ctx.fillStyle = '#1a1a1a';
+      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+
+      txt('no history', cx - r * 0.8, cy + 22, { size: 10, color: '#c03020', align: 'center' });
+      txt('building', cx, cy + r * 0.36, { size: 10, color: '#b0b020', align: 'center' });
+      txt('trusted', cx + r * 0.8, cy + 22, { size: 10, color: '#2a8a2a', align: 'center' });
+
+      txt('→ can borrow $500k at 4%', cx + r * 0.42, cy - r * 0.32, { size: 11, color: '#2a8a2a', align: 'left' });
+
+      notebox('Credit is your reputation for paying back what you borrow.',
+        'Good credit = more money, lower cost. No credit = can\'t borrow. Credit is not money.', C.credit);
+    }
+
+    // ── step 8: HOW THEY CONNECT ──────────────────────────────────────────────
+    function drawAll() {
+      clear();
+      txt('How They Connect', W / 2, H * 0.08, { size: 15, weight: 'bold' });
+
+      const nodes = [
+        { key: 'value',   label: 'VALUE',   x: W*0.50, y: H*0.34, c: C.value  },
+        { key: 'wealth',  label: 'WEALTH',  x: W*0.22, y: H*0.52, c: C.wealth },
+        { key: 'capital', label: 'CAPITAL', x: W*0.78, y: H*0.52, c: C.capital},
+        { key: 'money',   label: 'MONEY',   x: W*0.50, y: H*0.68, c: C.money  },
+        { key: 'asset',   label: 'ASSET',   x: W*0.50, y: H*0.18, c: C.asset  },
+        { key: 'debt',    label: 'DEBT',    x: W*0.20, y: H*0.74, c: C.debt   },
+        { key: 'credit',  label: 'CREDIT',  x: W*0.80, y: H*0.74, c: C.credit },
+      ];
+      const nm = {};
+      nodes.forEach(n => nm[n.key] = n);
+      const NR = 26;
+
+      const edges = [
+        { f: 'wealth',  t: 'value',   lbl: 'stores'    },
+        { f: 'capital', t: 'value',   lbl: 'produces'  },
+        { f: 'asset',   t: 'value',   lbl: 'holds'     },
+        { f: 'wealth',  t: 'money',   lbl: 'represents'},
+        { f: 'money',   t: 'debt',    lbl: 'borrowed'  },
+        { f: 'credit',  t: 'debt',    lbl: 'enables'   },
+        { f: 'wealth',  t: 'capital', lbl: 'invested as'},
+      ];
+
+      edges.forEach(e => {
+        const a = nm[e.f], b = nm[e.t];
+        const ang = Math.atan2(b.y - a.y, b.x - a.x);
+        arr(
+          a.x + Math.cos(ang) * (NR + 2), a.y + Math.sin(ang) * (NR + 2),
+          b.x - Math.cos(ang) * (NR + 10), b.y - Math.sin(ang) * (NR + 10),
+          '#ccc', 1.2
+        );
+        txt(e.lbl, (a.x + b.x) / 2, (a.y + b.y) / 2, { size: 9, color: '#bbb' });
+      });
+
+      nodes.forEach(n => {
+        ctx.save();
+        ctx.fillStyle = '#faf8f5';
+        ctx.strokeStyle = n.c; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(n.x, n.y, NR, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.restore();
+        txt(n.label, n.x, n.y, { size: 9, weight: 'bold', color: n.c });
+      });
+    }
+
+    // ── steps ─────────────────────────────────────────────────────────────────
+    const STEPS = [
+      { draw: drawValue,
+        desc: 'Value is usefulness. A tomato you grew has value because it feeds someone. Value is not the same as price — price is what someone pays at a specific moment; value is what a thing actually does. Value exists even when no money changes hands.' },
+      { draw: drawWealth,
+        desc: 'Wealth is accumulated value. A full root cellar, a productive garden, a healthy forest — these are wealth. Wealth is stored-up capacity to meet needs or create more value. You can have a lot of wealth with very little money.' },
+      { draw: drawMoney,
+        desc: 'Money is a token that stands for value — a shared promise that others will accept it in trade. It is not food or shelter on its own. It works because everyone agrees it does. That agreement is more fragile than it looks.' },
+      { draw: drawCapital,
+        desc: 'Capital is wealth or resources that make MORE value. A seed is capital. An irrigation system is capital. A skilled worker, healthy soil, a tool set — all capital. The key: capital produces. Wealth just holds.' },
+      { draw: drawAsset,
+        desc: 'An asset is anything you own that has value or earns income. Land, tools, savings, a house. But not all assets are capital: gold holds value but makes no more gold. An orchard is both an asset and capital — it holds value and keeps producing.' },
+      { draw: drawDebt,
+        desc: 'Debt is borrowed value that must be paid back — usually with interest. You receive something now and owe back more than you received. The interest gap is real: more is always owed back than was created, which is why debt-based economies require continuous growth.' },
+      { draw: drawCredit,
+        desc: 'Credit is your permission to borrow — your reputation for paying back. Good credit means you can borrow more money at lower cost. No credit means you cannot borrow at all. Credit is not money. It is the door that lets you access debt.' },
+      { draw: drawAll,
+        desc: 'These terms are connected. Value gets stored as wealth. Wealth gets represented as money. Capital uses wealth to produce more value. Assets hold value or produce income. Debt is borrowed money. Credit opens the debt door. When someone says "I have money," they might mean any of these.' },
+    ];
+
+    // ── nav ───────────────────────────────────────────────────────────────────
+    let step = 0;
+    const descEl = document.getElementById('desc');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const ctEl   = document.getElementById('ct');
+
+    function render() {
+      STEPS[step].draw();
+      descEl.textContent = STEPS[step].desc;
+      prevBtn.disabled = step === 0;
+      nextBtn.disabled = step === STEPS.length - 1;
+      ctEl.textContent = (step + 1) + ' of ' + STEPS.length;
+    }
+
+    prevBtn.addEventListener('click', () => { if (step > 0) { step--; render(); } });
+    nextBtn.addEventListener('click', () => { if (step < STEPS.length - 1) { step++; render(); } });
+
+    render();
+
+    window.addEventListener('resize', () => {
+      canvas.width = canvas.offsetWidth;
+      W = canvas.width;
+      render();
+    });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
