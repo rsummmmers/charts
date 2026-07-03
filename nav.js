@@ -1,6 +1,7 @@
 (function () {
   const SECTIONS = [
     { id: 'banking', short: 'Banking', name: 'How Banks Create Money', models: [
+      { file: 'money-terms.html',         title: 'What the Words Mean' },
       { file: 'money-multiplier.html',    title: 'The Money Multiplier' },
       { file: 'debt-copies.html',         title: 'The Debt Copy Problem' },
       { file: 'interest-ratchet.html',    title: 'The Interest Ratchet' },
