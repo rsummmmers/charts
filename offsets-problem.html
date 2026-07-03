@@ -178,7 +178,7 @@
     }
 
     // Labels
-    ctx.font = 'bold 10px Georgia,serif';
+    ctx.font = 'bold 13px Georgia,serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#1a6b3c';
     ctx.fillText('Forest', forestX, groundY + 16);
@@ -220,13 +220,13 @@
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = `rgba(26,107,60,${alpha})`;
-    ctx.font = '9px Georgia,serif';
+    ctx.font = '12px Georgia,serif';
     ctx.textAlign = 'center';
     ctx.fillText('↓ absorbs CO₂', x, groundY - 90);
 
     if (stressed) {
       ctx.fillStyle = 'rgba(180,80,30,0.7)';
-      ctx.font = '8px Georgia,serif';
+      ctx.font = '11px Georgia,serif';
       ctx.fillText('(stressed)', x, groundY - 100);
     }
   }
@@ -266,7 +266,7 @@
 
     // CO2 label
     ctx.fillStyle = 'rgba(120,80,40,0.8)';
-    ctx.font = '9px Georgia,serif';
+    ctx.font = '12px Georgia,serif';
     ctx.textAlign = 'center';
     ctx.fillText('↑ CO₂', x + 14, groundY - h - stackH - 50);
   }
@@ -286,7 +286,7 @@
     ctx.lineTo(x + 50, groundY - 24);
     ctx.closePath();
     ctx.fill();
-    ctx.font = '9px Georgia,serif';
+    ctx.font = '12px Georgia,serif';
     ctx.textAlign = 'left';
     ctx.fillText('expansion planned', x + 62, groundY - 27);
     ctx.fillStyle = '#b91c1c';
@@ -304,7 +304,7 @@
     ctx.quadraticCurveTo(mid, groundY + 35, forestX + 30, groundY + 8);
     ctx.stroke();
     ctx.fillStyle = '#92600a';
-    ctx.font = 'bold 9px Georgia,serif';
+    ctx.font = 'bold 12px Georgia,serif';
     ctx.textAlign = 'center';
     ctx.fillText('$ payment', mid, groundY + 38);
 
@@ -315,17 +315,17 @@
     ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.roundRect(cx - 45, cy - 18, 90, 36, 4); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#92600a';
-    ctx.font = 'bold 9px Georgia,serif';
+    ctx.font = 'bold 12px Georgia,serif';
     ctx.textAlign = 'center';
     ctx.fillText('OFFSET CERTIFICATE', cx, cy - 4);
     ctx.fillStyle = '#1a6b3c';
-    ctx.font = '8px Georgia,serif';
+    ctx.font = '11px Georgia,serif';
     ctx.fillText('"net zero"', cx, cy + 10);
 
     if (scene === 'threshold') {
       // Warning: certificate doesn't help threshold
       ctx.fillStyle = '#b91c1c';
-      ctx.font = '8px Georgia,serif';
+      ctx.font = '11px Georgia,serif';
       ctx.textAlign = 'center';
       ctx.fillText('certificate ≠ physical stability', cx, cy + 24);
 
@@ -336,61 +336,72 @@
       ctx.beginPath(); ctx.arc(forestX, groundY - 35, 55, 0, Math.PI * 2); ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = '#b91c1c';
-      ctx.font = 'bold 8px Georgia,serif';
+      ctx.font = 'bold 11px Georgia,serif';
       ctx.textAlign = 'center';
       ctx.fillText('near threshold', forestX, groundY - 95);
-      ctx.font = '8px Georgia,serif';
+      ctx.font = '11px Georgia,serif';
       ctx.fillText('drought + heat + fragmentation', forestX, groundY - 107);
     }
   }
 
   function drawCapTrade(ctx, forestX, factoryX, groundY, W, H) {
     const mid = W * 0.5;
-    const capY = H * 0.18;
+    const capY = H * 0.12;
 
     // Cap bar
     ctx.fillStyle = '#92600a';
-    ctx.fillRect(W * 0.15, capY, W * 0.7, 3);
+    ctx.fillRect(W * 0.1, capY, W * 0.8, 3);
     ctx.fillStyle = '#92600a';
-    ctx.font = 'bold 9px Georgia,serif';
+    ctx.font = 'bold 12px Georgia,serif';
     ctx.textAlign = 'center';
-    ctx.fillText('EMISSIONS CAP (set by government)', mid, capY - 6);
+    ctx.fillText('EMISSIONS CAP (set by government)', mid, capY - 7);
 
-    // Permit icons
+    // Permit icons — spread with 70px spacing
     const permits = [
-      { x: mid - 80, label: 'Permit A', used: false },
-      { x: mid - 40, label: 'Permit B', used: true },
-      { x: mid, label: 'Permit C', used: true },
-      { x: mid + 40, label: 'Permit D', used: false },
+      { x: mid - 105, label: 'Permit A', used: false },
+      { x: mid - 35,  label: 'Permit B', used: true  },
+      { x: mid + 35,  label: 'Permit C', used: true  },
+      { x: mid + 105, label: 'Permit D', used: false },
     ];
     permits.forEach(p => {
       ctx.fillStyle = p.used ? '#fef3c7' : '#d1fae5';
       ctx.strokeStyle = p.used ? '#92600a' : '#1a6b3c';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.roundRect(p.x - 18, capY + 8, 36, 20, 3); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = p.used ? '#92600a' : '#1a6b3c';
-      ctx.font = '7px Georgia,serif';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.roundRect(p.x - 28, capY + 8, 56, 26, 4); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = p.used ? '#7b4a00' : '#1a5c3a';
+      ctx.font = '11px Georgia,serif';
       ctx.textAlign = 'center';
-      ctx.fillText(p.label, p.x, capY + 22);
+      ctx.fillText(p.label, p.x, capY + 25);
     });
 
-    // Transfer arrow
+    // "traded" label between B and C
     ctx.strokeStyle = '#92600a';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(mid - 25, capY + 18);
-    ctx.lineTo(mid - 10, capY + 18);
+    ctx.moveTo(mid - 5, capY + 21);
+    ctx.lineTo(mid + 5, capY + 21);
     ctx.stroke();
+    // arrowhead pointing right
     ctx.fillStyle = '#92600a';
-    ctx.font = '8px Georgia,serif';
+    ctx.beginPath();
+    ctx.moveTo(mid + 5, capY + 17); ctx.lineTo(mid + 12, capY + 21); ctx.lineTo(mid + 5, capY + 25);
+    ctx.closePath(); ctx.fill();
+    ctx.font = '11px Georgia,serif';
     ctx.textAlign = 'center';
-    ctx.fillText('traded', mid - 18, capY + 36);
+    ctx.fillStyle = '#92600a';
+    ctx.fillText('traded', mid, capY + 46);
 
-    // Total note
+    // Summary note in a box
+    const noteY = H * 0.52;
+    const noteW = W * 0.68, noteH = 28;
+    ctx.fillStyle = 'rgba(146,96,10,0.08)';
+    ctx.strokeStyle = '#92600a';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(mid - noteW/2, noteY - noteH + 6, noteW, noteH, 4); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#7b3f00';
-    ctx.font = '9px Georgia,serif';
+    ctx.font = '12px Georgia,serif';
     ctx.textAlign = 'center';
-    ctx.fillText('total emissions = cap (optimally distributed, not reduced)', mid, H * 0.55);
+    ctx.fillText('total emissions = cap — optimally distributed, not reduced', mid, noteY);
   }
 
   function drawFuller(ctx, forestX, factoryX, groundY, W, H) {
@@ -406,14 +417,14 @@
     ];
     const vx = forestX + 60;
     ctx.fillStyle = '#1a6b3c';
-    ctx.font = 'bold 9px Georgia,serif';
+    ctx.font = 'bold 12px Georgia,serif';
     ctx.textAlign = 'left';
-    ctx.fillText('INTACT VALUE:', vx, groundY - 100);
+    ctx.fillText('INTACT VALUE:', vx, groundY - 118);
     values.forEach((v, i) => {
       ctx.fillStyle = '#1a6b3c';
-      ctx.beginPath(); ctx.arc(vx + 4, groundY - 86 + i * 13, 2.5, 0, Math.PI*2); ctx.fill();
-      ctx.font = '9px Georgia,serif';
-      ctx.fillText(v, vx + 12, groundY - 82 + i * 13);
+      ctx.beginPath(); ctx.arc(vx + 4, groundY - 100 + i * 16, 2.5, 0, Math.PI*2); ctx.fill();
+      ctx.font = '12px Georgia,serif';
+      ctx.fillText(v, vx + 14, groundY - 96 + i * 16);
     });
 
     // X through offset arrow area
@@ -423,7 +434,7 @@
     ctx.beginPath(); ctx.moveTo(mx - 20, my - 15); ctx.lineTo(mx + 20, my + 15); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(mx + 20, my - 15); ctx.lineTo(mx - 20, my + 15); ctx.stroke();
     ctx.fillStyle = 'rgba(180,40,40,0.7)';
-    ctx.font = '8px Georgia,serif';
+    ctx.font = '11px Georgia,serif';
     ctx.textAlign = 'center';
     ctx.fillText('no offset captures this', mx, my + 28);
   }
@@ -431,7 +442,7 @@
   function resize() {
     const c = document.getElementById('canvas');
     c.width = c.parentElement.clientWidth;
-    c.height = Math.round(c.width * 0.44);
+    c.height = Math.round(c.width * 0.50);
     render();
   }
   window.addEventListener('resize', resize);
