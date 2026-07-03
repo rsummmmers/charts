@@ -27,6 +27,10 @@
     .model-arrow { display: flex; align-items: center; padding: 0 0.9rem; color: #bbb; font-size: 1.1rem; flex-shrink: 0; }
 
     .footer-note { font-size: 0.78rem; color: #aaa; margin-top: 2rem; font-style: italic; border-top: 1px solid #eee; padding-top: 1rem; }
+
+    .tab-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .tab-bar a { padding: 0.35rem 0.9rem; border: 1.5px solid #ddd; border-radius: 20px; font-size: 0.78rem; color: #666; text-decoration: none; background: #faf8f5; white-space: nowrap; }
+    .tab-bar a:hover { border-color: #999; color: #1a1a1a; }
   </style>
 </head>
 <body>
@@ -34,10 +38,17 @@
     <h1>Visualizations of Money, Debt, and Growth Implications</h1>
     <p class="subtitle">Fifteen interactive models in four groups</p>
   </header>
-  <p class="intro">Each model stands alone — you can start anywhere. Or follow the groups in order: how banks create money and why interest creates a built-in growth problem; what rules exist and what they can't fix; what the economy leaves out of its accounting; and how living systems actually work.</p>
+  <p class="intro">Each model stands alone — you can start anywhere. Or follow the groups in order: how banks create money and why interest creates a built-in growth problem; what rules exist and what they can't fix; what the economy leaves out of its accounting; and how biophysical systems actually work.</p>
+
+  <div class="tab-bar">
+    <a href="#banking">How Banks Create Money</a>
+    <a href="#rules">Rules and Alternatives</a>
+    <a href="#missing">What the Economy Leaves Out</a>
+    <a href="#biophysical">How Biophysical Systems Work</a>
+  </div>
 
   <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-head">
+  <div class="section-head" id="banking">
     <span class="section-title">How Banks Create Money</span>
     <span class="section-sub">The mechanics of money creation, and why interest creates a built-in problem</span>
   </div>
@@ -86,7 +97,7 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-head">
+  <div class="section-head" id="rules">
     <span class="section-title">Rules and Alternatives</span>
     <span class="section-sub">What controls exist, what they can and can't fix, and what a different design looks like</span>
   </div>
@@ -135,7 +146,7 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-head">
+  <div class="section-head" id="missing">
     <span class="section-title">What the Economy Leaves Out</span>
     <span class="section-sub">The hidden foundation the economy runs on — and doesn't pay for</span>
   </div>
@@ -184,7 +195,7 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-head">
+  <div class="section-head" id="biophysical">
     <span class="section-title">How Biophysical Systems Work</span>
     <span class="section-sub">The physical rules nature runs on — and why they don't respond to economic tools the way we assume</span>
   </div>
@@ -238,6 +249,16 @@
         <div class="model-title">Gravity, Atmosphere, and the Water Cycle</div>
         <div class="model-desc">Gravity holds our atmosphere in place — without it, the gases that make breathing possible would drift into space. It pulls water down through watersheds, drives the water cycle, and shapes every physical system on Earth. These are the background conditions every economy runs inside of — they didn't appear on the invoice because no one made them, and no one can replace them. They are not resources. They are the container.</div>
         <div class="model-tag">Gravity · atmosphere · water cycle · background conditions · what we can't replace</div>
+      </div>
+      <div class="model-arrow">→</div>
+    </a>
+
+    <a class="model-card" href="emergence.html">
+      <div class="model-num" style="background:#1a4a4a;">18</div>
+      <div class="model-body">
+        <div class="model-title">Emergence</div>
+        <div class="model-desc">A murmuration of starlings moves as one fluid shape — but no single bird is in charge. A brain produces thought, but no individual neuron thinks. A forest regulates its own climate, but no single tree controls the weather. Emergence happens when a group of simple parts produces something that none of the parts could produce alone. Living systems are full of it. Economic models largely ignore it — which is one reason they fail to predict how ecosystems respond to stress.</div>
+        <div class="model-tag">Emergence · the whole is more than its parts · self-organization · what models miss</div>
       </div>
       <div class="model-arrow">→</div>
     </a>
