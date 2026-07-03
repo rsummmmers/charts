@@ -193,6 +193,7 @@
   let step = 0;
   let animFrame = null;
   let raindrops = [];
+  let hybridRain = [];
   let evapParticles = [];
   let cloudX = 0;
   let t = 0;
@@ -297,31 +298,54 @@
       raindrops = [];
     }
 
-    // Evaporation arrows (always — water cycle)
-    const evapAlpha = s.rain > 0 ? 0.4 : 0.7;
-    ctx.strokeStyle = `rgba(100,180,255,${evapAlpha})`;
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([3, 3]);
-    [W*0.2, W*0.5, W*0.8].forEach((ex, i) => {
-      const phase = (t * 0.03 + i * 0.7) % 1;
-      const ey = H * 0.65 - phase * H * 0.35;
-      ctx.globalAlpha = Math.sin(phase * Math.PI) * evapAlpha;
+    // Evaporation — prominent animated vapor rising from ground to cloud
+    const cloudCy = H * 0.2;
+    const groundY  = H * 0.65;
+    const cloudBase = cloudCy + 25;
+    const evapAlpha = s.rain > 0 ? 0.55 : 0.88;
+
+    [W*0.22, W*0.5, W*0.78].forEach((ex, i) => {
+      const phase = (t * 0.022 + i * 0.34) % 1;
+      // Dashed vapor trail from ground to cloud
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = evapAlpha * 0.4;
+      ctx.strokeStyle = 'rgba(140,215,255,1)';
       ctx.beginPath();
-      ctx.moveTo(ex, ey + 8);
-      ctx.lineTo(ex, ey);
+      ctx.moveTo(ex, groundY);
+      ctx.lineTo(ex, cloudBase);
       ctx.stroke();
+      ctx.setLineDash([]);
+      // Animated rising particle
+      const py = groundY - phase * (groundY - cloudBase);
+      ctx.globalAlpha = Math.sin(phase * Math.PI) * evapAlpha;
+      ctx.fillStyle = 'rgba(170,230,255,1)';
+      ctx.beginPath();
+      ctx.arc(ex, py, 4, 0, Math.PI * 2);
+      ctx.fill();
+      // Arrowhead as particle nears cloud
+      if (phase > 0.78) {
+        const a = (phase - 0.78) / 0.22;
+        ctx.globalAlpha = a * evapAlpha;
+        ctx.beginPath();
+        ctx.moveTo(ex, cloudBase + 3);
+        ctx.lineTo(ex - 6, cloudBase + 14);
+        ctx.lineTo(ex + 6, cloudBase + 14);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(170,230,255,0.9)';
+        ctx.fill();
+      }
     });
-    ctx.setLineDash([]);
     ctx.globalAlpha = 1;
 
-    // Cycle label
-    ctx.fillStyle = 'rgba(100,180,255,0.55)';
-    ctx.font = '9px Georgia,serif';
+    // Cycle labels
+    ctx.fillStyle = `rgba(140,215,255,${evapAlpha * 0.9})`;
+    ctx.font = 'bold 10px Georgia,serif';
     ctx.textAlign = 'left';
-    ctx.fillText('↑ evaporation', 6, H * 0.62);
+    ctx.fillText('↑ water rises back to sky', 5, groundY - 8);
     if (s.rain > 0) {
-      ctx.fillStyle = 'rgba(120,180,255,0.55)';
-      ctx.fillText('↓ precipitation', 6, H * 0.72);
+      ctx.fillStyle = 'rgba(120,180,255,0.75)';
+      ctx.fillText('↓ rain falls', 5, H * 0.73);
     }
 
     // Status label
@@ -429,15 +453,25 @@
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, W, H);
 
-    ctx.fillStyle = '#0d180e';
-    ctx.fillRect(0, 0, W, H);
-
     const level = s.pond;
     const health = s.pondHealth;
 
-    // Ground
+    // Sky (top 42% of canvas)
+    const groundTop = H * 0.42;
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, groundTop);
+    if (s.rain > 0) {
+      skyGrad.addColorStop(0, '#0d1a2e');
+      skyGrad.addColorStop(1, '#1a2e4a');
+    } else {
+      skyGrad.addColorStop(0, '#1a1205');
+      skyGrad.addColorStop(1, '#2e2210');
+    }
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, W, groundTop);
+
+    // Ground (lower portion)
     ctx.fillStyle = health > 0.6 ? '#1a2e14' : '#241a0a';
-    ctx.fillRect(0, H * 0.5, W, H * 0.5);
+    ctx.fillRect(0, groundTop, W, H - groundTop);
 
     // Pond shape (ellipse-ish)
     const px = W * 0.5, py = H * 0.62;
@@ -490,19 +524,49 @@
       }
     });
 
-    // Rain falling into pond
+    // Cloud or sun in sky
+    const cloudCy2 = H * 0.13;
     if (s.rain > 0) {
-      ctx.strokeStyle = 'rgba(120,180,255,0.5)';
-      ctx.lineWidth = 1;
-      for (let i = 0; i < 5; i++) {
-        const rx = px - prx * 0.6 + i * prx * 0.3;
-        const phase = ((t * 0.04 + i * 0.2) % 1);
-        const ry = H * 0.1 + phase * (py - pry * 0.5 - H * 0.1);
+      ctx.fillStyle = '#3a4a5a';
+      [[0,0,20],[-16,7,14],[16,7,14],[-8,12,12],[8,12,12]].forEach(([dx,dy,r]) => {
+        ctx.beginPath(); ctx.arc(W*0.5+dx, cloudCy2+dy, r, 0, Math.PI*2); ctx.fill();
+      });
+      // "↓ rain" label under cloud
+      ctx.fillStyle = 'rgba(120,185,255,0.8)';
+      ctx.font = 'bold 10px Georgia,serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('↓ rain', W * 0.5, cloudCy2 + 40);
+    } else {
+      // Sun
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath(); ctx.arc(W * 0.76, cloudCy2, 14, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 1.5;
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
         ctx.beginPath();
-        ctx.moveTo(rx, ry);
-        ctx.lineTo(rx - 1, ry + 7);
+        ctx.moveTo(W*0.76 + Math.cos(a)*17, cloudCy2 + Math.sin(a)*17);
+        ctx.lineTo(W*0.76 + Math.cos(a)*24, cloudCy2 + Math.sin(a)*24);
         ctx.stroke();
       }
+      ctx.fillStyle = 'rgba(245,158,11,0.55)';
+      ctx.font = '9px Georgia,serif'; ctx.textAlign = 'center';
+      ctx.fillText('no rain', W * 0.5, cloudCy2 + 4);
+    }
+
+    // Rain falling from cloud to ground
+    if (s.rain > 0) {
+      while (hybridRain.length < 18) {
+        hybridRain.push({ x: W * 0.12 + Math.random() * W * 0.76, y: Math.random() * groundTop, speed: 2.2 + Math.random() * 2 });
+      }
+      ctx.strokeStyle = 'rgba(120,180,255,0.65)';
+      ctx.lineWidth = 1.5;
+      hybridRain.forEach(drop => {
+        drop.y += drop.speed;
+        if (drop.y > groundTop) { drop.y = cloudCy2 + 22; drop.x = W * 0.12 + Math.random() * W * 0.76; }
+        ctx.beginPath(); ctx.moveTo(drop.x, drop.y); ctx.lineTo(drop.x - 1, drop.y + 8); ctx.stroke();
+      });
+    } else {
+      hybridRain = [];
     }
 
     // Health indicator
