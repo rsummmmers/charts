@@ -28,24 +28,14 @@
 
     .footer-note { font-size: 0.78rem; color: #aaa; margin-top: 2rem; font-style: italic; border-top: 1px solid #eee; padding-top: 1rem; }
 
-    .tab-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-    .tab-bar a { padding: 0.35rem 0.9rem; border: 1.5px solid #ddd; border-radius: 20px; font-size: 0.78rem; color: #666; text-decoration: none; background: #faf8f5; white-space: nowrap; }
-    .tab-bar a:hover { border-color: #999; color: #1a1a1a; }
   </style>
 </head>
 <body>
   <header>
     <h1>Visualizations of Money, Debt, and Growth Implications</h1>
-    <p class="subtitle">Fifteen interactive models in four groups</p>
+    <p class="subtitle">Eighteen interactive models in four groups</p>
   </header>
   <p class="intro">Each model stands alone — you can start anywhere. Or follow the groups in order: how banks create money and why interest creates a built-in growth problem; what rules exist and what they can't fix; what the economy leaves out of its accounting; and how biophysical systems actually work.</p>
-
-  <div class="tab-bar">
-    <a href="#banking">How Banks Create Money</a>
-    <a href="#rules">Rules and Alternatives</a>
-    <a href="#missing">What the Economy Leaves Out</a>
-    <a href="#biophysical">How Biophysical Systems Work</a>
-  </div>
 
   <!-- ═══════════════════════════════════════════════════════ -->
   <div class="section-head" id="banking">
@@ -231,8 +221,6 @@
       <div class="model-arrow">→</div>
     </a>
 
-  </div>
-
     <a class="model-card" href="entropy.html">
       <div class="model-num" style="background:#4a3a6b;">16</div>
       <div class="model-body">
@@ -263,8 +251,9 @@
       <div class="model-arrow">→</div>
     </a>
 
-  </div>
+  </div><!-- end biophysical .models -->
 
   <p class="footer-note">Group 1: how banks create money and why interest creates a built-in growth problem. Group 2: banking rules, risk models, and an alternative design. Group 3: what the economy leaves out — fossil energy, care work, ecological services, full-cost accounting. Group 4: how biophysical systems work — flow vs. stock, threshold failure, offsets, entropy, gravity and atmosphere.</p>
+  <script src="nav.js"></script>
 </body>
 </html>
