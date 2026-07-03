@@ -87,12 +87,12 @@
         <!-- x-axis -->
         <line x1="60" y1="300" x2="760" y2="300" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
         <!-- x-axis labels: outcomes from rare-bad to common to rare-good -->
-        <text x="60"  y="318" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.35)">catastrophic</text>
-        <text x="410" y="318" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.35)">average year</text>
-        <text x="760" y="318" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.35)">exceptional</text>
-        <text x="410" y="335" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.25)">← worse outcomes · · · · · · · · · · · · · · · · better outcomes →</text>
+        <text x="60"  y="318" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(255,255,255,0.75)">catastrophic</text>
+        <text x="410" y="318" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(255,255,255,0.75)">average year</text>
+        <text x="760" y="318" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(255,255,255,0.75)">exceptional</text>
+        <text x="410" y="335" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(255,255,255,0.6)">← worse outcomes · · · · · · · · · · · · · · · · better outcomes →</text>
         <!-- y-axis label -->
-        <text x="30" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.35)" transform="rotate(-90,30,180)">probability</text>
+        <text x="30" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(255,255,255,0.75)" transform="rotate(-90,30,180)">probability</text>
         <!-- vertical tick marks -->
         <line x1="60"  y1="296" x2="60"  y2="304" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
         <line x1="410" y1="296" x2="410" y2="304" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
@@ -104,33 +104,33 @@
         <path d="M60,299 C100,299 160,260 220,200 C280,140 330,55 410,40 C490,55 540,140 600,200 C660,260 720,299 760,299"
               fill="rgba(100,160,255,0.15)" stroke="#6496ff" stroke-width="2.5"/>
         <text x="610" y="22" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#6496ff" font-weight="bold">HISTORICAL DISTRIBUTION</text>
-        <text x="610" y="35" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#6496ff" opacity="0.7">based on the last 20–30 years of data</text>
+        <text x="610" y="35" text-anchor="middle" font-family="Georgia,serif" font-size="11"  fill="#6496ff" opacity="0.9">based on the last 20–30 years of data</text>
 
         <!-- Tail labels -->
-        <text x="115" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6496ff" opacity="0.7">rare</text>
-        <text x="115" y="291" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6496ff" opacity="0.7">losses</text>
-        <text x="700" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6496ff" opacity="0.7">rare</text>
-        <text x="700" y="291" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6496ff" opacity="0.7">gains</text>
+        <text x="115" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#6496ff" opacity="0.9">rare</text>
+        <text x="115" y="291" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#6496ff" opacity="0.9">losses</text>
+        <text x="700" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#6496ff" opacity="0.9">rare</text>
+        <text x="700" y="291" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#6496ff" opacity="0.9">gains</text>
       </g>
 
       <!-- LAYER 2: Model projection line -->
       <g id="layer-projection" class="layer hidden">
         <!-- Dashed vertical line at "acceptable loss" threshold -->
         <line x1="175" y1="60" x2="175" y2="300" stroke="#ffd54f" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.8"/>
-        <text x="175" y="56" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#ffd54f">"acceptable loss"</text>
-        <text x="175" y="68" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#ffd54f" opacity="0.7">threshold (VaR 99%)</text>
+        <text x="175" y="56" text-anchor="middle" font-family="Georgia,serif" font-size="11"  fill="#ffd54f">"acceptable loss"</text>
+        <text x="175" y="68" text-anchor="middle" font-family="Georgia,serif" font-size="11"  fill="#ffd54f" opacity="0.9">threshold (VaR 99%)</text>
 
         <!-- Shaded left tail — "the model says this won't happen" -->
         <path d="M60,299 C100,299 140,290 175,262 L175,300 Z"
               fill="rgba(255,213,79,0.1)" stroke="none"/>
-        <text x="116" y="248" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ffd54f" opacity="0.8">1% chance</text>
-        <text x="116" y="260" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ffd54f" opacity="0.8">of exceeding this</text>
-        <text x="116" y="272" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ffd54f" opacity="0.8">(the model says)</text>
+        <text x="116" y="248" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ffd54f" opacity="0.95">1% chance</text>
+        <text x="116" y="264" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ffd54f" opacity="0.95">of exceeding this</text>
+        <text x="116" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ffd54f" opacity="0.95">(the model says)</text>
 
         <!-- Arrow: "model projects forward" -->
         <line x1="410" y1="100" x2="480" y2="130" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
-        <text x="490" y="128" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.4)">model assumes</text>
-        <text x="490" y="140" font-family="Georgia,serif" font-size="9" fill="rgba(255,255,255,0.4)">future ≈ past</text>
+        <text x="490" y="128" font-family="Georgia,serif" font-size="11" fill="rgba(255,255,255,0.7)">model assumes</text>
+        <text x="490" y="140" font-family="Georgia,serif" font-size="11" fill="rgba(255,255,255,0.7)">future ≈ past</text>
       </g>
 
       <!-- LAYER 3: Actual shifted curve (red/amber) -->
@@ -139,7 +139,7 @@
         <path d="M60,299 C80,299 110,270 170,200 C230,130 300,48 375,35 C450,48 510,130 570,200 C630,270 700,299 760,299"
               fill="rgba(255,100,80,0.12)" stroke="#ff6b6b" stroke-width="2.5" stroke-dasharray="none"/>
         <text x="220" y="22" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ff6b6b" font-weight="bold">ACTUAL DISTRIBUTION</text>
-        <text x="220" y="35" text-anchor="middle" font-family="Georgia,serif" font-size="9"  fill="#ff6b6b" opacity="0.7">shifted left — more bad outcomes</text>
+        <text x="220" y="35" text-anchor="middle" font-family="Georgia,serif" font-size="11"  fill="#ff6b6b" opacity="0.9">shifted left — more bad outcomes</text>
 
         <!-- Shift arrow -->
         <line x1="418" y1="52" x2="378" y2="52" stroke="#ffd54f" stroke-width="2" marker-end="url(#shift-arrow)"/>
@@ -148,36 +148,36 @@
             <path d="M0,0 L0,6 L8,3 z" fill="#ffd54f"/>
           </marker>
         </defs>
-        <text x="430" y="66" text-anchor="start" font-family="Georgia,serif" font-size="9" fill="#ffd54f">distribution shifts</text>
-        <text x="430" y="78" text-anchor="start" font-family="Georgia,serif" font-size="9" fill="#ffd54f" opacity="0.8">as conditions change</text>
+        <text x="430" y="66" text-anchor="start" font-family="Georgia,serif" font-size="11" fill="#ffd54f">distribution shifts</text>
+        <text x="430" y="78" text-anchor="start" font-family="Georgia,serif" font-size="11" fill="#ffd54f" opacity="0.95">as conditions change</text>
       </g>
 
       <!-- LAYER 4: The gap — what the model misses -->
       <g id="layer-gap" class="layer hidden">
         <!-- Highlight the zone the model said was "1%" but is now much more likely -->
         <rect x="60" y="180" width="115" height="120" fill="rgba(255,50,50,0.15)" rx="4"/>
-        <text x="117" y="175" text-anchor="middle" font-family="Georgia,serif" font-size="9"   fill="#ff6b6b" font-weight="bold">UNDERPRICED RISK</text>
-        <text x="117" y="188" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ff6b6b" opacity="0.8">model says: 1% chance</text>
-        <text x="117" y="200" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#ff6b6b" opacity="0.8">reality: much higher</text>
+        <text x="117" y="175" text-anchor="middle" font-family="Georgia,serif" font-size="11"   fill="#ff6b6b" font-weight="bold">UNDERPRICED RISK</text>
+        <text x="117" y="188" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ff6b6b" opacity="0.95">model says: 1% chance</text>
+        <text x="117" y="200" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ff6b6b" opacity="0.95">reality: much higher</text>
 
         <!-- Examples -->
-        <text x="530" y="180" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.8)">examples of shifted distributions:</text>
-        <text x="530" y="196" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· "100-year floods" now every 10–15 years</text>
-        <text x="530" y="210" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· crop yield variance increasing</text>
-        <text x="530" y="224" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· wildfire season length doubling</text>
-        <text x="530" y="238" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· coastal property insurance unwriteable</text>
-        <text x="530" y="252" font-family="Georgia,serif" font-size="9" fill="rgba(255,150,100,0.7)">· pandemic frequency accelerating</text>
+        <text x="530" y="180" font-family="Georgia,serif" font-size="11" fill="rgba(255,175,130,1)">examples of shifted distributions:</text>
+        <text x="530" y="196" font-family="Georgia,serif" font-size="11" fill="rgba(255,175,130,0.95)">· "100-year floods" now every 10–15 years</text>
+        <text x="530" y="210" font-family="Georgia,serif" font-size="11" fill="rgba(255,175,130,0.95)">· crop yield variance increasing</text>
+        <text x="530" y="224" font-family="Georgia,serif" font-size="11" fill="rgba(255,175,130,0.95)">· wildfire season length doubling</text>
+        <text x="530" y="238" font-family="Georgia,serif" font-size="11" fill="rgba(255,175,130,0.95)">· coastal property insurance unwriteable</text>
+        <text x="530" y="252" font-family="Georgia,serif" font-size="11" fill="rgba(255,175,130,0.95)">· pandemic frequency accelerating</text>
 
         <!-- The model doesn't know it's wrong -->
         <rect x="530" y="265" width="220" height="34" rx="4" fill="rgba(255,213,79,0.12)" stroke="#ffd54f" stroke-width="1" opacity="0.8"/>
-        <text x="640" y="279" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#ffd54f">The model doesn't know it's wrong.</text>
-        <text x="640" y="292" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#ffd54f" opacity="0.8">It still outputs a confidence interval.</text>
+        <text x="640" y="279" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ffd54f">The model doesn't know it's wrong.</text>
+        <text x="640" y="292" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ffd54f" opacity="0.95">It still outputs a confidence interval.</text>
       </g>
 
       <!-- LAYER 5: Stationarity assumption label -->
       <g id="layer-stationarity" class="layer hidden">
         <rect x="60" y="345" width="700" height="28" rx="4" fill="rgba(91,45,142,0.2)" stroke="#9c6fcc" stroke-width="1" opacity="0.9"/>
-        <text x="410" y="363" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#c9a0f5" font-weight="bold">Core assumption: stationarity — the statistical properties of the world don't change over time. In ecology and climate, this assumption has failed.</text>
+        <text x="410" y="363" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#c9a0f5" font-weight="bold">Core assumption: stationarity — the statistical properties of the world don't change over time. In ecology and climate, this assumption has failed.</text>
       </g>
 
     </svg>
@@ -212,7 +212,7 @@
   <script>
     const steps = [
       {
-        layers: ['layer-grid'],
+        layers: ['layer-grid', 'layer-historical'],
         text: '<strong>The setup.</strong> Every financial risk model works by looking at historical outcomes and fitting a distribution to them. The x-axis is the range of possible outcomes — from catastrophic losses on the left to exceptional gains on the right. The y-axis is probability. The model then uses this distribution to calculate how much risk the institution is exposed to.',
         showInsight: false
       },
