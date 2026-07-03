@@ -255,7 +255,7 @@
       // Rain cloud
       ctx.fillStyle = '#3a4a5a';
       const cx = W * 0.5, cy = H * 0.2;
-      [[0,0,22],[−18,8,16],[18,8,16],[−9,14,14],[9,14,14]].forEach(([dx,dy,r]) => {
+      [[0,0,22],[-18,8,16],[18,8,16],[-9,14,14],[9,14,14]].forEach(([dx,dy,r]) => {
         ctx.beginPath(); ctx.arc(cx+dx, cy+dy, r, 0, Math.PI*2); ctx.fill();
       });
     } else {
