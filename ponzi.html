@@ -287,8 +287,9 @@
   }
 
   function drawBankingEngine(ctx, W, H) {
+    label(ctx,'Interest-Bearing Banking System',W*0.5,H*0.07,{bold:true,color:'#2a5c34',size:12});
     const bx=W*0.18, mx=W*0.5, ex=W*0.82;
-    const y=H*0.38;
+    const y=H*0.42;
 
     box(ctx,bx-50,y-24,100,44,'#e8f4ee','#2a5c34');
     label(ctx,'BANK',bx,y-6,{bold:true,color:'#2a5c34'});
@@ -319,8 +320,9 @@
   }
 
   function drawBankingProduction(ctx, W, H) {
+    label(ctx,'Ponzi vs. Banking: the production difference',W*0.5,H*0.07,{bold:true,color:'#444',size:12});
     const lx=W*0.2, cx=W*0.5, rx=W*0.8;
-    const y=H*0.35;
+    const y=H*0.38;
 
     // Ponzi (left)
     box(ctx,lx-55,y-28,110,50,'#fff5f5','#b91c1c');
@@ -354,10 +356,11 @@
 
   function drawEcological(ctx, W, H) {
     const cx=W*0.5;
+    label(ctx,'Banking System at Ecological Limits',cx,H*0.06,{bold:true,color:'#b91c1c',size:12});
 
     // Two columns
     const lx=W*0.27, rx=W*0.73;
-    const ty=H*0.12;
+    const ty=H*0.14;
 
     label(ctx,'HEALTHY GROWTH',lx,ty,{bold:true,color:'#2a5c34',size:10});
     label(ctx,'new debt → real production',lx,ty+16,{size:9,color:'#2a5c34'});
@@ -407,13 +410,13 @@
       ['reversible?','no','partially','often no (threshold)'],
     ];
     const col=[W*0.12, W*0.34, W*0.58, W*0.82];
-    const rowH=H*0.115;
-    const startY=H*0.08;
+    const rowH=H*0.12;
+    const startY=H*0.07;
 
     // Headers
     headers.forEach((h,i) => {
       const colors=['#444','#b91c1c','#2a5c34','#92600a'];
-      label(ctx,h,col[i],startY,{bold:true,color:colors[i],size:9});
+      label(ctx,h,col[i],startY,{bold:true,color:colors[i],size:11});
     });
 
     rows.forEach((row,ri) => {
@@ -421,7 +424,7 @@
       if(ri%2===0) { ctx.fillStyle='rgba(0,0,0,0.03)'; ctx.fillRect(0,y-rowH*0.7,W,rowH); }
       row.forEach((cell,ci) => {
         const color = ci===0?'#666':ci===1?'#b91c1c':ci===2?'#2a5c34':'#92600a';
-        label(ctx,cell,col[ci],y,{size:ci===0?8:9,color,bold:ci===0});
+        label(ctx,cell,col[ci],y,{size:ci===0?10:11,color,bold:ci===0});
       });
     });
   }
@@ -429,7 +432,7 @@
   function resize() {
     const c=document.getElementById('canvas');
     c.width=c.parentElement.clientWidth;
-    c.height=Math.round(c.width*0.46);
+    c.height=Math.round(c.width*0.54);
     render();
   }
   window.addEventListener('resize', resize);
