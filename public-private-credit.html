@@ -51,12 +51,12 @@
     <p class="subtitle">Who creates money, who charges interest, and where the interest goes — these are design choices, not natural laws.</p>
   </header>
 
-  <p class="intro">Private banks create money by making loans. Every dollar created this way carries interest — and that interest flows to private shareholders. The structural growth imperative (models 3 and 4) follows directly from this design. But it isn't the only possible design. Public credit creation — through sovereign issuance, central bank lending, or public banks — can create money differently: with interest returning to the public, or with no interest obligation at all. The growth math changes when the money-creation mechanism changes.</p>
+  <p class="intro">Private banks create money by making loans. Every dollar created this way carries interest — and that interest flows to private shareholders. But this isn't the only possible design. Public credit creation — through sovereign issuance, central bank lending, or public banks — creates money the same way, but with interest returning to the public. The growth math changes when that one variable changes.</p>
 
   <div class="step-controls">
     <button class="step-btn" id="btn-prev" onclick="changeStep(-1)">← Back</button>
     <button class="step-btn" id="btn-next" onclick="changeStep(1)">Next →</button>
-    <span class="step-indicator" id="step-label">Step 1 of 6</span>
+    <span class="step-indicator" id="step-label">Step 1 of 4</span>
   </div>
 
   <div class="viz-wrap">
@@ -70,55 +70,43 @@
     <div class="ctx-grid">
       <div class="ctx-box b1">
         <div class="ctx-title">Private bank credit (current system)</div>
-        When a private bank makes a loan, it creates a deposit — money that didn't exist before. The borrower owes back principal plus interest. The interest flows to the bank's shareholders (after expenses and reserves). Because interest is charged on money that was newly created, total debt always exceeds total money in circulation. New credit creation must continuously outpace old debt repayment. This is the structural growth imperative. It is not a consequence of capitalism broadly — it's a consequence of this specific money-creation mechanism.
+        When a private bank makes a loan, it creates a deposit — money that didn't exist before. The borrower owes back principal plus interest. The interest flows to the bank's shareholders. Because interest is charged on newly created money, total debt always exceeds total money. New credit must continuously outpace old debt repayment. This is the structural growth imperative built into this specific design.
       </div>
       <div class="ctx-box b2">
         <div class="ctx-title">Public credit / sovereign issuance</div>
-        Governments with sovereign currency can issue money directly — through spending, through the central bank, or through publicly owned banks. Interest on public loans returns to the public treasury rather than to shareholders. Alternatively, some public credit carries no interest at all (direct sovereign spending). In both cases, the structural interest gap is reduced or eliminated: the money created doesn't automatically demand more money than was created. This changes the growth math at the foundation.
+        Governments with sovereign currency can issue money directly — or through publicly owned banks. Interest on public loans returns to the public treasury as revenue. In some cases (direct sovereign spending), no interest is charged at all. In both cases, the structural interest gap is reduced or eliminated: the money created doesn't automatically demand more money than exists.
       </div>
       <div class="ctx-box b3">
         <div class="ctx-title">Historical examples</div>
-        The Bank of North Dakota (est. 1919) — the only US state-owned bank — returns profits to the state general fund rather than private shareholders. Colonial-era land banks and bills of credit issued by governments (before the federal constitution prohibited state-issued currency) functioned as public credit instruments. The post-WWII reconstruction programs in Japan and Germany used directed public credit to channel investment. Modern monetary theory (MMT) argues that sovereign currency issuers are already doing a version of public credit creation — but without accounting for it clearly.
+        The Bank of North Dakota (est. 1919) — the only US state-owned bank — returns profits to the state general fund. Post-WWII reconstruction in Japan and Germany used directed public credit. Modern monetary theory (MMT) argues that sovereign currency issuers are already doing a version of public credit creation, just without accounting for it clearly.
       </div>
       <div class="ctx-box b4">
         <div class="ctx-title">What this model doesn't resolve</div>
-        Public credit creation doesn't automatically solve the ecological limits problem — government spending can drive extraction just as readily as private lending. And public credit without discipline can produce inflation (too much money chasing too few goods). The question this model raises is narrower: whether the structural growth imperative built into private interest-bearing money creation is a necessary feature of any monetary system, or a specific design choice. The answer is: it's a design choice. What follows from that is a different conversation.
+        Public credit doesn't automatically solve ecological limits — government spending can drive extraction just as readily as private lending. And public credit without discipline can produce inflation. The question here is narrower: is the structural growth imperative a necessary feature of any monetary system, or a specific design choice? Answer: it's a design choice.
       </div>
     </div>
   </div>
 
   <script>
-  const W_BASE = 800, H_BASE = 420;
-
   const STEPS = [
     {
-      label: "Step 1 of 6 — Private bank creates a loan",
-      lesson: "<strong>Private bank money creation:</strong> A borrower needs $1,000. The private bank writes a loan and simultaneously creates a $1,000 deposit. The deposit is new money — it didn't exist before. The borrower now owes $1,000 + interest. The interest will flow to the bank's shareholders.",
-      scene: "private_loan"
+      label: "Step 1 of 4 — How each creates a loan",
+      lesson: "<strong>The loan mechanism is identical.</strong> A private bank and a public bank both create a $1,000 loan the same way: they write a new deposit into existence — money that wasn't there before. The borrower has $1,000 and owes $1,000 plus interest. The mechanism doesn't differ. What differs is what happens when the interest gets paid back.",
+      scene: "both_loan"
     },
     {
-      label: "Step 2 of 6 — Where does the interest go?",
-      lesson: "<strong>The interest path in private banking:</strong> The borrower repays principal + interest. Principal returns to the money supply (the deposit is extinguished when the loan is repaid). The interest — which was never created as money — flows out: to bank profits, shareholders, and dividends. This is the gap that drives the structural growth imperative in model 3.",
-      scene: "private_interest"
+      label: "Step 2 of 4 — Where the interest goes",
+      lesson: "<strong>This is the design difference.</strong> When the borrower repays, both banks receive principal plus interest. The principal is extinguished (the deposit disappears when the loan is repaid). The interest is the variable: in a private bank it flows to shareholders as profit. In a public bank it flows to the public treasury — as revenue that can fund services, reduce taxes, or make new loans. One path exits the economy. The other stays.",
+      scene: "both_interest"
     },
     {
-      label: "Step 3 of 6 — The structural consequence",
-      lesson: "<strong>The growth imperative:</strong> Because interest exits the system as profit but principal re-enters as new loan capacity, total debt obligations always exceed total money. To service existing debt, new loans must continuously be created. Growth isn't optional — it's the mechanism that keeps the system from collapsing. Model 3 shows this divergence in detail.",
-      scene: "private_growth"
+      label: "Step 3 of 4 — The structural consequence",
+      lesson: "<strong>In a private system, interest permanently exits the money supply.</strong> Because interest drains out as profit, the total money in circulation is always less than total debt owed. New lending must continuously create new money to cover old obligations. In a public system, interest returns as revenue — it doesn't drain out. The gap between money created and money owed still exists within any given loan, but it isn't widened by the drain. The growth pressure is structurally different.",
+      scene: "growth_gap"
     },
     {
-      label: "Step 4 of 6 — Public bank / sovereign issuance",
-      lesson: "<strong>Public credit creation:</strong> A government or public bank creates the same $1,000 loan. The mechanism of money creation is identical — new deposit, new debt. The difference: interest paid on public loans returns to the public treasury, not to private shareholders. The interest doesn't exit the system as profit. It re-enters as public revenue.",
-      scene: "public_loan"
-    },
-    {
-      label: "Step 5 of 6 — Where public interest goes",
-      lesson: "<strong>Interest returns to the commons:</strong> In a public credit system, interest payments become public revenue — used for infrastructure, services, debt reduction, or further lending. The gap between money created and money owed still exists within the system, but the interest doesn't drain permanently to a separate profit pool. The growth pressure is structurally lower.",
-      scene: "public_interest"
-    },
-    {
-      label: "Step 6 of 6 — The design comparison",
-      lesson: "<strong>A design choice, not a natural law:</strong> Both systems create money as debt. The difference is in who captures the interest — private shareholders or the public. This single variable changes whether the system requires continuous private-sector growth to remain solvent. Changing it doesn't solve ecological limits (model 5) or the incomplete ledger (model 9). But it removes one specific structural driver of perpetual growth that is built into the current design.",
+      label: "Step 4 of 4 — Design comparison",
+      lesson: "<strong>A design choice, not a natural law.</strong> Both systems create money as debt. The difference is in who captures the interest — private shareholders or the public. This single variable changes whether the system requires continuous private-sector growth just to stay afloat. Changing it doesn't solve the ecological limits problem. But it removes one specific growth driver that is built into the current design.",
       scene: "comparison"
     }
   ];
@@ -140,11 +128,14 @@
     drawScene(s);
   }
 
-  function label(text, x, y, opts = {}) {
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
+  function lbl(text, x, y, opts = {}) {
     ctx.save();
     ctx.font = `${opts.bold ? 'bold ' : ''}${opts.size || 12}px Georgia,serif`;
     ctx.fillStyle = opts.color || '#1a1a1a';
     ctx.textAlign = opts.align || 'center';
+    ctx.globalAlpha = opts.alpha || 1;
     ctx.fillText(text, x, y);
     ctx.restore();
   }
@@ -152,23 +143,24 @@
   function box(x, y, w, h, fill, stroke, r = 6) {
     ctx.save();
     ctx.beginPath();
-    ctx.roundRect(x, y, w, h, r);
+    if (ctx.roundRect) {
+      ctx.roundRect(x, y, w, h, r);
+    } else {
+      ctx.rect(x, y, w, h);
+    }
     ctx.fillStyle = fill;
     ctx.fill();
     if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.stroke(); }
     ctx.restore();
   }
 
-  function arrow(x1, y1, x2, y2, color, dashed = false) {
+  function arr(x1, y1, x2, y2, color, dashed) {
     ctx.save();
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
     ctx.lineWidth = 1.8;
     if (dashed) ctx.setLineDash([5, 4]);
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     ctx.setLineDash([]);
     const angle = Math.atan2(y2 - y1, x2 - x1);
     const ah = 8;
@@ -176,228 +168,362 @@
     ctx.moveTo(x2, y2);
     ctx.lineTo(x2 - ah * Math.cos(angle - 0.4), y2 - ah * Math.sin(angle - 0.4));
     ctx.lineTo(x2 - ah * Math.cos(angle + 0.4), y2 - ah * Math.sin(angle + 0.4));
-    ctx.closePath();
-    ctx.fill();
+    ctx.closePath(); ctx.fill();
     ctx.restore();
   }
 
-  function person(x, y, color, size = 18) {
+  function person(x, y, color, sz = 16) {
     ctx.save();
     ctx.fillStyle = color;
-    ctx.beginPath(); ctx.arc(x, y - size * 0.7, size * 0.38, 0, Math.PI * 2); ctx.fill();
-    ctx.fillRect(x - size * 0.28, y - size * 0.35, size * 0.56, size * 0.72);
+    ctx.beginPath(); ctx.arc(x, y - sz * 0.7, sz * 0.38, 0, Math.PI * 2); ctx.fill();
+    ctx.fillRect(x - sz * 0.28, y - sz * 0.32, sz * 0.56, sz * 0.72);
     ctx.restore();
   }
 
+  // ── Divider ──────────────────────────────────────────────────────────────
+
+  function drawDivider() {
+    ctx.save();
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(W * 0.5, H * 0.04);
+    ctx.lineTo(W * 0.5, H * 0.92);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  // ── Scene: both_loan ─────────────────────────────────────────────────────
+
+  function drawBothLoan() {
+    const mid = W * 0.5;
+    const bkW = W * 0.17, bkH = H * 0.24;
+    const by  = H * 0.42;  // bank box center y
+
+    drawDivider();
+
+    // ── LEFT: PRIVATE BANK ──
+    const pBankX = mid * 0.62;  // bank center x in left half
+    const pBorrX = mid * 0.14;  // borrower center x
+
+    lbl('PRIVATE BANK', mid * 0.5, H * 0.09, { bold: true, size: 13, color: '#1a3a6b' });
+
+    // Bank box
+    box(pBankX - bkW/2, by - bkH/2, bkW, bkH, '#dce8f5', '#1a3a6b');
+    lbl('Private', pBankX, by - 10, { bold: true, size: 11, color: '#1a3a6b' });
+    lbl('Bank', pBankX, by + 5, { bold: true, size: 11, color: '#1a3a6b' });
+    lbl('creates $1,000', pBankX, by + 20, { size: 9, color: '#2d5986' });
+
+    // Borrower
+    person(pBorrX, by, '#555');
+    lbl('Borrower', pBorrX, by + 22, { size: 10, color: '#444' });
+
+    // Loan arrow: bank → borrower (above center)
+    const loanY = by - H * 0.10;
+    arr(pBankX - bkW/2, loanY, pBorrX + 12, loanY, '#1a3a6b');
+    lbl('← Loan: $1,000', (pBankX - bkW/2 + pBorrX) / 2, loanY - 8, { size: 10, color: '#1a3a6b' });
+
+    // Debt arrow: borrower → bank (below center)
+    const debtY = by + H * 0.10;
+    arr(pBorrX + 12, debtY, pBankX - bkW/2, debtY, '#b91c1c', true);
+    lbl('Owes $1,000 + interest →', (pBorrX + pBankX - bkW/2) / 2, debtY + 13, { size: 10, color: '#b91c1c' });
+
+    // ── RIGHT: PUBLIC BANK ──
+    const qBankX = mid + mid * 0.38;  // bank center x in right half
+    const qBorrX = mid + mid * 0.86;  // borrower center x
+
+    lbl('PUBLIC BANK', mid + mid * 0.5, H * 0.09, { bold: true, size: 13, color: '#1a6b3c' });
+
+    // Bank box
+    box(qBankX - bkW/2, by - bkH/2, bkW, bkH, '#ddf0e8', '#1a6b3c');
+    lbl('Public', qBankX, by - 10, { bold: true, size: 11, color: '#1a6b3c' });
+    lbl('Bank', qBankX, by + 5, { bold: true, size: 11, color: '#1a6b3c' });
+    lbl('creates $1,000', qBankX, by + 20, { size: 9, color: '#2a7a4c' });
+
+    // Borrower
+    person(qBorrX, by, '#555');
+    lbl('Borrower', qBorrX, by + 22, { size: 10, color: '#444' });
+
+    // Loan arrow: bank → borrower
+    arr(qBankX + bkW/2, loanY, qBorrX - 12, loanY, '#1a6b3c');
+    lbl('Loan: $1,000 →', (qBankX + bkW/2 + qBorrX) / 2, loanY - 8, { size: 10, color: '#1a6b3c' });
+
+    // Debt arrow: borrower → bank
+    arr(qBorrX - 12, debtY, qBankX + bkW/2, debtY, '#7b5200', true);
+    lbl('← Repays $1,000 + interest', (qBorrX + qBankX + bkW/2) / 2, debtY + 13, { size: 10, color: '#7b5200' });
+
+    // Bottom note
+    lbl('The loan mechanism is identical. Both write new money into existence.', W * 0.5, H * 0.92, { size: 10, color: '#888' });
+  }
+
+  // ── Scene: both_interest ─────────────────────────────────────────────────
+
+  function drawBothInterest() {
+    const mid = W * 0.5;
+    const bkW = W * 0.14, bkH = H * 0.22;
+    const bankY = H * 0.40;
+
+    drawDivider();
+
+    // Destination box dimensions
+    const dW = W * 0.14, dH = H * 0.16;
+
+    // ── LEFT: PRIVATE BANK ──
+    const pBorrX = mid * 0.12;
+    const pBankX = mid * 0.46;
+    const pMSupX = mid * 0.82;
+    const pShareX = mid * 0.82;
+
+    lbl('PRIVATE BANK', mid * 0.5, H * 0.09, { bold: true, size: 13, color: '#1a3a6b' });
+
+    // Borrower
+    person(pBorrX, bankY, '#555');
+    lbl('Borrower', pBorrX, bankY + 22, { size: 10, color: '#444' });
+
+    // Bank box
+    box(pBankX - bkW/2, bankY - bkH/2, bkW, bkH, '#dce8f5', '#1a3a6b');
+    lbl('Private', pBankX, bankY - 8, { bold: true, size: 11, color: '#1a3a6b' });
+    lbl('Bank', pBankX, bankY + 7, { bold: true, size: 11, color: '#1a3a6b' });
+
+    // Repayment arrow: borrower → bank
+    arr(pBorrX + 12, bankY, pBankX - bkW/2, bankY, '#444');
+    lbl('repays $1,000 + interest', (pBorrX + pBankX - bkW/2) / 2, bankY - 10, { size: 9, color: '#555' });
+
+    // Destination boxes
+    const pMSupY = H * 0.22;
+    const pShareY = H * 0.66;
+
+    box(pMSupX - dW/2, pMSupY - dH/2, dW, dH, '#eef4f0', '#1a6b3c');
+    lbl('Money', pMSupX, pMSupY - 10, { bold: true, size: 10, color: '#1a6b3c' });
+    lbl('Supply', pMSupX, pMSupY + 4, { bold: true, size: 10, color: '#1a6b3c' });
+    lbl('principal', pMSupX, pMSupY + 18, { size: 9, color: '#888' });
+    lbl('returns here', pMSupX, pMSupY + 30, { size: 9, color: '#888' });
+
+    box(pShareX - dW/2, pShareY - dH/2, dW, dH, '#fff0f0', '#b91c1c');
+    lbl('Share-', pShareX, pShareY - 10, { bold: true, size: 10, color: '#b91c1c' });
+    lbl('holders', pShareX, pShareY + 4, { bold: true, size: 10, color: '#b91c1c' });
+    lbl('interest', pShareX, pShareY + 18, { size: 9, color: '#b91c1c' });
+    lbl('EXITS here', pShareX, pShareY + 30, { size: 9, color: '#b91c1c' });
+
+    // Split arrows from bank
+    arr(pBankX + bkW/2, bankY - bkH/4, pMSupX - dW/2, pMSupY + dH * 0.3, '#1a6b3c');
+    lbl('$1,000', (pBankX + bkW/2 + pMSupX - dW/2) / 2 - 10, bankY - H * 0.08, { size: 9, color: '#1a6b3c' });
+
+    arr(pBankX + bkW/2, bankY + bkH/4, pShareX - dW/2, pShareY - dH * 0.3, '#b91c1c');
+    lbl('interest', (pBankX + bkW/2 + pShareX - dW/2) / 2 - 10, bankY + H * 0.12, { size: 9, color: '#b91c1c' });
+
+    // Exit symbol under shareholders box
+    lbl('↓ exits economy', pShareX, pShareY + dH/2 + 14, { size: 9, color: '#b91c1c', bold: true });
+
+    // ── RIGHT: PUBLIC BANK ──
+    const qBorrX = mid + mid * 0.88;
+    const qBankX = mid + mid * 0.54;
+    const qMSupX = mid + mid * 0.18;
+    const qTreasX = mid + mid * 0.18;
+
+    lbl('PUBLIC BANK', mid + mid * 0.5, H * 0.09, { bold: true, size: 13, color: '#1a6b3c' });
+
+    // Borrower
+    person(qBorrX, bankY, '#555');
+    lbl('Borrower', qBorrX, bankY + 22, { size: 10, color: '#444' });
+
+    // Bank box
+    box(qBankX - bkW/2, bankY - bkH/2, bkW, bkH, '#ddf0e8', '#1a6b3c');
+    lbl('Public', qBankX, bankY - 8, { bold: true, size: 11, color: '#1a6b3c' });
+    lbl('Bank', qBankX, bankY + 7, { bold: true, size: 11, color: '#1a6b3c' });
+
+    // Repayment arrow: borrower → bank
+    arr(qBorrX - 12, bankY, qBankX + bkW/2, bankY, '#444');
+    lbl('repays $1,000 + interest', (qBorrX - 12 + qBankX + bkW/2) / 2, bankY - 10, { size: 9, color: '#555' });
+
+    // Destination boxes
+    const qMSupY = H * 0.22;
+    const qTreasY = H * 0.66;
+
+    box(qMSupX - dW/2, qMSupY - dH/2, dW, dH, '#eef4f0', '#1a6b3c');
+    lbl('Money', qMSupX, qMSupY - 10, { bold: true, size: 10, color: '#1a6b3c' });
+    lbl('Supply', qMSupX, qMSupY + 4, { bold: true, size: 10, color: '#1a6b3c' });
+    lbl('principal', qMSupX, qMSupY + 18, { size: 9, color: '#888' });
+    lbl('returns here', qMSupX, qMSupY + 30, { size: 9, color: '#888' });
+
+    box(qTreasX - dW/2, qTreasY - dH/2, dW, dH, '#e8f0ff', '#1a3a6b');
+    lbl('Public', qTreasX, qTreasY - 10, { bold: true, size: 10, color: '#1a3a6b' });
+    lbl('Treasury', qTreasX, qTreasY + 4, { bold: true, size: 10, color: '#1a3a6b' });
+    lbl('interest', qTreasX, qTreasY + 18, { size: 9, color: '#1a3a6b' });
+    lbl('STAYS here', qTreasX, qTreasY + 30, { size: 9, color: '#1a3a6b' });
+
+    // Split arrows from bank (going LEFT from bank to boxes on left)
+    arr(qBankX - bkW/2, bankY - bkH/4, qMSupX + dW/2, qMSupY + dH * 0.3, '#1a6b3c');
+    lbl('$1,000', (qBankX - bkW/2 + qMSupX + dW/2) / 2 + 10, bankY - H * 0.08, { size: 9, color: '#1a6b3c' });
+
+    arr(qBankX - bkW/2, bankY + bkH/4, qTreasX + dW/2, qTreasY - dH * 0.3, '#1a3a6b');
+    lbl('interest', (qBankX - bkW/2 + qTreasX + dW/2) / 2 + 10, bankY + H * 0.12, { size: 9, color: '#1a3a6b' });
+
+    // Re-enters note under treasury box
+    lbl('↑ re-enters as public revenue', qTreasX, qTreasY + dH/2 + 14, { size: 9, color: '#1a3a6b', bold: true });
+
+    // Bottom summary
+    lbl('One variable. Two outcomes.', W * 0.5, H * 0.92, { size: 11, color: '#444', bold: true });
+  }
+
+  // ── Scene: growth_gap ────────────────────────────────────────────────────
+
+  function drawGrowthGap() {
+    const lx = W * 0.10, rx = W * 0.88;
+    const topY = H * 0.10, botY = H * 0.86;
+    const midX = (lx + rx) / 2;
+
+    // Axes
+    ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(lx, botY); ctx.lineTo(rx, botY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lx, topY); ctx.lineTo(lx, botY); ctx.stroke();
+
+    // Axis labels
+    lbl('Time →', rx + 2, botY + 4, { size: 10, color: '#aaa', align: 'left' });
+    lbl('$', lx - 4, topY, { size: 10, color: '#aaa', align: 'right' });
+
+    const pts = 8;
+    const xStep = (rx - lx) / (pts - 1);
+    const rangeY = botY - topY;
+
+    // Money created — flat (principal only, no growth)
+    const moneyLevel = 0.40;
+    ctx.strokeStyle = '#2d5986'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i < pts; i++) {
+      const x = lx + i * xStep;
+      const y = botY - rangeY * moneyLevel;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Private total owed — grows with compounding interest
+    ctx.strokeStyle = '#b91c1c'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i < pts; i++) {
+      const x = lx + i * xStep;
+      const f = 0.40 + i * 0.065 + i * i * 0.008;
+      const y = botY - rangeY * Math.min(f, 0.95);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Public net obligation — grows more slowly (interest returned reduces net drain)
+    ctx.strokeStyle = '#1a6b3c'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    for (let i = 0; i < pts; i++) {
+      const x = lx + i * xStep;
+      const f = 0.40 + i * 0.022 + i * i * 0.002;
+      const y = botY - rangeY * Math.min(f, 0.95);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Gap shading (between money created and private owed)
+    ctx.fillStyle = 'rgba(185,28,28,0.07)';
+    ctx.beginPath();
+    ctx.moveTo(lx, botY - rangeY * 0.40);
+    for (let i = 0; i < pts; i++) {
+      const x = lx + i * xStep;
+      const f = 0.40 + i * 0.065 + i * i * 0.008;
+      ctx.lineTo(x, botY - rangeY * Math.min(f, 0.95));
+    }
+    for (let i = pts - 1; i >= 0; i--) {
+      ctx.lineTo(lx + i * xStep, botY - rangeY * 0.40);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // Labels on lines (right end)
+    const endX = lx + (pts - 1) * xStep + 6;
+    lbl('money in existence', endX, botY - rangeY * 0.40 + 4, { size: 10, color: '#2d5986', align: 'left' });
+
+    const privEnd = 0.40 + (pts-1)*0.065 + (pts-1)*(pts-1)*0.008;
+    lbl('private: total owed', endX, botY - rangeY * Math.min(privEnd, 0.95) - 4, { size: 10, color: '#b91c1c', align: 'left' });
+
+    const pubEnd = 0.40 + (pts-1)*0.022 + (pts-1)*(pts-1)*0.002;
+    lbl('public: net obligation', endX, botY - rangeY * Math.min(pubEnd, 0.95) + 4, { size: 10, color: '#1a6b3c', align: 'left' });
+
+    // Gap label
+    const gapMid = botY - rangeY * (0.40 + 0.22);
+    lbl('GAP', lx + (pts-1) * xStep * 0.7, gapMid, { size: 11, bold: true, color: '#b91c1c' });
+    lbl('(always present in', lx + (pts-1) * xStep * 0.7, gapMid + 16, { size: 9, color: '#b91c1c' });
+    lbl('private system)', lx + (pts-1) * xStep * 0.7, gapMid + 28, { size: 9, color: '#b91c1c' });
+  }
+
+  // ── Scene: comparison ────────────────────────────────────────────────────
+
+  function drawComparison() {
+    const rows = [
+      ['', 'Private Banking', 'Public Banking'],
+      ['How money is created', 'New bank deposit (loan)', 'New deposit or direct spending'],
+      ['Interest charged', 'Yes', 'Yes (sometimes none)'],
+      ['Interest goes to', 'Shareholders / profit', 'Public treasury / revenue'],
+      ['Growth requirement', 'Structurally high', 'Structurally lower'],
+      ['Failure if growth stops?', 'Yes — debt unpayable', 'Less so — interest recycled'],
+    ];
+
+    const colX = [W * 0.22, W * 0.54, W * 0.82];
+    const colColors = ['#444', '#1a3a6b', '#1a6b3c'];
+    const rowH = H / (rows.length + 1.5);
+    const startY = H * 0.09;
+
+    rows.forEach((row, ri) => {
+      const y = startY + rowH * ri;
+
+      if (ri === 0) {
+        // Header row
+        [colX[1], colX[2]].forEach((cx, ci) => {
+          const fill = ci === 0 ? '#dce8f5' : '#ddf0e8';
+          const stroke = ci === 0 ? '#1a3a6b' : '#1a6b3c';
+          box(cx - W * 0.16, y - rowH * 0.5, W * 0.27, rowH * 0.85, fill, stroke);
+          lbl(row[ci + 1], cx, y + 6, { bold: true, size: 12, color: colColors[ci + 1] });
+        });
+      } else {
+        // Alternating stripe
+        if (ri % 2 === 0) {
+          ctx.fillStyle = 'rgba(0,0,0,0.025)';
+          ctx.fillRect(0, y - rowH * 0.45, W, rowH * 0.9);
+        }
+        // Row label
+        lbl(row[0], colX[0], y + 5, { size: 10, color: '#666', bold: true, align: 'center' });
+        // Private value
+        const privColor = row[2].includes('high') || row[2].includes('Yes —') ? '#b91c1c' : '#2d5986';
+        lbl(row[1], colX[1], y + 5, { size: 10, color: privColor, align: 'center' });
+        // Public value
+        const pubColor = row[3].includes('lower') || row[3].includes('Less') ? '#1a6b3c' : '#1a6b3c';
+        lbl(row[2], colX[2], y + 5, { size: 10, color: pubColor, align: 'center' });
+      }
+    });
+
+    // Vertical dividers
+    [colX[0] + W * 0.15, colX[1] + W * 0.15].forEach(x => {
+      ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, H * 0.05); ctx.lineTo(x, H * 0.95); ctx.stroke();
+    });
+  }
+
+  // ── Main draw ─────────────────────────────────────────────────────────────
+
   function drawScene(s) {
+    if (!ctx) return;
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#f8f8f4';
     ctx.fillRect(0, 0, W, H);
-
     const sc = s.scene;
-
-    if (sc === 'private_loan') {
-      // Borrower on left, private bank on right
-      const bx = W * 0.18, by = H * 0.38;
-      const px = W * 0.72, py = H * 0.38;
-
-      person(bx, by, '#2d5986');
-      label('Borrower', bx, by + 28, { size: 11, color: '#2d5986' });
-      label('needs $1,000', bx, by + 42, { size: 10, color: '#666' });
-
-      box(px - 60, py - 50, 120, 80, '#e8f0fb', '#1a3a6b');
-      label('Private Bank', px, py - 22, { size: 11, bold: true, color: '#1a3a6b' });
-      label('creates $1,000 deposit', px, py - 4, { size: 10, color: '#444' });
-      label('(new money)', px, py + 12, { size: 10, color: '#888' });
-
-      // Loan arrow: bank → borrower
-      arrow(px - 60, py - 10, bx + 20, by - 10, '#1a3a6b');
-      label('Loan ($1,000)', W * 0.45, py - 22, { size: 10, color: '#1a3a6b' });
-
-      // Debt obligation arrow: borrower → bank
-      arrow(bx + 20, by + 4, px - 60, py + 4, '#b91c1c', true);
-      label('Debt: $1,000 + interest', W * 0.45, py + 22, { size: 10, color: '#b91c1c' });
-
-    } else if (sc === 'private_interest') {
-      // Repayment flow diagram
-      const bx = W * 0.15, by = H * 0.4;
-      const px = W * 0.5, py = H * 0.4;
-      const sx = W * 0.82, sy = H * 0.3;
-      const mx = W * 0.82, my = H * 0.58;
-
-      person(bx, by, '#2d5986');
-      label('Borrower', bx, by + 28, { size: 11, color: '#2d5986' });
-
-      box(px - 50, py - 45, 100, 70, '#e8f0fb', '#1a3a6b');
-      label('Private Bank', px, py - 18, { size: 11, bold: true, color: '#1a3a6b' });
-
-      box(sx - 52, sy - 32, 104, 52, '#f0f9f4', '#1a6b3c');
-      label('Money Supply', sx, sy - 10, { size: 10, bold: true, color: '#1a6b3c' });
-      label('(principal returns)', sx, sy + 6, { size: 9, color: '#666' });
-
-      box(mx - 52, my - 32, 104, 52, '#fff5f5', '#b91c1c');
-      label('Shareholders', mx, my - 10, { size: 10, bold: true, color: '#b91c1c' });
-      label('(interest exits)', mx, my + 6, { size: 9, color: '#666' });
-
-      arrow(bx + 18, by - 8, px - 50, py - 8, '#444');
-      label('$1,000 + interest', W * 0.33, by - 18, { size: 10, color: '#444' });
-
-      arrow(px + 50, py - 18, sx - 52, sy + 2, '#1a6b3c');
-      label('$1,000', W * 0.67, py - 26, { size: 10, color: '#1a6b3c' });
-
-      arrow(px + 50, py + 6, mx - 52, my - 6, '#b91c1c');
-      label('interest →', W * 0.67, py + 22, { size: 10, color: '#b91c1c' });
-
-    } else if (sc === 'private_growth') {
-      // Show the diverging gap — loan created vs. total owed over time
-      const lx = W * 0.1, rx = W * 0.88;
-      const topY = H * 0.1, botY = H * 0.88;
-      const midY = H * 0.5;
-
-      // Axes
-      ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(lx, botY); ctx.lineTo(rx, botY); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(lx, topY); ctx.lineTo(lx, botY); ctx.stroke();
-
-      label('Money created (principal)', lx + 10, topY + 16, { size: 10, color: '#999', align: 'left' });
-      label('Total owed (principal + cumulative interest)', lx + 10, topY + 32, { size: 10, color: '#b91c1c', align: 'left' });
-
-      const pts = 7;
-      const xStep = (rx - lx) / (pts - 1);
-
-      // Money created — flat (no new lending)
-      ctx.strokeStyle = '#2d5986'; ctx.lineWidth = 2;
-      ctx.beginPath();
-      for (let i = 0; i < pts; i++) {
-        const x = lx + i * xStep;
-        const y = botY - (botY - topY) * 0.35;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-
-      // Debt grows with interest (compounding)
-      ctx.strokeStyle = '#b91c1c'; ctx.lineWidth = 2;
-      ctx.beginPath();
-      for (let i = 0; i < pts; i++) {
-        const x = lx + i * xStep;
-        const debtFrac = 0.35 + i * 0.08 + (i * i * 0.01);
-        const y = botY - (botY - topY) * Math.min(debtFrac, 0.92);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-
-      // Gap annotation at right
-      const gapX = lx + (pts - 1) * xStep;
-      const moneyY = botY - (botY - topY) * 0.35;
-      const debtFrac = 0.35 + (pts-1) * 0.08 + ((pts-1) * (pts-1) * 0.01);
-      const debtY = botY - (botY - topY) * Math.min(debtFrac, 0.92);
-      ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
-      ctx.beginPath(); ctx.moveTo(gapX + 10, moneyY); ctx.lineTo(gapX + 10, debtY); ctx.stroke();
-      ctx.setLineDash([]);
-      label('gap', gapX + 22, (moneyY + debtY) / 2, { size: 10, color: '#b91c1c' });
-
-      label('Time →', rx - 10, botY + 14, { size: 10, color: '#aaa', align: 'right' });
-
-    } else if (sc === 'public_loan') {
-      // Same as private_loan but with public bank
-      const bx = W * 0.18, by = H * 0.38;
-      const px = W * 0.72, py = H * 0.38;
-
-      person(bx, by, '#2d5986');
-      label('Borrower', bx, by + 28, { size: 11, color: '#2d5986' });
-      label('needs $1,000', bx, by + 42, { size: 10, color: '#666' });
-
-      box(px - 68, py - 52, 136, 82, '#e8f4ee', '#1a6b3c');
-      label('Public Bank / Government', px, py - 26, { size: 11, bold: true, color: '#1a6b3c' });
-      label('creates $1,000 deposit', px, py - 8, { size: 10, color: '#444' });
-      label('(same mechanism)', px, py + 8, { size: 10, color: '#888' });
-
-      arrow(px - 68, py - 12, bx + 20, by - 12, '#1a6b3c');
-      label('Loan ($1,000)', W * 0.45, py - 24, { size: 10, color: '#1a6b3c' });
-
-      arrow(bx + 20, by + 4, px - 68, py + 4, '#7b5200', true);
-      label('Repayment: $1,000 + interest', W * 0.45, py + 22, { size: 10, color: '#7b5200' });
-
-    } else if (sc === 'public_interest') {
-      // Interest returns to public treasury
-      const bx = W * 0.15, by = H * 0.4;
-      const px = W * 0.5, py = H * 0.4;
-      const sx = W * 0.82, sy = H * 0.3;
-      const tx = W * 0.82, ty = H * 0.58;
-
-      person(bx, by, '#2d5986');
-      label('Borrower', bx, by + 28, { size: 11, color: '#2d5986' });
-
-      box(px - 58, py - 45, 116, 70, '#e8f4ee', '#1a6b3c');
-      label('Public Bank', px, py - 18, { size: 11, bold: true, color: '#1a6b3c' });
-
-      box(sx - 52, sy - 32, 104, 52, '#f0f9f4', '#1a6b3c');
-      label('Money Supply', sx, sy - 10, { size: 10, bold: true, color: '#1a6b3c' });
-      label('(principal returns)', sx, sy + 6, { size: 9, color: '#666' });
-
-      box(tx - 52, ty - 32, 104, 52, '#f0f4ff', '#1a3a6b');
-      label('Public Treasury', tx, ty - 10, { size: 10, bold: true, color: '#1a3a6b' });
-      label('(interest returns)', tx, ty + 6, { size: 9, color: '#1a3a6b' });
-
-      arrow(bx + 18, by - 8, px - 58, py - 8, '#444');
-      label('$1,000 + interest', W * 0.33, by - 18, { size: 10, color: '#444' });
-
-      arrow(px + 58, py - 18, sx - 52, sy + 2, '#1a6b3c');
-      label('$1,000', W * 0.67, py - 26, { size: 10, color: '#1a6b3c' });
-
-      arrow(px + 58, py + 6, tx - 52, ty - 6, '#1a3a6b');
-      label('interest →', W * 0.67, py + 22, { size: 10, color: '#1a3a6b' });
-
-      label('public revenue, not private profit', tx, ty + 28, { size: 9, color: '#1a3a6b' });
-
-    } else if (sc === 'comparison') {
-      // Side-by-side comparison table
-      const cols = [W * 0.28, W * 0.55, W * 0.82];
-      const rows = [H * 0.08, H * 0.22, H * 0.36, H * 0.50, H * 0.64, H * 0.78];
-      const rowH = H * 0.13;
-      const colW = W * 0.24;
-
-      // Headers
-      box(cols[0] - colW/2, rows[0] - 14, colW, 28, '#f4f4f0', '#ddd');
-      label('', cols[0], rows[0] + 6, { size: 10, bold: true, color: '#888' });
-
-      box(cols[1] - colW/2, rows[0] - 14, colW, 28, '#e8f0fb', '#1a3a6b');
-      label('Private Banking', cols[1], rows[0] + 6, { size: 11, bold: true, color: '#1a3a6b' });
-
-      box(cols[2] - colW/2, rows[0] - 14, colW, 28, '#e8f4ee', '#1a6b3c');
-      label('Public Credit', cols[2], rows[0] + 6, { size: 11, bold: true, color: '#1a6b3c' });
-
-      const rowData = [
-        ['Money created?', 'Yes — as loan', 'Yes — as loan'],
-        ['Interest charged?', 'Yes', 'Sometimes / less'],
-        ['Interest flows to', 'Shareholders', 'Public treasury'],
-        ['Growth imperative', 'Strong (structural)', 'Weaker / absent'],
-        ['US example', 'JPMorgan, etc.', 'Bank of North Dakota'],
-      ];
-
-      const colors = {
-        label: '#888',
-        private: '#1a3a6b',
-        public: '#1a6b3c',
-      };
-
-      rowData.forEach((row, i) => {
-        const y = rows[i + 1];
-        const bg = i % 2 === 0 ? '#faf8f5' : '#f4f4f0';
-        [cols[0], cols[1], cols[2]].forEach((cx, ci) => {
-          box(cx - colW/2, y - rowH * 0.42, colW, rowH * 0.84, bg, '#eee');
-        });
-        label(row[0], cols[0], y + 6, { size: 10, color: colors.label });
-        label(row[1], cols[1], y + 6, { size: 10, color: colors.private });
-        label(row[2], cols[2], y + 6, { size: 10, color: colors.public });
-      });
-    }
+    if (sc === 'both_loan') drawBothLoan();
+    else if (sc === 'both_interest') drawBothInterest();
+    else if (sc === 'growth_gap') drawGrowthGap();
+    else if (sc === 'comparison') drawComparison();
   }
 
   function resize() {
     canvas = document.getElementById('canvas');
     canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = Math.round(canvas.width * 0.52);
+    canvas.height = Math.round(canvas.width * 0.58);
     W = canvas.width;
     H = canvas.height;
     ctx = canvas.getContext('2d');
