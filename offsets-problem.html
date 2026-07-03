@@ -56,6 +56,7 @@
   <div class="step-controls">
     <button class="step-btn" id="btn-prev" onclick="changeStep(-1)">← Back</button>
     <button class="step-btn" id="btn-next" onclick="changeStep(1)">Next →</button>
+    <button class="step-btn" onclick="resetSteps()">Reset</button>
     <span class="step-indicator" id="step-label">Step 1 of 6</span>
   </div>
 
@@ -130,6 +131,7 @@
     step = Math.max(0, Math.min(STEPS.length - 1, step + dir));
     render();
   }
+  function resetSteps() { step = 0; render(); }
 
   function render() {
     const s = STEPS[step];
