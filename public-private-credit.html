@@ -137,7 +137,7 @@
     document.getElementById('lesson').innerHTML = s.lesson;
     document.getElementById('btn-prev').disabled = step === 0;
     document.getElementById('btn-next').disabled = step === STEPS.length - 1;
-    draw(s);
+    drawScene(s);
   }
 
   function label(text, x, y, opts = {}) {
