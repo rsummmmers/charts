@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergence</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; min-height: 4.5em; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+    button { font-family: 'Georgia', serif; font-size: 0.82rem; padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; cursor: pointer; border-radius: 3px; }
+    button:hover { background: #1a1a1a; color: #faf8f5; }
+    button:disabled { opacity: 0.3; cursor: default; }
+    .step-ct { font-size: 0.78rem; color: #aaa; margin-left: auto; }
+  </style>
+</head>
+<body>
+  <h1>Emergence</h1>
+  <p class="subtitle">When a group of simple parts produces something none of the parts could do alone</p>
+  <canvas id="c" height="330"></canvas>
+  <p class="desc" id="desc"></p>
+  <nav>
+    <button id="prev">← Back</button>
+    <button id="next">Next →</button>
+    <span class="step-ct" id="ct"></span>
+  </nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    let raf = null;
+    function cancelAnim() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight || 'normal') + ' ' + (o.size || 13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+      else ctx.rect(x, y, w, h);
+    }
+
+    function arr(x1, y1, x2, y2, color, lw) {
+      color = color || '#888'; lw = lw || 1.5;
+      const ang = Math.atan2(y2 - y1, x2 - x1), hl = 9;
+      ctx.save();
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - hl * Math.cos(ang - 0.4), y2 - hl * Math.sin(ang - 0.4));
+      ctx.lineTo(x2 - hl * Math.cos(ang + 0.4), y2 - hl * Math.sin(ang + 0.4));
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    // ── Step 1: Definition ────────────────────────────────────────────────────
+    function step1() {
+      clear();
+      txt('Emergence', W / 2, H * 0.1, { size: 16, weight: 'bold' });
+
+      // Left: parts alone (simple, isolated)
+      const lx = W * 0.22, ly = H * 0.46;
+      ctx.save(); ctx.fillStyle = '#e0e8f0'; ctx.strokeStyle = '#4a7aaa'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(W*0.04, H*0.2, W*0.36, H*0.52, 8); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('Individual parts', lx, H*0.26, { size: 12, color: '#4a7aaa', weight: 'bold' });
+
+      // Simple dots
+      [[lx-30, ly-40],[lx+10,ly-50],[lx-10,ly-20],[lx+28,ly-30],[lx-28,ly-10],[lx+14,ly+5],[lx-8,ly+22]].forEach(([px,py]) => {
+        ctx.save(); ctx.fillStyle = '#4a7aaa'; ctx.globalAlpha = 0.6;
+        ctx.beginPath(); ctx.arc(px, py, 8, 0, Math.PI*2); ctx.fill(); ctx.restore();
+      });
+      txt('each one simple', lx, H*0.69, { size: 11, color: '#888' });
+      txt('each one limited', lx, H*0.69+15, { size: 11, color: '#888' });
+
+      // Not equals sign
+      txt('≠', W*0.5, H*0.46, { size: 32, color: '#c03020' });
+
+      // Right: emergent whole
+      const rx = W * 0.76, ry = H * 0.46;
+      ctx.save(); ctx.fillStyle = '#e8f8e0'; ctx.strokeStyle = '#2a8a2a'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(W*0.6, H*0.2, W*0.36, H*0.52, 8); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('The whole system', rx, H*0.26, { size: 12, color: '#2a8a2a', weight: 'bold' });
+
+      // Connected dots forming a pattern
+      const rpts = [[rx-30,ry-40],[rx+10,ry-50],[rx-10,ry-20],[rx+28,ry-30],[rx-28,ry-10],[rx+14,ry+5],[rx-8,ry+22]];
+      ctx.save(); ctx.strokeStyle = '#2a8a2a'; ctx.globalAlpha = 0.3; ctx.lineWidth = 1;
+      for (let i = 0; i < rpts.length; i++) {
+        for (let j = i+1; j < rpts.length; j++) {
+          ctx.beginPath(); ctx.moveTo(rpts[i][0],rpts[i][1]); ctx.lineTo(rpts[j][0],rpts[j][1]); ctx.stroke();
+        }
+      }
+      ctx.restore();
+      rpts.forEach(([px,py]) => {
+        ctx.save(); ctx.fillStyle = '#2a8a2a'; ctx.globalAlpha = 0.8;
+        ctx.beginPath(); ctx.arc(px, py, 8, 0, Math.PI*2); ctx.fill(); ctx.restore();
+      });
+      txt('can do things no part', rx, H*0.69, { size: 11, color: '#888' });
+      txt('could do alone', rx, H*0.69+15, { size: 11, color: '#888' });
+
+      txt('The whole is more than the sum of its parts.', W/2, H*0.88, { size: 12, color: '#555', weight: 'italic' });
+    }
+
+    // ── Step 2: Murmuration ───────────────────────────────────────────────────
+    // Animated starlings
+    let birds = null;
+    function initBirds() {
+      birds = [];
+      for (let i = 0; i < 60; i++) {
+        birds.push({
+          x: W * (0.2 + Math.random() * 0.6),
+          y: H * (0.2 + Math.random() * 0.5),
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: (Math.random() - 0.5) * 1.5,
+        });
+      }
+    }
+
+    function stepBirds() {
+      const SEP = 18, ALI = 50, COH = 80;
+      birds.forEach(b => {
+        let sx=0,sy=0, ax=0,ay=0, cx=0,cy=0, ns=0,na=0,nc=0;
+        birds.forEach(o => {
+          if (o===b) return;
+          const dx=o.x-b.x, dy=o.y-b.y, d=Math.sqrt(dx*dx+dy*dy);
+          if (d<SEP && d>0) { sx-=dx/d; sy-=dy/d; ns++; }
+          if (d<ALI) { ax+=o.vx; ay+=o.vy; na++; }
+          if (d<COH) { cx+=o.x; cy+=o.y; nc++; }
+        });
+        if (ns>0) { b.vx+=sx/ns*0.08; b.vy+=sy/ns*0.08; }
+        if (na>0) { b.vx+=(ax/na-b.vx)*0.04; b.vy+=(ay/na-b.vy)*0.04; }
+        if (nc>0) { b.vx+=(cx/nc-b.x)*0.003; b.vy+=(cy/nc-b.y)*0.003; }
+        const sp=Math.sqrt(b.vx*b.vx+b.vy*b.vy);
+        if (sp>2) { b.vx=b.vx/sp*2; b.vy=b.vy/sp*2; }
+        if (sp<0.5 && sp>0) { b.vx=b.vx/sp*0.5; b.vy=b.vy/sp*0.5; }
+        b.x+=b.vx; b.y+=b.vy;
+        if (b.x<W*0.05) b.vx+=0.1; if (b.x>W*0.95) b.vx-=0.1;
+        if (b.y<H*0.1) b.vy+=0.1; if (b.y>H*0.85) b.vy-=0.1;
+      });
+    }
+
+    function drawMurmuration() {
+      // Sky
+      const g = ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#c8d8e8'); g.addColorStop(1,'#e8eeee');
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+      // Ground
+      ctx.fillStyle = '#4a6a3a'; ctx.fillRect(0, H*0.88, W, H*0.12);
+
+      // Birds
+      ctx.save(); ctx.fillStyle = '#1a1a1a';
+      birds.forEach(b => {
+        const ang = Math.atan2(b.vy, b.vx);
+        ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.moveTo(5, 0); ctx.lineTo(-3, -2.5); ctx.lineTo(-1, 0); ctx.lineTo(-3, 2.5); ctx.closePath();
+        ctx.fill(); ctx.restore();
+      });
+      ctx.restore();
+
+      txt('Murmuration of starlings', W/2, H*0.07, { size: 13, weight: 'bold', color: '#1a1a1a' });
+      txt('60 birds · 3 simple rules · one fluid shape', W/2, H*0.07+18, { size: 11, color: '#555' });
+      txt('No bird is in charge. No bird knows the whole pattern.', W/2, H*0.94, { size: 11, color: '#555', weight: 'italic' });
+    }
+
+    function animateMurmuration() {
+      stepBirds();
+      drawMurmuration();
+      raf = requestAnimationFrame(animateMurmuration);
+    }
+
+    // ── Step 3: Brain ─────────────────────────────────────────────────────────
+    function step3() {
+      clear();
+      txt('86 Billion Neurons', W / 2, H * 0.08, { size: 14, weight: 'bold' });
+
+      // Draw simplified neuron network
+      const cx = W / 2, cy = H * 0.46;
+      const nodes = [];
+      // deterministic positions
+      const seed_positions = [
+        [0.50,0.30],[0.32,0.38],[0.68,0.38],[0.22,0.52],[0.42,0.55],
+        [0.60,0.55],[0.78,0.52],[0.35,0.68],[0.50,0.72],[0.65,0.68],
+        [0.25,0.38],[0.75,0.38],[0.50,0.46],[0.38,0.46],[0.62,0.46],
+      ];
+      seed_positions.forEach(([fx,fy]) => nodes.push({x:fx*W, y:fy*H}));
+
+      // Connections
+      const connections = [
+        [0,1],[0,2],[1,3],[1,4],[2,5],[2,6],[3,7],[4,7],[4,8],[5,8],[5,9],[6,9],
+        [10,1],[11,2],[12,4],[12,5],[13,4],[14,5],[7,8],[8,9],[0,12],[12,8],
+      ];
+      ctx.save(); ctx.strokeStyle = '#c8a8d8'; ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
+      connections.forEach(([a,b]) => {
+        ctx.beginPath(); ctx.moveTo(nodes[a].x, nodes[a].y); ctx.lineTo(nodes[b].x, nodes[b].y); ctx.stroke();
+      });
+      ctx.restore();
+
+      // Nodes
+      nodes.forEach((n, i) => {
+        ctx.save(); ctx.fillStyle = '#6a3a9a'; ctx.globalAlpha = 0.75;
+        ctx.beginPath(); ctx.arc(n.x, n.y, 6, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      });
+
+      // Labels
+      txt('each neuron:', W*0.5, H*0.83, { size: 11, color: '#888' });
+      txt('"fire" or "don\'t fire" — that\'s all it knows', W*0.5, H*0.83+16, { size: 11, color: '#888' });
+
+      // Thought bubble
+      ctx.save(); ctx.fillStyle = '#f0e8f8'; ctx.strokeStyle = '#8a5aaa'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(W*0.06, H*0.15, W*0.28, 34, 6); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('memory', W*0.20, H*0.15+17, { size: 12, color: '#6a3a9a' });
+
+      ctx.save(); ctx.fillStyle = '#f0e8f8'; ctx.strokeStyle = '#8a5aaa'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(W*0.66, H*0.15, W*0.28, 34, 6); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('consciousness', W*0.80, H*0.15+17, { size: 12, color: '#6a3a9a' });
+
+      txt('Together → thought, memory, consciousness. No single neuron knows any of this.', W/2, H*0.94, { size: 11, color: '#555', weight: 'italic' });
+    }
+
+    // ── Step 4: Forest climate ────────────────────────────────────────────────
+    function step4() {
+      // Forest background
+      const g = ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#b8daf0'); g.addColorStop(0.55,'#c8eac0'); g.addColorStop(0.55,'#2a5a18'); g.addColorStop(1,'#1a3a10');
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+      // Tree trunks and crowns
+      const trees = [0.08,0.15,0.22,0.30,0.38,0.46,0.54,0.62,0.70,0.78,0.86,0.93];
+      trees.forEach(fx => {
+        const tx = fx*W;
+        ctx.save(); ctx.fillStyle = '#3a2010';
+        ctx.fillRect(tx-4, H*0.52, 8, H*0.48); ctx.restore();
+        ctx.save(); ctx.fillStyle = ['#2a7a18','#348a22','#2d8020','#3a8a20'][Math.floor(fx*8)%4];
+        ctx.beginPath(); ctx.arc(tx, H*0.44, 26+((fx*7)%10), 0, Math.PI*2); ctx.fill(); ctx.restore();
+      });
+
+      // Evaporation arrows from trees
+      [[0.15,0.32],[0.30,0.28],[0.46,0.30],[0.62,0.28],[0.78,0.32]].forEach(([fx,fy]) => {
+        ctx.save(); ctx.strokeStyle = '#88ccee'; ctx.globalAlpha = 0.6; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(fx*W, fy*H); ctx.lineTo(fx*W-5, (fy-0.12)*H); ctx.stroke();
+        ctx.beginPath(); ctx.arc(fx*W-5, (fy-0.12)*H, 4, 0, Math.PI*2); ctx.fill(); ctx.restore();
+      });
+
+      // Cloud building above forest
+      [[0.25,0.14],[0.45,0.10],[0.65,0.13]].forEach(([fx,fy]) => {
+        ctx.save(); ctx.fillStyle = '#fff'; ctx.globalAlpha = 0.8;
+        ctx.beginPath(); ctx.arc(fx*W, fy*H, 22, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(fx*W+18, fy*H+3, 16, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(fx*W-14, fy*H+5, 14, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+      });
+
+      // Labels
+      txt('Forest creates its own rain', W/2, H*0.06, { size: 13, weight: 'bold', color: '#1a1a1a' });
+      txt('trees transpire → moisture → clouds → rain → trees', W/2, H*0.06+17, { size: 10, color: '#555' });
+
+      // Temperature label
+      ctx.save(); ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.05, H*0.82, W*0.9, 44, 5); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('An intact forest regulates its own temperature, rainfall, and soil moisture.', W/2, H*0.82+14, { size: 11, color: '#2a5a18', weight: 'bold' });
+      txt('No individual tree does this. It only happens at the system level.', W/2, H*0.82+30, { size: 11, color: '#555' });
+    }
+
+    // ── Step 5: Economic models miss emergence ────────────────────────────────
+    function step5() {
+      clear();
+      txt('Why This Matters for Economics', W/2, H*0.08, { size: 14, weight: 'bold' });
+
+      const mid = W / 2;
+
+      // Left panel: how models think
+      ctx.save(); ctx.fillStyle = '#f0f4ff'; ctx.strokeStyle = '#4a6aaa'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(W*0.03, H*0.17, mid-W*0.05, H*0.62, 8); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      txt('How models work', mid*0.5, H*0.24, { size: 12, color: '#4a6aaa', weight: 'bold' });
+
+      // Sum diagram: A + B + C = total
+      const items = ['farm A', 'farm B', 'forest C'];
+      items.forEach((label, i) => {
+        const iy = H*0.35 + i*H*0.12;
+        ctx.save(); ctx.fillStyle = '#dde4f0'; ctx.strokeStyle = '#4a6aaa'; ctx.lineWidth = 1;
+        ctx.beginPath(); rr(W*0.08, iy-12, mid*0.6-10, 24, 4); ctx.fill(); ctx.stroke(); ctx.restore();
+        txt(label, W*0.08 + (mid*0.6-10)/2, iy, { size: 11, color: '#4a6aaa' });
+        if (i < 2) txt('+', W*0.08 + (mid*0.6-10)/2, iy+24, { size: 14, color: '#888' });
+      });
+      txt('= regional output', mid*0.5, H*0.72, { size: 11, color: '#4a6aaa' });
+
+      // Right panel: what models miss
+      ctx.save(); ctx.fillStyle = '#fff4f0'; ctx.strokeStyle = '#c03020'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(mid+W*0.02, H*0.17, W-mid-W*0.05, H*0.62, 8); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      txt('What models miss', mid+((W-mid-W*0.05)/2), H*0.24, { size: 12, color: '#c03020', weight: 'bold' });
+
+      const missed = ['rainfall the forest makes', 'temperature regulation', 'soil moisture', 'biodiversity buffer', 'pollinator networks'];
+      missed.forEach((m, i) => {
+        txt('· ' + m, mid+W*0.06, H*0.33+i*H*0.09, { size: 10.5, color: '#c03020', align: 'left' });
+      });
+
+      txt('Emergent properties can\'t be found by studying each part separately.', W/2, H*0.87, { size: 11.5, color: '#555' });
+      txt('Remove parts one by one — the system can collapse suddenly.', W/2, H*0.87+16, { size: 11.5, color: '#c03020', weight: 'bold' });
+    }
+
+    // ── step data ─────────────────────────────────────────────────────────────
+    const STEPS = [
+      { draw: step1, anim: false,
+        desc: 'Emergence happens when a group of simple parts produces something that none of the parts could produce on its own. It\'s not magic — it comes from the connections and interactions between the parts. But the result is genuinely new: something that wouldn\'t exist if you just added up the parts.' },
+      { draw: null, anim: true,
+        desc: 'A murmuration of starlings follows three simple rules: stay close to neighbors, match their speed, avoid collisions. No bird is in charge. No bird can see the whole flock. Yet together they produce fluid, intelligent movement that predators can\'t predict. The behavior emerges from the interactions — it isn\'t in any single bird.' },
+      { draw: step3, anim: false,
+        desc: 'Your brain has about 86 billion neurons. Each one is simple: it either fires or it doesn\'t, based on signals from its neighbors. No individual neuron knows what "memory" or "fear" or "your mother\'s face" means. Somehow, from billions of these simple on/off signals, consciousness and thought emerge. No neuroscientist can point to the neuron that holds any specific thought.' },
+      { draw: step4, anim: false,
+        desc: 'A healthy forest doesn\'t just contain trees — it regulates its own climate. Trees transpire moisture into the air, which forms clouds, which produce rain, which feeds the trees. This feedback loop creates cooler temperatures and more reliable rainfall inside and around the forest. This isn\'t something any individual tree does. It\'s an emergent property of the whole system.' },
+      { draw: step5, anim: false,
+        desc: 'Standard economic models add things up: this farm produces X, that forest produces Y, add them together. But emergent properties don\'t add up — they appear at the system level and disappear when the system breaks. A coral reef isn\'t just fish + coral + water. It\'s a system that produces stability, nursery habitat, and storm protection. Remove enough parts, and those properties vanish — not gradually, but suddenly.' },
+    ];
+
+    let step = 0;
+    const descEl = document.getElementById('desc');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const ctEl   = document.getElementById('ct');
+
+    function render() {
+      cancelAnim();
+      const s = STEPS[step];
+      if (s.anim) {
+        if (!birds) initBirds();
+        animateMurmuration();
+      } else {
+        s.draw();
+      }
+      descEl.textContent = s.desc;
+      prevBtn.disabled = step === 0;
+      nextBtn.disabled = step === STEPS.length - 1;
+      ctEl.textContent = (step + 1) + ' of ' + STEPS.length;
+    }
+
+    prevBtn.addEventListener('click', () => { if (step > 0) { step--; render(); } });
+    nextBtn.addEventListener('click', () => { if (step < STEPS.length - 1) { step++; render(); } });
+
+    render();
+
+    window.addEventListener('resize', () => {
+      canvas.width = canvas.offsetWidth; W = canvas.width;
+      if (!STEPS[step].anim) STEPS[step].draw();
+    });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
