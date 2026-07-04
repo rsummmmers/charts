@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gravity, Atmosphere, and the Water Cycle</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; min-height: 4.5em; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+    button { font-family: 'Georgia', serif; font-size: 0.82rem; padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; cursor: pointer; border-radius: 3px; }
+    button:hover { background: #1a1a1a; color: #faf8f5; }
+    button:disabled { opacity: 0.3; cursor: default; }
+    .step-ct { font-size: 0.78rem; color: #aaa; margin-left: auto; }
+  </style>
+</head>
+<body>
+  <h1>Gravity, Atmosphere, and the Water Cycle</h1>
+  <p class="subtitle">The background conditions every economy runs inside of — made by no one, replaceable by no one</p>
+  <canvas id="c" height="330"></canvas>
+  <p class="desc" id="desc"></p>
+  <nav>
+    <button id="prev">← Back</button>
+    <button id="next">Next →</button>
+    <span class="step-ct" id="ct"></span>
+  </nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    function clear(bg) {
+      ctx.fillStyle = bg || '#faf8f5';
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight || 'normal') + ' ' + (o.size || 13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function arr(x1, y1, x2, y2, color, lw) {
+      color = color || '#888'; lw = lw || 1.5;
+      const ang = Math.atan2(y2 - y1, x2 - x1), hl = 9;
+      ctx.save();
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - hl * Math.cos(ang - 0.4), y2 - hl * Math.sin(ang - 0.4));
+      ctx.lineTo(x2 - hl * Math.cos(ang + 0.4), y2 - hl * Math.sin(ang + 0.4));
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+      else ctx.rect(x, y, w, h);
+    }
+
+    // ── Step 1: Gravity holds the atmosphere ─────────────────────────────────
+    function step1() {
+      // Space gradient
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#0a0a1a');
+      g.addColorStop(0.45, '#1a3a6a');
+      g.addColorStop(0.65, '#4a8abf');
+      g.addColorStop(1, '#7abf50');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+      // Stars
+      ctx.save(); ctx.fillStyle = '#fff';
+      [[0.08,0.05],[0.22,0.12],[0.55,0.08],[0.78,0.04],[0.91,0.15],[0.35,0.18],[0.65,0.16]].forEach(([fx,fy]) => {
+        ctx.beginPath(); ctx.arc(fx*W, fy*H, 1.5, 0, Math.PI*2); ctx.fill();
+      });
+      ctx.restore();
+
+      // Earth arc at bottom
+      ctx.save(); ctx.fillStyle = '#3a7a30';
+      ctx.beginPath(); ctx.arc(W/2, H*1.35, W*0.85, 0, Math.PI, true); ctx.fill(); ctx.restore();
+
+      // Atmosphere layer
+      ctx.save(); ctx.globalAlpha = 0.35; ctx.fillStyle = '#4a9adf';
+      ctx.beginPath(); ctx.arc(W/2, H*1.35, W*0.85 + 44, 0, Math.PI, true);
+      ctx.arc(W/2, H*1.35, W*0.85, 0, Math.PI, false);
+      ctx.closePath(); ctx.fill(); ctx.restore();
+
+      txt('atmosphere', W/2, H*0.52, { size: 12, color: '#ddeeff', weight: 'bold' });
+
+      // Gravity arrows pointing down
+      [[0.2, 0.28], [0.5, 0.22], [0.8, 0.28]].forEach(([fx, fy]) => {
+        arr(fx*W, fy*H, fx*W, (fy+0.18)*H, '#f5c030', 2);
+      });
+      txt('gravity', W*0.5, H*0.17, { size: 12, color: '#f5c030', weight: 'bold' });
+      txt('pulls everything toward Earth — including air molecules', W/2, H*0.09, { size: 11, color: '#ddd' });
+
+      // Label: space
+      txt('space', W*0.06, H*0.1, { size: 11, color: '#888', align: 'left' });
+    }
+
+    // ── Step 2: Without gravity ───────────────────────────────────────────────
+    function step2() {
+      // Split canvas: left = with gravity, right = without
+      const mid = W / 2;
+
+      // Left half: with gravity (habitable)
+      const g1 = ctx.createLinearGradient(0, 0, 0, H);
+      g1.addColorStop(0, '#1a3a7a'); g1.addColorStop(0.6, '#4a8abf'); g1.addColorStop(1, '#3a7a30');
+      ctx.fillStyle = g1; ctx.fillRect(0, 0, mid, H);
+
+      // Right half: no gravity (inhospitable)
+      const g2 = ctx.createLinearGradient(mid, 0, mid, H);
+      g2.addColorStop(0, '#0a0a1a'); g2.addColorStop(1, '#2a1a0a');
+      ctx.fillStyle = g2; ctx.fillRect(mid, 0, mid, H);
+
+      // Divider
+      ctx.save(); ctx.strokeStyle = '#888'; ctx.lineWidth = 1.5; ctx.setLineDash([5,5]);
+      ctx.beginPath(); ctx.moveTo(mid, 0); ctx.lineTo(mid, H); ctx.stroke(); ctx.restore();
+
+      // Left: atmosphere present, arrows staying down
+      ctx.save(); ctx.globalAlpha = 0.4; ctx.fillStyle = '#4a9adf';
+      ctx.fillRect(0, H*0.3, mid, H*0.25); ctx.restore();
+      txt('With gravity', mid*0.5, H*0.1, { size: 13, weight: 'bold', color: '#ddeeff' });
+      txt('atmosphere held in', mid*0.5, H*0.25, { size: 11, color: '#aaccff' });
+      txt('temperature: stable', mid*0.5, H*0.63, { size: 11, color: '#7fdf7f' });
+      txt('water: liquid possible', mid*0.5, H*0.63+18, { size: 11, color: '#7fdf7f' });
+      txt('breathing: possible', mid*0.5, H*0.63+36, { size: 11, color: '#7fdf7f' });
+
+      // Earth left
+      ctx.save(); ctx.fillStyle = '#3a7a30';
+      ctx.beginPath(); ctx.arc(mid*0.5, H*1.3, mid*0.8, 0, Math.PI, true); ctx.fill(); ctx.restore();
+
+      // Right: no atmosphere, gases flying off
+      txt('Without gravity', mid + mid*0.5, H*0.1, { size: 13, weight: 'bold', color: '#ffddaa' });
+      txt('gases escape to space', mid + mid*0.5, H*0.25, { size: 11, color: '#ffaa66' });
+
+      // Gas molecules flying off
+      [[0.6,0.35,0.72,0.1],[0.75,0.4,0.9,0.12],[0.85,0.45,0.95,0.28],[0.62,0.52,0.68,0.22]].forEach(([fx,fy,tx2,ty2]) => {
+        arr(fx*W, fy*H, tx2*W, ty2*H, '#ff8844', 1.5);
+        ctx.save(); ctx.fillStyle = '#ff8844'; ctx.globalAlpha = 0.7;
+        ctx.beginPath(); ctx.arc(fx*W, fy*H, 4, 0, Math.PI*2); ctx.fill(); ctx.restore();
+      });
+
+      // Rocky earth right
+      ctx.save(); ctx.fillStyle = '#4a3a2a';
+      ctx.beginPath(); ctx.arc(mid + mid*0.5, H*1.3, mid*0.8, 0, Math.PI, true); ctx.fill(); ctx.restore();
+      txt('-200°C nights', mid + mid*0.5, H*0.63, { size: 11, color: '#ff6644' });
+      txt('+130°C days', mid + mid*0.5, H*0.63+18, { size: 11, color: '#ff6644' });
+      txt('no water, no breathing', mid + mid*0.5, H*0.63+36, { size: 11, color: '#ff6644' });
+    }
+
+    // ── Step 3: The water cycle ───────────────────────────────────────────────
+    function step3() {
+      // Sky + ground
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#b8d8f0'); g.addColorStop(0.65, '#e8f4f8'); g.addColorStop(0.65, '#3a7a30'); g.addColorStop(1, '#2a5a20');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+      const groundY = H * 0.65;
+
+      // Cloud
+      const clx = W * 0.22, cly = H * 0.15;
+      ctx.save(); ctx.fillStyle = '#fff'; ctx.globalAlpha = 0.9;
+      [[0,0,30],[22,-8,22],[44,0,26],[-18,5,18],[62,5,20]].forEach(([dx,dy,r]) => {
+        ctx.beginPath(); ctx.arc(clx+dx, cly+dy, r, 0, Math.PI*2); ctx.fill();
+      });
+      ctx.restore();
+      txt('cloud', clx+22, cly+35, { size: 11, color: '#555' });
+
+      // Rain drops
+      ctx.save(); ctx.strokeStyle = '#4a9adf'; ctx.lineWidth = 1.5;
+      for (let i = 0; i < 8; i++) {
+        const rx = clx - 10 + i * 8, ry = cly + 30;
+        ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 2, ry + 12); ctx.stroke();
+      }
+      ctx.restore();
+
+      // Rain arrow label
+      arr(clx + 22, cly + 55, clx + 22, groundY - 20, '#4a9adf', 2);
+      txt('gravity pulls', clx + 46, H*0.4, { size: 11, color: '#4a9adf', align: 'left' });
+      txt('rain down', clx + 46, H*0.4+15, { size: 11, color: '#4a9adf', align: 'left' });
+
+      // River on ground
+      ctx.save(); ctx.strokeStyle = '#2a6abf'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(W*0.18, groundY); ctx.bezierCurveTo(W*0.3, groundY+10, W*0.5, groundY+8, W*0.7, groundY+2); ctx.stroke();
+      ctx.restore();
+      txt('river (gravity drives flow)', W*0.44, groundY+20, { size: 11, color: '#2a6abf' });
+
+      // Ocean
+      ctx.save(); ctx.fillStyle = '#2a6abf'; ctx.globalAlpha = 0.7;
+      ctx.fillRect(W*0.72, groundY, W*0.28, H*0.35); ctx.restore();
+      txt('ocean', W*0.86, groundY+20, { size: 11, color: '#fff' });
+
+      // Evaporation arrows up
+      [[0.76,0.7],[0.82,0.68],[0.88,0.7]].forEach(([fx,fy]) => {
+        arr(fx*W, fy*H, fx*W, H*0.35, '#88bbdd', 1.5);
+      });
+      txt('heat lifts', W*0.94, H*0.5, { size: 11, color: '#4a9adf', align: 'left' });
+      txt('water up', W*0.94, H*0.5+15, { size: 11, color: '#4a9adf', align: 'left' });
+
+      // Cloud on right
+      const cl2x = W * 0.78, cl2y = H * 0.2;
+      ctx.save(); ctx.fillStyle = '#fff'; ctx.globalAlpha = 0.85;
+      [[0,0,24],[18,-6,18],[34,0,20],[-14,4,15]].forEach(([dx,dy,r]) => {
+        ctx.beginPath(); ctx.arc(cl2x+dx, cl2y+dy, r, 0, Math.PI*2); ctx.fill();
+      });
+      ctx.restore();
+
+      // Cycle arrow connecting clouds
+      ctx.save(); ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1; ctx.setLineDash([4,5]);
+      ctx.beginPath(); ctx.moveTo(cl2x, cl2y - 25); ctx.bezierCurveTo(W*0.6, H*0.02, W*0.3, H*0.02, clx+22, cly-25); ctx.stroke();
+      ctx.restore();
+      txt('wind carries moisture', W/2, H*0.04, { size: 10, color: '#888' });
+    }
+
+    // ── Step 4: What this enables ─────────────────────────────────────────────
+    function step4() {
+      clear();
+      txt('What Gravity and Atmosphere Enable', W/2, H*0.08, { size: 14, weight: 'bold' });
+
+      const items = [
+        { label: 'Breathing',       note: 'oxygen held in atmosphere by gravity',      color: '#4a9adf', y: 0.22 },
+        { label: 'Liquid water',    note: 'pressure + temp range keep water from boiling off', color: '#2a6abf', y: 0.38 },
+        { label: 'Stable climate',  note: 'atmosphere buffers temperature swings',      color: '#3a8a2a', y: 0.54 },
+        { label: 'The water cycle', note: 'rain, rivers, aquifers — all gravity-driven', color: '#1a6a8a', y: 0.70 },
+      ];
+
+      items.forEach(item => {
+        ctx.save();
+        ctx.fillStyle = item.color; ctx.globalAlpha = 0.1;
+        ctx.beginPath(); rr(W*0.06, H*item.y - 18, W*0.88, 38, 5); ctx.fill();
+        ctx.globalAlpha = 0.5; ctx.strokeStyle = item.color; ctx.lineWidth = 1;
+        ctx.beginPath(); rr(W*0.06, H*item.y - 18, W*0.88, 38, 5); ctx.stroke();
+        ctx.restore();
+        txt(item.label, W*0.26, H*item.y - 3, { size: 13, weight: 'bold', color: item.color, align: 'center' });
+        txt(item.note, W*0.62, H*item.y - 3, { size: 11, color: '#555', align: 'center' });
+      });
+
+      ctx.save(); ctx.fillStyle = '#f5f0e8'; ctx.strokeStyle = '#d8c8a8'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.06, H*0.84, W*0.88, 34, 5); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('None of this was made by anyone. None of it can be purchased or replaced.', W/2, H*0.84+17, { size: 11.5, color: '#888', weight: 'italic' });
+    }
+
+    // ── Step 5: The invisible container ──────────────────────────────────────
+    function step5() {
+      clear();
+      txt('The Container vs. the Resources', W/2, H*0.08, { size: 14, weight: 'bold' });
+
+      // Two boxes: resource (inside economy) vs container (outside)
+      // Outer box = container (atmosphere, gravity, water cycle)
+      ctx.save(); ctx.fillStyle = '#e8f4f8'; ctx.strokeStyle = '#2a6abf'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); rr(W*0.04, H*0.15, W*0.92, H*0.72, 10); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('CONTAINER', W/2, H*0.21, { size: 11, color: '#2a6abf', weight: 'bold' });
+      txt('gravity · atmosphere · water cycle · stable temperature', W/2, H*0.21+16, { size: 10, color: '#4a9adf' });
+      txt('(not resources — the conditions that make resources possible)', W/2, H*0.21+30, { size: 10, color: '#888', weight: 'italic' });
+
+      // Inner box = economy
+      ctx.save(); ctx.fillStyle = '#faf8f5'; ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(W*0.14, H*0.38, W*0.72, H*0.42, 8); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('THE ECONOMY', W/2, H*0.47, { size: 13, weight: 'bold', color: '#1a1a1a' });
+
+      // Items inside economy
+      ['farms', 'factories', 'banks', 'cities', 'trade'].forEach((item, i) => {
+        const x = W*(0.22 + i*0.14), y = H*0.62;
+        ctx.save(); ctx.fillStyle = '#e8e4e0'; ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1;
+        ctx.beginPath(); rr(x-24, y-12, 48, 24, 4); ctx.fill(); ctx.stroke(); ctx.restore();
+        txt(item, x, y, { size: 10, color: '#555' });
+      });
+
+      // Bottom label
+      ctx.save(); ctx.fillStyle = '#fff8ee'; ctx.strokeStyle = '#e0c080'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.06, H*0.9, W*0.88, 34, 5); ctx.fill(); ctx.stroke(); ctx.restore();
+      txt('The economy runs inside the container. Standard accounting ignores the container entirely.', W/2, H*0.9+17, { size: 11, color: '#888' });
+    }
+
+    // ── step data ─────────────────────────────────────────────────────────────
+    const STEPS = [
+      { draw: step1,
+        desc: 'Gravity is a constant pull toward Earth\'s center. It acts on everything — including air molecules. Without gravity, the gases in our atmosphere would drift off into space over time, the way a gas giant sheds its outer layers. Gravity is why we have air at all.' },
+      { draw: step2,
+        desc: 'Without an atmosphere, Earth would look like the Moon or Mars: temperature swings of more than 300°C between day and night, no liquid water, nothing to breathe. The atmosphere isn\'t just "air" — it\'s the buffer that keeps conditions within the narrow range that allows life.' },
+      { draw: step3,
+        desc: 'Gravity also drives the water cycle. Rain falls because gravity pulls it. Rivers flow because gravity pulls water downhill. Heat from the sun lifts water back into the atmosphere as vapor. Gravity and solar energy together make the cycle work — continuously, without any human input.' },
+      { draw: step4,
+        desc: 'Every breath you take, every glass of water, every food crop — depends on these conditions. The atmosphere maintains the temperature range and pressure that keep water liquid. The water cycle delivers fresh water to where life needs it. These aren\'t resources to be extracted. They\'re the conditions that make resources possible.' },
+      { draw: step5,
+        desc: 'Here is the key distinction: the economy counts what\'s inside it — farms, factories, products, trade. It doesn\'t count what it runs inside of. Gravity, atmosphere, and the water cycle are the container, not the contents. Standard economic accounting has no line item for them. They appear in the budget only when they fail.' },
+    ];
+
+    let step = 0;
+    const descEl = document.getElementById('desc');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const ctEl   = document.getElementById('ct');
+
+    function render() {
+      STEPS[step].draw();
+      descEl.textContent = STEPS[step].desc;
+      prevBtn.disabled = step === 0;
+      nextBtn.disabled = step === STEPS.length - 1;
+      ctEl.textContent = (step + 1) + ' of ' + STEPS.length;
+    }
+
+    prevBtn.addEventListener('click', () => { if (step > 0) { step--; render(); } });
+    nextBtn.addEventListener('click', () => { if (step < STEPS.length - 1) { step++; render(); } });
+
+    render();
+
+    window.addEventListener('resize', () => { canvas.width = canvas.offsetWidth; W = canvas.width; render(); });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
