@@ -73,7 +73,7 @@
 
     // ── castle drawing ───────────────────────────────────────────────────────
 
-    var BRICK_COLORS = ['#c03828', '#d04030', '#b82c20', '#cc3828', '#d84838'];
+    var BRICK_COLORS = ['#c03020', '#f5c030', '#1a50c0', '#2a8a2a', '#e08020', '#e0ddd8'];
 
     function castle(cx, cy, sc, alpha) {
       sc = sc || 1; alpha = alpha !== undefined ? alpha : 1;
@@ -329,9 +329,9 @@
       ctx.beginPath(); rr(pad, H * 0.17, mid - pad - 8, H * 0.6, 8); ctx.fill(); ctx.stroke(); ctx.restore();
 
       txt('Lego Castle', pad + (mid - pad - 8) / 2, H * 0.24, { size: 12, color: '#2a7a2a', weight: 'bold' });
-      castle(pad + (mid - pad - 8) / 2, H * 0.66, 0.7);
-      txt('✓ smash it, rebuild it', pad + (mid - pad - 8) / 2, H * 0.73, { size: 11, color: '#2a7a2a' });
-      txt('costs energy, but possible', pad + (mid - pad - 8) / 2, H * 0.73 + 15, { size: 10, color: '#888' });
+      castle(pad + (mid - pad - 8) / 2, H * 0.63, 0.65);
+      txt('✓ smash it, rebuild it', pad + (mid - pad - 8) / 2, H * 0.70, { size: 11, color: '#2a7a2a' });
+      txt('costs energy, but possible', pad + (mid - pad - 8) / 2, H * 0.70 + 14, { size: 10, color: '#888' });
 
       // Right panel — living systems (may not rebuild)
       ctx.save(); ctx.fillStyle = '#fff4f4'; ctx.strokeStyle = '#c03020'; ctx.lineWidth = 1.5;
