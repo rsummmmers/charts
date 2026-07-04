@@ -141,4 +141,35 @@
   if (idx < sec.models.length - 1) navLink(sec.models[idx + 1].file, sec.models[idx + 1].title, 'next');
 
   nav.appendChild(row);
+
+  // ── Section model picker (all models as chips) ────────────────────────────
+
+  const picker = document.createElement('div');
+  picker.style.cssText = [
+    'display:flex', 'flex-wrap:wrap', 'gap:0.3rem',
+    'width:100%', 'padding-top:0.38rem', 'margin-top:0.15rem',
+    'border-top:1px solid #f0f0f0'
+  ].join(';');
+
+  sec.models.forEach((m, i) => {
+    const isCurrent = (i === idx);
+    const chip = document.createElement(isCurrent ? 'span' : 'a');
+    if (!isCurrent) chip.href = m.file;
+    chip.textContent = m.title;
+    chip.style.cssText = [
+      'font-size:0.68rem', 'text-decoration:none',
+      'padding:0.18rem 0.48rem', 'border-radius:3px',
+      'white-space:nowrap', "font-family:'Georgia',serif",
+      isCurrent
+        ? 'background:#1a1a1a;color:#fff;cursor:default;'
+        : 'color:#888;border:1px solid #e8e8e8;background:#faf8f5;'
+    ].join(';');
+    if (!isCurrent) {
+      chip.onmouseenter = () => { chip.style.color = '#1a1a1a'; chip.style.borderColor = '#999'; };
+      chip.onmouseleave = () => { chip.style.color = '#888'; chip.style.borderColor = '#e8e8e8'; };
+    }
+    picker.appendChild(chip);
+  });
+
+  nav.appendChild(picker);
 })();
