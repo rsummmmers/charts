@@ -99,12 +99,12 @@
       ctx.save(); ctx.fillStyle = '#e8f4e8'; ctx.strokeStyle = C.value; ctx.lineWidth = 1.5;
       ctx.beginPath(); rr(lx-54, ly+22, 108, 46, 5); ctx.fill(); ctx.stroke(); ctx.restore();
       txt('$500 borrowed', lx, ly+38, {size:12, weight:'bold', color:C.value});
-      txt('(seeds + tools)', lx, ly+55, {size:10, color:'#888'});
+      txt('(seeds + tools)', lx, ly+55, {size:10, color:'#555'});
 
       ctx.save(); ctx.fillStyle = '#fce8e8'; ctx.strokeStyle = C.debt; ctx.lineWidth = 1.5;
       ctx.beginPath(); rr(rx-58, ry+22, 116, 46, 5); ctx.fill(); ctx.stroke(); ctx.restore();
       txt('$550 owed back', rx, ry+38, {size:12, weight:'bold', color:C.debt});
-      txt('(+ interest)', rx, ry+55, {size:10, color:'#888'});
+      txt('(+ interest)', rx, ry+55, {size:10, color:'#555'});
 
       notebox('Debt is borrowed value you must pay back — usually with extra (interest).',
         'You owe back more than you received. This gap is why debt-based economies must keep growing.', C.debt);
