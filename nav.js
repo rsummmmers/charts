@@ -8,6 +8,7 @@
       { file: 'asset.html',       title: 'Asset' },
       { file: 'debt.html',        title: 'Debt' },
       { file: 'credit.html',      title: 'Credit' },
+      { file: 'price.html',       title: 'Price' },
       { file: 'connections.html', title: 'How They Connect' },
     ]},
     { id: 'banking', short: 'Banking', name: 'How Banks Create Money', models: [
@@ -16,7 +17,7 @@
       { file: 'interest-ratchet.html',    title: 'The Interest Ratchet' },
       { file: 'interest-comparison.html', title: 'The Interest Variable' },
     ]},
-    { id: 'rules', short: 'Rules', name: 'Rules and Alternatives', models: [
+    { id: 'rules', short: 'Guardrails', name: 'How the Financial System Is Governed', models: [
       { file: 'capital-requirements.html',  title: 'Three Banking Guardrails' },
       { file: 'risk-modeling.html',         title: 'Risk Models' },
       { file: 'public-private-credit.html', title: 'Public vs. Private Credit' },
