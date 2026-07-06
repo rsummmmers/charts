@@ -117,9 +117,9 @@
       const t = { cx: sx+cw/2, cy: sy+ch/2+4 };
       const tcol = '#5a6a10';
       const titems = ['home','food','clothing','furniture'];
-      const tspread = cw*0.78;
+      const tspread = cw - 52;
       titems.forEach((label, i) => {
-        const tx = (sx+8) + (i/(titems.length-1))*tspread;
+        const tx = (sx+26) + (i/(titems.length-1))*tspread;
         const ty = t.cy - 10;
         ctx.save(); ctx.fillStyle = tcol; ctx.globalAlpha = 0.18;
         ctx.beginPath(); rr(tx-22,ty-14,44,24,4); ctx.fill();
@@ -128,7 +128,7 @@
         ctx.restore();
         txt(label, tx, ty, {size:10, color:tcol, weight:'bold'});
       });
-      txt('things you own outright', t.cx, t.cy+20, {size:9.5, color:'#aaa'});
+      txt('things you own outright', t.cx, t.cy+20, {size:9.5, color:'#555'});
 
       // Human: health + skills
       const h = { cx: sx+cw+gap+cw/2, cy: sy+ch/2+6 };
@@ -158,10 +158,8 @@
       ctx.beginPath(); ctx.moveTo(s2.cx-26,figY+6); ctx.lineTo(s2.cx+26,figY+6); ctx.stroke();
       ctx.restore();
       const slabels = ['community','childcare','eldercare'];
-      const sspread = cw*0.76;
-      slabels.forEach((label, i) => {
-        const lx = (sx+10) + (i/(slabels.length-1))*sspread;
-        txt(label, lx, s2.cy+22, {size:9.5, color:scol});
+      [s2.cx-26, s2.cx, s2.cx+26].forEach((lx, i) => {
+        txt(slabels[i], lx, s2.cy+22, {size:9.5, color:scol});
       });
 
       // Security: shield
