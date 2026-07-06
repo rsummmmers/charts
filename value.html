@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Value — Money Concept Definitions</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>Value</h1>
+  <p class="subtitle">Usefulness — what a thing actually does for someone</p>
+  <canvas id="c" height="320"></canvas>
+  <p class="desc">Value is usefulness. A tomato you grew has value because it feeds someone. Value is not the same as price — price is what someone pays at a specific moment; value is what a thing actually does. Value exists even when no money changes hands.</p>
+  <nav></nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    const C = {
+      value:  '#2a7a2a', wealth: '#6a5a10', money:  '#1a4a8a',
+      capital:'#7a3a10', asset:  '#4a1a7a', debt:   '#8a1a1a', credit: '#1a6a6a',
+    };
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight||'normal') + ' ' + (o.size||13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function arr(x1, y1, x2, y2, color, lw) {
+      color = color||'#888'; lw = lw||1.5;
+      const ang = Math.atan2(y2-y1, x2-x1), hl = 9;
+      ctx.save();
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2-hl*Math.cos(ang-0.4), y2-hl*Math.sin(ang-0.4));
+      ctx.lineTo(x2-hl*Math.cos(ang+0.4), y2-hl*Math.sin(ang+0.4));
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h);
+    }
+
+    function banner(label, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath(); rr(0,0,W,50,0); ctx.fill();
+      ctx.font = 'bold 20px Georgia,serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, W/2, 25);
+      ctx.restore();
+    }
+
+    function notebox(text1, text2, color, y) {
+      y = y || H*0.78;
+      ctx.save();
+      ctx.fillStyle = color+'18'; ctx.strokeStyle = color+'55'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.05, y, W*0.9, text2?46:30, 5); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      if (text2) {
+        txt(text1, W/2, y+14, {size:11.5, color:color, weight:'bold'});
+        txt(text2, W/2, y+31, {size:11, color:'#555'});
+      } else {
+        txt(text1, W/2, y+15, {size:11.5, color:'#555'});
+      }
+    }
+
+    function tomato(cx, cy, r) {
+      r = r||16;
+      ctx.save();
+      ctx.fillStyle = '#d04030';
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#a02010'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = '#3a8a2a';
+      ctx.beginPath(); ctx.moveTo(cx,cy-r);
+      ctx.bezierCurveTo(cx+r*0.5,cy-r*1.4, cx+r*0.8,cy-r*0.6, cx,cy-r*0.4);
+      ctx.bezierCurveTo(cx-r*0.8,cy-r*0.6, cx-r*0.5,cy-r*1.4, cx,cy-r);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function figure(px, py, sc) {
+      sc = sc||1;
+      ctx.save(); ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2*sc;
+      ctx.beginPath(); ctx.arc(px,py,13*sc,0,Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px,py+13*sc); ctx.lineTo(px,py+50*sc); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px-20*sc,py+28*sc); ctx.lineTo(px+20*sc,py+28*sc); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px,py+50*sc); ctx.lineTo(px-15*sc,py+76*sc); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px,py+50*sc); ctx.lineTo(px+15*sc,py+76*sc); ctx.stroke();
+      ctx.restore();
+    }
+
+    function draw() {
+      clear(); banner('VALUE', C.value);
+
+      const px = W*0.25, py = H*0.58;
+      ctx.save(); ctx.strokeStyle = '#5a3a1a'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(px,py+8); ctx.lineTo(px,py-55); ctx.stroke();
+      ctx.fillStyle = '#3a8a2a';
+      ctx.beginPath(); ctx.ellipse(px-22,py-35,20,9,-0.5,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(px+20,py-44,20,9,0.5,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      tomato(px-8,py-72,15);
+      tomato(px+16,py-62,12);
+      tomato(px-22,py-55,11);
+      txt('a tomato plant', px, py+26, {size:11, color:'#888'});
+
+      arr(px+42,py-56, W*0.53,H*0.46, C.value, 2);
+      txt('useful to', W*0.6,H*0.37, {size:11, color:C.value});
+      txt('someone',   W*0.6,H*0.37+16, {size:11, color:C.value});
+
+      figure(W*0.76, H*0.38, 0.85);
+
+      notebox('Value ≠ price.  Price is what someone pays.  Value is what a thing actually does.',
+        'Value exists even when no money changes hands.', C.value);
+    }
+
+    draw();
+    window.addEventListener('resize', () => { canvas.width = canvas.offsetWidth; W = canvas.width; draw(); });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
