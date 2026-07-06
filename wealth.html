@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wealth — Money Concept Definitions</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>Wealth</h1>
+  <p class="subtitle">Stored capacity to meet needs — tangible and intangible</p>
+  <canvas id="c" height="370"></canvas>
+  <p class="desc">Wealth is stored-up capacity to meet needs — tangible and intangible. A home you own. A full pantry. Good health (your body's ability to work and enjoy life without crisis). Skills that can always regenerate income. Relationships with people who would show up for you. These are all real wealth, even though none appear in a bank account. You can have significant wealth with very little money, and significant money with very little wealth.</p>
+  <nav></nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    const C = {
+      value:  '#2a7a2a', wealth: '#6a5a10', money:  '#1a4a8a',
+      capital:'#7a3a10', asset:  '#4a1a7a', debt:   '#8a1a1a', credit: '#1a6a6a',
+    };
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight||'normal') + ' ' + (o.size||13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h);
+    }
+
+    function banner(label, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath(); rr(0,0,W,50,0); ctx.fill();
+      ctx.font = 'bold 20px Georgia,serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, W/2, 25);
+      ctx.restore();
+    }
+
+    function notebox(text1, text2, color, y) {
+      y = y || H*0.78;
+      ctx.save();
+      ctx.fillStyle = color+'18'; ctx.strokeStyle = color+'55'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.05, y, W*0.9, text2?46:30, 5); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      if (text2) {
+        txt(text1, W/2, y+14, {size:11.5, color:color, weight:'bold'});
+        txt(text2, W/2, y+31, {size:11, color:'#555'});
+      } else {
+        txt(text1, W/2, y+15, {size:11.5, color:'#555'});
+      }
+    }
+
+    function figure(px, py, sc) {
+      sc = sc||1;
+      ctx.save(); ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2*sc;
+      ctx.beginPath(); ctx.arc(px,py,13*sc,0,Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px,py+13*sc); ctx.lineTo(px,py+50*sc); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px-20*sc,py+28*sc); ctx.lineTo(px+20*sc,py+28*sc); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px,py+50*sc); ctx.lineTo(px-15*sc,py+76*sc); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px,py+50*sc); ctx.lineTo(px+15*sc,py+76*sc); ctx.stroke();
+      ctx.restore();
+    }
+
+    function draw() {
+      clear(); banner('WEALTH', C.wealth);
+
+      const pad = W*0.04, gap = W*0.04;
+      const cw = (W - pad*2 - gap) / 2;
+      const ch = (H - 58 - H*0.14 - gap) / 2;
+      const sx = pad, sy = 58;
+      const cells = [
+        { label:'Tangible',  color:'#5a6a10', fx:0, fy:0 },
+        { label:'Human',     color:'#2a6a3a', fx:1, fy:0 },
+        { label:'Social',    color:'#1a4a7a', fx:0, fy:1 },
+        { label:'Security',  color:'#6a3a6a', fx:1, fy:1 },
+      ];
+
+      cells.forEach(cell => {
+        const cx = sx + cell.fx*(cw+gap);
+        const cy = sy + cell.fy*(ch+gap);
+        ctx.save();
+        ctx.fillStyle = cell.color; ctx.globalAlpha = 0.08;
+        ctx.beginPath(); rr(cx,cy,cw,ch,6); ctx.fill();
+        ctx.globalAlpha = 0.4; ctx.strokeStyle = cell.color; ctx.lineWidth = 1.2;
+        ctx.beginPath(); rr(cx,cy,cw,ch,6); ctx.stroke();
+        ctx.restore();
+        txt(cell.label, cx+cw/2, cy+13, {size:10, weight:'bold', color:cell.color});
+      });
+
+      // Tangible: home, food, clothing, furniture
+      const t = { cx: sx+cw/2, cy: sy+ch/2+4 };
+      const tcol = '#5a6a10';
+      const titems = ['home','food','clothing','furniture'];
+      const tspread = cw*0.78;
+      titems.forEach((label, i) => {
+        const tx = (sx+8) + (i/(titems.length-1))*tspread;
+        const ty = t.cy - 10;
+        ctx.save(); ctx.fillStyle = tcol; ctx.globalAlpha = 0.18;
+        ctx.beginPath(); rr(tx-22,ty-14,44,24,4); ctx.fill();
+        ctx.globalAlpha = 0.5; ctx.strokeStyle = tcol; ctx.lineWidth = 1;
+        ctx.beginPath(); rr(tx-22,ty-14,44,24,4); ctx.stroke();
+        ctx.restore();
+        txt(label, tx, ty, {size:10, color:tcol, weight:'bold'});
+      });
+      txt('things you own outright', t.cx, t.cy+20, {size:9.5, color:'#aaa'});
+
+      // Human: health + skills
+      const h = { cx: sx+cw+gap+cw/2, cy: sy+ch/2+6 };
+      ctx.save(); ctx.fillStyle = '#e05050'; ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.moveTo(h.cx-30, h.cy-14);
+      ctx.bezierCurveTo(h.cx-30,h.cy-28, h.cx-14,h.cy-28, h.cx-14,h.cy-14);
+      ctx.bezierCurveTo(h.cx-14,h.cy-28, h.cx,h.cy-28, h.cx,h.cy-14);
+      ctx.bezierCurveTo(h.cx,h.cy-4, h.cx-30,h.cy+10, h.cx-30,h.cy-14);
+      ctx.fill(); ctx.restore();
+      txt('good health', h.cx-20, h.cy+6, {size:10, color:'#2a6a3a'});
+      ctx.save(); ctx.fillStyle = '#2a6a3a'; ctx.strokeStyle = '#1a4a2a'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(h.cx+8,h.cy-28,30,36,3); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.globalAlpha = 0.3;
+      [h.cy-18,h.cy-10,h.cy-2,h.cy+6].forEach(ly => { ctx.fillRect(h.cx+13,ly,20,3); });
+      ctx.restore();
+      txt('skills', h.cx+23, h.cy+20, {size:10, color:'#2a6a3a'});
+
+      // Social: community, childcare, eldercare
+      const s2 = { cx: sx+cw/2, cy: sy+ch+gap+ch/2+4 };
+      const scol = '#1a4a7a';
+      const figY = s2.cy - 18;
+      figure(s2.cx-26, figY, 0.48);
+      figure(s2.cx,    figY, 0.48);
+      figure(s2.cx+26, figY, 0.48);
+      ctx.save(); ctx.strokeStyle = scol; ctx.globalAlpha = 0.3; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(s2.cx-26,figY+6); ctx.lineTo(s2.cx+26,figY+6); ctx.stroke();
+      ctx.restore();
+      const slabels = ['community','childcare','eldercare'];
+      const sspread = cw*0.76;
+      slabels.forEach((label, i) => {
+        const lx = (sx+10) + (i/(slabels.length-1))*sspread;
+        txt(label, lx, s2.cy+22, {size:9.5, color:scol});
+      });
+
+      // Security: shield
+      const sc2 = { cx: sx+cw+gap+cw/2, cy: sy+ch+gap+ch/2+6 };
+      ctx.save(); ctx.fillStyle = '#d8c8e8'; ctx.strokeStyle = '#6a3a6a'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(sc2.cx,sc2.cy-28);
+      ctx.lineTo(sc2.cx+28,sc2.cy-16);
+      ctx.lineTo(sc2.cx+28,sc2.cy+4);
+      ctx.bezierCurveTo(sc2.cx+28,sc2.cy+16, sc2.cx,sc2.cy+24, sc2.cx,sc2.cy+24);
+      ctx.bezierCurveTo(sc2.cx,sc2.cy+24, sc2.cx-28,sc2.cy+16, sc2.cx-28,sc2.cy+4);
+      ctx.lineTo(sc2.cx-28,sc2.cy-16);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      txt('✓', sc2.cx, sc2.cy-2, {size:16, color:'#6a3a6a', weight:'bold'});
+      ctx.restore();
+      txt('healthcare, legal, rest', sc2.cx, sc2.cy+34, {size:10, color:'#6a3a6a'});
+
+      notebox('Wealth with very little money: good health, trusted neighbors, a paid-off home, useful skills.',
+        'Plenty of money with little wealth: high income, poor health, no community, renting everything.', C.wealth, H*0.875);
+    }
+
+    draw();
+    window.addEventListener('resize', () => { canvas.width = canvas.offsetWidth; W = canvas.width; draw(); });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
