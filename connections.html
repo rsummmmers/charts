@@ -31,6 +31,7 @@
     const C = {
       value:  '#2a7a2a', wealth: '#6a5a10', money:  '#1a4a8a',
       capital:'#7a3a10', asset:  '#4a1a7a', debt:   '#8a1a1a', credit: '#1a6a6a',
+      price:  '#8a5a10',
     };
 
     function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
@@ -63,25 +64,27 @@
 
     function draw() {
       clear();
-      txt('How They Connect', W/2, H*0.08, {size:15, weight:'bold'});
+      txt('How They Connect', W/2, H*0.07, {size:15, weight:'bold'});
 
       const nodes = [
+        { key:'asset',   label:'ASSET',   x:W*0.32, y:H*0.19, c:C.asset   },
+        { key:'price',   label:'PRICE',   x:W*0.68, y:H*0.19, c:C.price   },
         { key:'value',   label:'VALUE',   x:W*0.50, y:H*0.34, c:C.value   },
-        { key:'wealth',  label:'WEALTH',  x:W*0.22, y:H*0.52, c:C.wealth  },
-        { key:'capital', label:'CAPITAL', x:W*0.78, y:H*0.52, c:C.capital },
-        { key:'money',   label:'MONEY',   x:W*0.50, y:H*0.68, c:C.money   },
-        { key:'asset',   label:'ASSET',   x:W*0.50, y:H*0.18, c:C.asset   },
-        { key:'debt',    label:'DEBT',    x:W*0.20, y:H*0.74, c:C.debt    },
-        { key:'credit',  label:'CREDIT',  x:W*0.80, y:H*0.74, c:C.credit  },
+        { key:'wealth',  label:'WEALTH',  x:W*0.18, y:H*0.52, c:C.wealth  },
+        { key:'capital', label:'CAPITAL', x:W*0.82, y:H*0.52, c:C.capital },
+        { key:'money',   label:'MONEY',   x:W*0.50, y:H*0.63, c:C.money   },
+        { key:'debt',    label:'DEBT',    x:W*0.22, y:H*0.82, c:C.debt    },
+        { key:'credit',  label:'CREDIT',  x:W*0.78, y:H*0.82, c:C.credit  },
       ];
       const nm = {};
       nodes.forEach(n => nm[n.key] = n);
-      const NR = 26;
+      const NR = 24;
 
       const edges = [
         { f:'wealth',  t:'value',   lbl:'stores'     },
         { f:'capital', t:'value',   lbl:'produces'   },
         { f:'asset',   t:'value',   lbl:'holds'      },
+        { f:'price',   t:'value',   lbl:'measures'   },
         { f:'wealth',  t:'money',   lbl:'represents' },
         { f:'money',   t:'debt',    lbl:'borrowed'   },
         { f:'credit',  t:'debt',    lbl:'enables'    },
@@ -94,9 +97,9 @@
         arr(
           a.x+Math.cos(ang)*(NR+2), a.y+Math.sin(ang)*(NR+2),
           b.x-Math.cos(ang)*(NR+10), b.y-Math.sin(ang)*(NR+10),
-          '#ccc', 1.2
+          '#bbb', 1.2
         );
-        txt(e.lbl, (a.x+b.x)/2, (a.y+b.y)/2, {size:9, color:'#bbb'});
+        txt(e.lbl, (a.x+b.x)/2, (a.y+b.y)/2, {size:9, color:'#888'});
       });
 
       nodes.forEach(n => {
