@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asset — Money Concept Definitions</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>Asset</h1>
+  <p class="subtitle">Anything you own that holds value or earns income</p>
+  <canvas id="c" height="320"></canvas>
+  <p class="desc">An asset is anything you own that has value or earns income. Land, tools, savings, a house. But not all assets are capital: an orchard is both an asset and capital — it holds value and keeps producing. Savings are an asset but not capital — they hold value but don't make more.</p>
+  <nav></nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    const C = {
+      value:  '#2a7a2a', wealth: '#6a5a10', money:  '#1a4a8a',
+      capital:'#7a3a10', asset:  '#4a1a7a', debt:   '#8a1a1a', credit: '#1a6a6a',
+    };
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight||'normal') + ' ' + (o.size||13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h);
+    }
+
+    function banner(label, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath(); rr(0,0,W,50,0); ctx.fill();
+      ctx.font = 'bold 20px Georgia,serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, W/2, 25);
+      ctx.restore();
+    }
+
+    function notebox(text1, text2, color, y) {
+      y = y || H*0.78;
+      ctx.save();
+      ctx.fillStyle = color+'18'; ctx.strokeStyle = color+'55'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.05, y, W*0.9, text2?46:30, 5); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      if (text2) {
+        txt(text1, W/2, y+14, {size:11.5, color:color, weight:'bold'});
+        txt(text2, W/2, y+31, {size:11, color:'#555'});
+      } else {
+        txt(text1, W/2, y+15, {size:11.5, color:'#555'});
+      }
+    }
+
+    function draw() {
+      clear(); banner('ASSET', C.asset);
+
+      const items = [
+        { label:'Land',    sub:'holds value · can produce',
+          also:'also: capital · wealth',             alsoColor:C.capital, color:C.value },
+        { label:'House',   sub:'shelter · equity',
+          also:'also: wealth · capital (if rented)', alsoColor:C.wealth,  color:C.money },
+        { label:'Tools',   sub:'produces more value',
+          also:'always capital',                      alsoColor:C.capital, color:C.capital },
+        { label:'Savings', sub:'claim on future value',
+          also:'most liquid — closest to money',      alsoColor:C.money,   color:'#555' },
+      ];
+      const cw = W*0.38, ch = H*0.26;
+      const sx = W*0.08, sy = H*0.19;
+      items.forEach((item, i) => {
+        const col = i%2, row = Math.floor(i/2);
+        const cx = sx + col*(cw+W*0.12) + cw/2;
+        const cy = sy + row*(ch+H*0.05) + ch/2;
+        ctx.save();
+        ctx.fillStyle = item.color; ctx.globalAlpha = 0.1;
+        ctx.beginPath(); rr(cx-cw/2, cy-ch/2, cw, ch, 8); ctx.fill();
+        ctx.globalAlpha = 0.55; ctx.strokeStyle = item.color; ctx.lineWidth = 1.5;
+        ctx.beginPath(); rr(cx-cw/2, cy-ch/2, cw, ch, 8); ctx.stroke();
+        ctx.restore();
+        txt(item.label, cx, cy-14, {size:14, weight:'bold', color:item.color});
+        txt(item.sub,   cx, cy+4,  {size:10, color:'#888'});
+        txt(item.also,  cx, cy+22, {size:9,  color:item.alsoColor});
+      });
+
+      notebox('An asset is anything you own that has value. Assets vary:',
+        'An orchard is both asset and capital. Savings are an asset but not capital.', C.asset);
+    }
+
+    draw();
+    window.addEventListener('resize', () => { canvas.width = canvas.offsetWidth; W = canvas.width; draw(); });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
