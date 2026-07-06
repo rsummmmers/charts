@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capital — Money Concept Definitions</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>Capital</h1>
+  <p class="subtitle">Wealth or resources that make more value</p>
+  <canvas id="c" height="320"></canvas>
+  <p class="desc">Capital is wealth or resources that make MORE value. A pump, a factory, a truck — all capital. So is a seed, a skilled worker, healthy soil. The key distinction: capital produces. Wealth just holds. An apple you picked is wealth. The apple tree is capital — it keeps producing next year and the year after.</p>
+  <nav></nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    const C = {
+      value:  '#2a7a2a', wealth: '#6a5a10', money:  '#1a4a8a',
+      capital:'#7a3a10', asset:  '#4a1a7a', debt:   '#8a1a1a', credit: '#1a6a6a',
+    };
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight||'normal') + ' ' + (o.size||13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function arr(x1, y1, x2, y2, color, lw) {
+      color = color||'#888'; lw = lw||1.5;
+      const ang = Math.atan2(y2-y1, x2-x1), hl = 9;
+      ctx.save();
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2-hl*Math.cos(ang-0.4), y2-hl*Math.sin(ang-0.4));
+      ctx.lineTo(x2-hl*Math.cos(ang+0.4), y2-hl*Math.sin(ang+0.4));
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h);
+    }
+
+    function banner(label, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath(); rr(0,0,W,50,0); ctx.fill();
+      ctx.font = 'bold 20px Georgia,serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, W/2, 25);
+      ctx.restore();
+    }
+
+    function notebox(text1, text2, color, y) {
+      y = y || H*0.78;
+      ctx.save();
+      ctx.fillStyle = color+'18'; ctx.strokeStyle = color+'55'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.05, y, W*0.9, text2?46:30, 5); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      if (text2) {
+        txt(text1, W/2, y+14, {size:11.5, color:color, weight:'bold'});
+        txt(text2, W/2, y+31, {size:11, color:'#555'});
+      } else {
+        txt(text1, W/2, y+15, {size:11.5, color:'#555'});
+      }
+    }
+
+    function tomato(cx, cy, r) {
+      r = r||16;
+      ctx.save();
+      ctx.fillStyle = '#d04030';
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#a02010'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = '#3a8a2a';
+      ctx.beginPath(); ctx.moveTo(cx,cy-r);
+      ctx.bezierCurveTo(cx+r*0.5,cy-r*1.4, cx+r*0.8,cy-r*0.6, cx,cy-r*0.4);
+      ctx.bezierCurveTo(cx-r*0.8,cy-r*0.6, cx-r*0.5,cy-r*1.4, cx,cy-r);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function draw() {
+      clear(); banner('CAPITAL', C.capital);
+
+      const bw = 66, bh = 34, br = 5;
+      const xs = [W*0.11, W*0.25, W*0.39];
+      const r1 = H*0.34, r2 = H*0.60;
+
+      txt('farm', W*0.25, r1-28, {size:10, color:'#bbb'});
+      ['hoe','seeds','pump'].forEach((label, i) => {
+        ctx.save(); ctx.fillStyle = C.capital; ctx.globalAlpha = 0.85;
+        ctx.beginPath(); rr(xs[i]-bw/2, r1-bh/2, bw, bh, br); ctx.fill(); ctx.restore();
+        txt(label, xs[i], r1, {size:12, color:'#fff', weight:'bold'});
+      });
+
+      txt('industry', W*0.25, r2-28, {size:10, color:'#bbb'});
+      ['factory','truck','machine'].forEach((label, i) => {
+        ctx.save(); ctx.fillStyle = C.capital; ctx.globalAlpha = 0.6;
+        ctx.beginPath(); rr(xs[i]-bw/2, r2-bh/2, bw, bh, br); ctx.fill(); ctx.restore();
+        txt(label, xs[i], r2, {size:12, color:'#fff', weight:'bold'});
+      });
+
+      xs.forEach(x => txt('capital', x, r2+26, {size:10, color:'#aaa'}));
+
+      const midY = H*0.47;
+      arr(W*0.52, midY, W*0.63, midY, C.capital, 2.5);
+      txt('produces', W*0.575, midY-16, {size:11, color:C.capital});
+
+      [[W*0.70,r1-18,17],[W*0.82,r1-22,14],[W*0.76,r1+6,12]].forEach(([tx,ty,r]) => tomato(tx,ty,r));
+      txt('goods (crops)', W*0.76, r1+30, {size:10, color:'#888'});
+
+      [[W*0.68,r2-14],[W*0.78,r2-18],[W*0.88,r2-10]].forEach(([px,py]) => {
+        ctx.save(); ctx.fillStyle = '#6a8a6a'; ctx.strokeStyle = '#3a5a3a'; ctx.lineWidth = 1;
+        ctx.beginPath(); rr(px-12, py-9, 24, 18, 3); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(px-12,py); ctx.lineTo(px+12,py); ctx.stroke();
+        ctx.restore();
+      });
+      txt('goods (products)', W*0.78, r2+14, {size:10, color:'#888'});
+
+      arr(W*0.65, H*0.82, W*0.96, H*0.82, '#888', 1);
+      txt('sold for → income', W*0.82, H*0.82-12, {size:9.5, color:'#aaa'});
+
+      notebox('Capital makes MORE value. Wealth is value stored. An apple is wealth.',
+        'An apple tree is capital — it keeps producing. A factory and a truck work the same way.', C.capital);
+    }
+
+    draw();
+    window.addEventListener('resize', () => { canvas.width = canvas.offsetWidth; W = canvas.width; draw(); });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
