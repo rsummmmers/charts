@@ -118,7 +118,7 @@
     function draw() {
       clear(); banner('VALUE', C.value);
 
-      const px = W*0.25, py = H*0.58;
+      const px = W*0.25, py = H*0.52;
       ctx.save(); ctx.strokeStyle = '#5a3a1a'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(px,py+8); ctx.lineTo(px,py-55); ctx.stroke();
       ctx.fillStyle = '#3a8a2a';
@@ -128,13 +128,25 @@
       tomato(px-8,py-72,15);
       tomato(px+16,py-62,12);
       tomato(px-22,py-55,11);
-      txt('a tomato plant', px, py+26, {size:11, color:'#888'});
+      txt('a tomato plant', px, py+26, {size:11, color:'#555'});
 
       arr(px+42,py-56, W*0.53,H*0.46, C.value, 2);
       txt('useful to', W*0.6,H*0.37, {size:11, color:C.value});
       txt('someone',   W*0.6,H*0.37+16, {size:11, color:C.value});
 
       figure(W*0.76, H*0.38, 0.85);
+
+      // non-monetary value examples
+      const ecol = C.value;
+      [{label:'back rub', ex:W*0.2},{label:'help carrying', ex:W*0.5},{label:'bowl of soup', ex:W*0.8}].forEach(e => {
+        ctx.save(); ctx.fillStyle = ecol; ctx.globalAlpha = 0.1;
+        ctx.beginPath(); rr(e.ex-50, H*0.67-12, 100, 24, 5); ctx.fill();
+        ctx.globalAlpha = 0.4; ctx.strokeStyle = ecol; ctx.lineWidth = 1;
+        ctx.beginPath(); rr(e.ex-50, H*0.67-12, 100, 24, 5); ctx.stroke();
+        ctx.restore();
+        txt(e.label, e.ex, H*0.67, {size:10, color:ecol});
+      });
+      txt('all value — no money involved', W/2, H*0.67+20, {size:9.5, color:'#777'});
 
       notebox('Value ≠ price.  Price is what someone pays.  Value is what a thing actually does.',
         'Value exists even when no money changes hands.', C.value);
