@@ -1,7 +1,16 @@
 (function () {
   const SECTIONS = [
+    { id: 'definitions', short: 'Definitions', name: 'Money Concept Definitions', models: [
+      { file: 'value.html',       title: 'Value' },
+      { file: 'wealth.html',      title: 'Wealth' },
+      { file: 'money.html',       title: 'Money' },
+      { file: 'capital.html',     title: 'Capital' },
+      { file: 'asset.html',       title: 'Asset' },
+      { file: 'debt.html',        title: 'Debt' },
+      { file: 'credit.html',      title: 'Credit' },
+      { file: 'connections.html', title: 'How They Connect' },
+    ]},
     { id: 'banking', short: 'Banking', name: 'How Banks Create Money', models: [
-      { file: 'money-terms.html',         title: 'What the Words Mean' },
       { file: 'money-multiplier.html',    title: 'The Money Multiplier' },
       { file: 'debt-copies.html',         title: 'The Debt Copy Problem' },
       { file: 'interest-ratchet.html',    title: 'The Interest Ratchet' },
