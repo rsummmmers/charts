@@ -328,14 +328,23 @@
       arr(W * 0.52, midY, W * 0.63, midY, C.capital, 2.5);
       txt('produces', W * 0.575, midY - 16, { size: 11, color: C.capital });
 
-      // Output: tomatoes (farm row) + dollars (industry row)
+      // Output: tomatoes (farm) + packages (industry) — both are GOODS
       [[W*0.70,r1-18,17],[W*0.82,r1-22,14],[W*0.76,r1+6,12]].forEach(([tx,ty,r]) => tomato(tx,ty,r));
-      txt('crops', W * 0.76, r1 + 30, { size: 10, color: '#888' });
+      txt('goods (crops)', W * 0.76, r1 + 30, { size: 10, color: '#888' });
 
-      [['$',W*0.70,r2,22],['$',W*0.82,r2-8,18],['$',W*0.76,r2+12,16]].forEach(([s,tx,ty,sz]) => {
-        txt(s, tx, ty, { size: sz, weight: 'bold', color: '#2a7a2a' });
+      // Industry output: physical packages/products
+      [[W*0.68,r2-14],[W*0.78,r2-18],[W*0.88,r2-10]].forEach(([px,py]) => {
+        ctx.save(); ctx.fillStyle = '#6a8a6a'; ctx.strokeStyle = '#3a5a3a'; ctx.lineWidth = 1;
+        ctx.beginPath(); rr(px - 12, py - 9, 24, 18, 3); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(px - 12, py); ctx.lineTo(px + 12, py); ctx.stroke();
+        ctx.restore();
       });
-      txt('goods / income', W * 0.76, r2 + 30, { size: 10, color: '#888' });
+      txt('goods (products)', W * 0.78, r2 + 14, { size: 10, color: '#888' });
+
+      // Goods → income note (separate)
+      arr(W * 0.65, H * 0.82, W * 0.96, H * 0.82, '#888', 1);
+      txt('sold for → income', W * 0.82, H * 0.82 - 12, { size: 9.5, color: '#aaa' });
 
       notebox('Capital makes MORE value. Wealth is value stored. An apple is wealth.',
         'An apple tree is capital — it keeps producing. A factory, a truck, and software work the same way.', C.capital);
