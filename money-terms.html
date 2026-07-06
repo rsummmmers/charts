@@ -186,25 +186,23 @@
         txt(cell.label, cx + cw / 2, cy + 13, { size: 10, weight: 'bold', color: cell.color });
       });
 
-      // ── Tangible: house + food ──
-      const t = { cx: sx + cw / 2, cy: sy + ch / 2 + 6 };
-      // House
-      ctx.save(); ctx.strokeStyle = '#5a6a10'; ctx.fillStyle = '#e8f0c8'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); rr(t.cx - 52, t.cy - 24, 42, 36, 3); ctx.fill(); ctx.stroke();
-      // Roof
-      ctx.fillStyle = '#8a7a1a';
-      ctx.beginPath(); ctx.moveTo(t.cx - 54, t.cy - 24); ctx.lineTo(t.cx - 31, t.cy - 44); ctx.lineTo(t.cx - 8, t.cy - 24); ctx.closePath(); ctx.fill();
-      ctx.restore();
-      txt('home', t.cx - 31, t.cy + 20, { size: 10, color: '#5a6a10' });
-      // Jars (small)
-      [t.cx + 10, t.cx + 26, t.cx + 42].forEach((jx, i) => {
-        ctx.save(); ctx.fillStyle = ['#c84028','#c89028','#4a8a2a'][i]; ctx.globalAlpha = 0.8;
-        ctx.beginPath(); rr(jx - 9, t.cy - 24, 18, 30, 3); ctx.fill();
-        ctx.fillStyle = '#777'; ctx.globalAlpha = 1;
-        ctx.beginPath(); rr(jx - 10, t.cy - 31, 20, 8, 2); ctx.fill();
+      // ── Tangible: house + food + clothing + furniture ──
+      const t = { cx: sx + cw / 2, cy: sy + ch / 2 + 4 };
+      const tcol = '#5a6a10';
+      // Four items as small labeled chips across the cell
+      const titems = ['home', 'food', 'clothing', 'furniture'];
+      const tspread = cw * 0.78;
+      titems.forEach((label, i) => {
+        const tx = (sx + 8) + (i / (titems.length - 1)) * tspread;
+        const ty = t.cy - 10;
+        ctx.save(); ctx.fillStyle = tcol; ctx.globalAlpha = 0.18;
+        ctx.beginPath(); rr(tx - 22, ty - 14, 44, 24, 4); ctx.fill();
+        ctx.globalAlpha = 0.5; ctx.strokeStyle = tcol; ctx.lineWidth = 1;
+        ctx.beginPath(); rr(tx - 22, ty - 14, 44, 24, 4); ctx.stroke();
         ctx.restore();
+        txt(label, tx, ty, { size: 10, color: tcol, weight: 'bold' });
       });
-      txt('food stores', t.cx + 26, t.cy + 20, { size: 10, color: '#5a6a10' });
+      txt('things you own outright', t.cx, t.cy + 20, { size: 9.5, color: '#aaa' });
 
       // ── Human: health + skills ──
       const h = { cx: sx + cw + gap + cw / 2, cy: sy + ch / 2 + 6 };
@@ -227,17 +225,24 @@
       ctx.restore();
       txt('skills', h.cx + 23, h.cy + 20, { size: 10, color: '#2a6a3a' });
 
-      // ── Social: relationships ──
-      const s2 = { cx: sx + cw / 2, cy: sy + ch + gap + ch / 2 + 6 };
-      figure(s2.cx - 28, s2.cy - 24, 0.52);
-      figure(s2.cx, s2.cy - 24, 0.52);
-      figure(s2.cx + 28, s2.cy - 24, 0.52);
-      // Connection lines
-      ctx.save(); ctx.strokeStyle = '#1a4a7a'; ctx.globalAlpha = 0.35; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(s2.cx - 28, s2.cy - 17); ctx.lineTo(s2.cx, s2.cy - 17); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(s2.cx, s2.cy - 17); ctx.lineTo(s2.cx + 28, s2.cy - 17); ctx.stroke();
+      // ── Social: relationships + childcare + eldercare ──
+      const s2 = { cx: sx + cw / 2, cy: sy + ch + gap + ch / 2 + 4 };
+      const scol = '#1a4a7a';
+      // Figures (compact, upper half of cell)
+      const figY = s2.cy - 18;
+      figure(s2.cx - 26, figY, 0.48);
+      figure(s2.cx, figY, 0.48);
+      figure(s2.cx + 26, figY, 0.48);
+      ctx.save(); ctx.strokeStyle = scol; ctx.globalAlpha = 0.3; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(s2.cx - 26, figY + 6); ctx.lineTo(s2.cx + 26, figY + 6); ctx.stroke();
       ctx.restore();
-      txt('people who show up', s2.cx, s2.cy + 22, { size: 10, color: '#1a4a7a' });
+      // Three labels across bottom of social cell
+      const slabels = ['community', 'childcare', 'eldercare'];
+      const sspread = cw * 0.76;
+      slabels.forEach((label, i) => {
+        const lx = (sx + 10) + (i / (slabels.length - 1)) * sspread;
+        txt(label, lx, s2.cy + 22, { size: 9.5, color: scol });
+      });
 
       // ── Security: access when needed ──
       const sc = { cx: sx + cw + gap + cw / 2, cy: sy + ch + gap + ch / 2 + 6 };
