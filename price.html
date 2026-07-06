@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Price — Money Concept Definitions</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>Price</h1>
+  <p class="subtitle">The number agreed on at a specific moment of exchange</p>
+  <canvas id="c" height="320"></canvas>
+  <p class="desc">Price is not value. Price is what someone agrees to pay at one specific moment — shaped by supply, urgency, bargaining power, and expectations, not just usefulness. The same tomato is $2.99 at a grocery store, $0 from a neighbor's garden, and $8.00 after a drought. The value (it feeds you) doesn't change. The price swings with context.</p>
+  <nav></nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    const C = {
+      value:  '#2a7a2a', wealth: '#6a5a10', money:  '#1a4a8a',
+      capital:'#7a3a10', asset:  '#4a1a7a', debt:   '#8a1a1a', credit: '#1a6a6a',
+      price:  '#8a5a10',
+    };
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight||'normal') + ' ' + (o.size||13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h);
+    }
+
+    function banner(label, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath(); rr(0,0,W,50,0); ctx.fill();
+      ctx.font = 'bold 20px Georgia,serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, W/2, 25);
+      ctx.restore();
+    }
+
+    function notebox(text1, text2, color, y) {
+      y = y || H*0.78;
+      ctx.save();
+      ctx.fillStyle = color+'18'; ctx.strokeStyle = color+'55'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.05, y, W*0.9, text2?46:30, 5); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      if (text2) {
+        txt(text1, W/2, y+14, {size:11.5, color:color, weight:'bold'});
+        txt(text2, W/2, y+31, {size:11, color:'#555'});
+      } else {
+        txt(text1, W/2, y+15, {size:11.5, color:'#555'});
+      }
+    }
+
+    function tomato(cx, cy, r) {
+      r = r||16;
+      ctx.save();
+      ctx.fillStyle = '#d04030';
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#a02010'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = '#3a8a2a';
+      ctx.beginPath(); ctx.moveTo(cx,cy-r);
+      ctx.bezierCurveTo(cx+r*0.5,cy-r*1.4, cx+r*0.8,cy-r*0.6, cx,cy-r*0.4);
+      ctx.bezierCurveTo(cx-r*0.8,cy-r*0.6, cx-r*0.5,cy-r*1.4, cx,cy-r);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function panel(cx, scenario, price, priceColor, bgColor) {
+      const pw = W*0.26, ph = H*0.48;
+      const px = cx - pw/2, py = H*0.17;
+
+      ctx.save();
+      ctx.fillStyle = bgColor; ctx.globalAlpha = 0.5;
+      ctx.beginPath(); rr(px,py,pw,ph,6); ctx.fill();
+      ctx.globalAlpha = 0.6; ctx.strokeStyle = priceColor; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(px,py,pw,ph,6); ctx.stroke();
+      ctx.restore();
+
+      txt(scenario, cx, py+16, {size:9.5, color:'#555'});
+
+      tomato(cx, py+ph*0.44, 22);
+
+      ctx.save();
+      ctx.font = 'bold 22px Georgia,serif';
+      ctx.fillStyle = priceColor;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(price, cx, py+ph*0.78);
+      ctx.restore();
+    }
+
+    function draw() {
+      clear(); banner('PRICE', C.price);
+
+      const cx1 = W*0.20, cx2 = W*0.50, cx3 = W*0.80;
+
+      panel(cx1, 'grocery store',     '$2.99', '#4a6a10', '#f0f4e8');
+      panel(cx2, "neighbor's garden", '$0',    '#2a7a2a', '#e8f4e8');
+      panel(cx3, 'drought year',      '$8.00', '#8a2a10', '#f8eae8');
+
+      txt('same tomato', W/2, H*0.70, {size:10.5, color:'#777'});
+
+      notebox('Price is the number agreed on at the moment of exchange — not the same as value.',
+        'Supply, urgency, and bargaining power all shift the price. The tomato still feeds you either way.', C.price);
+    }
+
+    draw();
+    window.addEventListener('resize', () => { canvas.width = canvas.offsetWidth; W = canvas.width; draw(); });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
