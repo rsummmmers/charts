@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credit — Money Concept Definitions</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>Credit</h1>
+  <p class="subtitle">Your reputation for paying back what you borrow</p>
+  <canvas id="c" height="320"></canvas>
+  <p class="desc">Credit is your permission to borrow — your reputation for paying back. Good credit means you can borrow more money at lower cost. No credit means you cannot borrow at all. Credit is not money. It is the door that lets you access debt.</p>
+  <nav></nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    const C = {
+      value:  '#2a7a2a', wealth: '#6a5a10', money:  '#1a4a8a',
+      capital:'#7a3a10', asset:  '#4a1a7a', debt:   '#8a1a1a', credit: '#1a6a6a',
+    };
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight||'normal') + ' ' + (o.size||13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h);
+    }
+
+    function banner(label, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath(); rr(0,0,W,50,0); ctx.fill();
+      ctx.font = 'bold 20px Georgia,serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, W/2, 25);
+      ctx.restore();
+    }
+
+    function notebox(text1, text2, color, y) {
+      y = y || H*0.78;
+      ctx.save();
+      ctx.fillStyle = color+'18'; ctx.strokeStyle = color+'55'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.05, y, W*0.9, text2?46:30, 5); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      if (text2) {
+        txt(text1, W/2, y+14, {size:11.5, color:color, weight:'bold'});
+        txt(text2, W/2, y+31, {size:11, color:'#555'});
+      } else {
+        txt(text1, W/2, y+15, {size:11.5, color:'#555'});
+      }
+    }
+
+    function draw() {
+      clear(); banner('CREDIT', C.credit);
+
+      const cx = W/2, cy = H*0.54, r = H*0.27;
+
+      ctx.save(); ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 20;
+      ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI,0); ctx.stroke();
+
+      [
+        { a0:Math.PI,       a1:Math.PI*1.35, color:'#c03020' },
+        { a0:Math.PI*1.35,  a1:Math.PI*1.58, color:'#d08020' },
+        { a0:Math.PI*1.58,  a1:Math.PI*1.78, color:'#b0b020' },
+        { a0:Math.PI*1.78,  a1:Math.PI*2,    color:'#2a8a2a' },
+      ].forEach(z => {
+        ctx.strokeStyle = z.color; ctx.lineWidth = 20; ctx.globalAlpha = 0.7;
+        ctx.beginPath(); ctx.arc(cx,cy,r,z.a0,z.a1); ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      const na = Math.PI*1.82;
+      ctx.save(); ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+Math.cos(na)*(r-12), cy+Math.sin(na)*(r-12));
+      ctx.stroke();
+      ctx.fillStyle = '#1a1a1a';
+      ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+
+      txt('no history', cx-r*0.8, cy+22, {size:10, color:'#c03020'});
+      txt('building',   cx,        cy+r*0.36, {size:10, color:'#b0b020'});
+      txt('trusted',    cx+r*0.8,  cy+22, {size:10, color:'#2a8a2a'});
+
+      txt('→ can borrow $500k at 4%', cx+r*0.42, cy-r*0.32, {size:11, color:'#2a8a2a', align:'left'});
+
+      notebox('Credit is your reputation for paying back what you borrow.',
+        "Good credit = more money, lower cost. No credit = can't borrow. Credit is not money.", C.credit);
+    }
+
+    draw();
+    window.addEventListener('resize', () => { canvas.width = canvas.offsetWidth; W = canvas.width; draw(); });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
