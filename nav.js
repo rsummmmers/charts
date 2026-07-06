@@ -16,6 +16,7 @@
       { file: 'debt-copies.html',         title: 'The Debt Copy Problem' },
       { file: 'interest-ratchet.html',    title: 'The Interest Ratchet' },
       { file: 'interest-comparison.html', title: 'The Interest Variable' },
+      { file: 'deleveraging.html',         title: 'Deleveraging' },
     ]},
     { id: 'rules', short: 'Guardrails', name: 'How the Financial System Is Governed', models: [
       { file: 'capital-requirements.html',  title: 'Three Banking Guardrails' },
