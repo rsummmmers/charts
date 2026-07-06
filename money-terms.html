@@ -162,39 +162,101 @@
     function drawWealth() {
       clear(); banner('WEALTH', C.wealth);
 
-      const cy = H * 0.52;
+      // 2×2 grid of wealth types
+      const pad = W * 0.04, gap = W * 0.04;
+      const cw = (W - pad * 2 - gap) / 2;
+      const ch = (H - 58 - H * 0.14 - gap) / 2;
+      const sx = pad, sy = 58;
+      const cells = [
+        { label: 'Tangible', color: '#5a6a10', fx: 0, fy: 0 },
+        { label: 'Human',    color: '#2a6a3a', fx: 1, fy: 0 },
+        { label: 'Social',   color: '#1a4a7a', fx: 0, fy: 1 },
+        { label: 'Security', color: '#6a3a6a', fx: 1, fy: 1 },
+      ];
 
-      // Jars
-      const jarColors = ['#c84028', '#c89028', '#4a8a2a', '#2a5a9a', '#8a4a1a'];
-      [W*0.16, W*0.28, W*0.40, W*0.52, W*0.64].forEach((jx, i) => {
+      cells.forEach(cell => {
+        const cx = sx + cell.fx * (cw + gap);
+        const cy = sy + cell.fy * (ch + gap);
         ctx.save();
-        ctx.fillStyle = jarColors[i]; ctx.globalAlpha = 0.75;
-        ctx.beginPath(); rr(jx - 14, cy - 44, 28, 46, 4); ctx.fill();
-        ctx.strokeStyle = 'rgba(0,0,0,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = cell.color; ctx.globalAlpha = 0.08;
+        ctx.beginPath(); rr(cx, cy, cw, ch, 6); ctx.fill();
+        ctx.globalAlpha = 0.4; ctx.strokeStyle = cell.color; ctx.lineWidth = 1.2;
+        ctx.beginPath(); rr(cx, cy, cw, ch, 6); ctx.stroke();
+        ctx.restore();
+        txt(cell.label, cx + cw / 2, cy + 13, { size: 10, weight: 'bold', color: cell.color });
+      });
+
+      // ── Tangible: house + food ──
+      const t = { cx: sx + cw / 2, cy: sy + ch / 2 + 6 };
+      // House
+      ctx.save(); ctx.strokeStyle = '#5a6a10'; ctx.fillStyle = '#e8f0c8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(t.cx - 52, t.cy - 24, 42, 36, 3); ctx.fill(); ctx.stroke();
+      // Roof
+      ctx.fillStyle = '#8a7a1a';
+      ctx.beginPath(); ctx.moveTo(t.cx - 54, t.cy - 24); ctx.lineTo(t.cx - 31, t.cy - 44); ctx.lineTo(t.cx - 8, t.cy - 24); ctx.closePath(); ctx.fill();
+      ctx.restore();
+      txt('home', t.cx - 31, t.cy + 20, { size: 10, color: '#5a6a10' });
+      // Jars (small)
+      [t.cx + 10, t.cx + 26, t.cx + 42].forEach((jx, i) => {
+        ctx.save(); ctx.fillStyle = ['#c84028','#c89028','#4a8a2a'][i]; ctx.globalAlpha = 0.8;
+        ctx.beginPath(); rr(jx - 9, t.cy - 24, 18, 30, 3); ctx.fill();
         ctx.fillStyle = '#777'; ctx.globalAlpha = 1;
-        ctx.beginPath(); rr(jx - 16, cy - 52, 32, 10, 2); ctx.fill();
+        ctx.beginPath(); rr(jx - 10, t.cy - 31, 20, 8, 2); ctx.fill();
         ctx.restore();
       });
-      txt('preserved food', W * 0.4, cy + 14, { size: 11, color: '#888' });
+      txt('food stores', t.cx + 26, t.cy + 20, { size: 10, color: '#5a6a10' });
 
-      // Garden beds
-      [W*0.22, W*0.50, W*0.78].forEach(bx => {
-        ctx.save(); ctx.fillStyle = '#5a3a1a'; ctx.globalAlpha = 0.7;
-        ctx.beginPath(); rr(bx - 40, cy + 42, 80, 24, 4); ctx.fill();
-        ctx.fillStyle = '#4a8a2a'; ctx.globalAlpha = 0.85;
-        for (let i = 0; i < 4; i++) {
-          ctx.beginPath(); ctx.arc(bx - 28 + i * 18, cy + 38, 7, 0, Math.PI * 2); ctx.fill();
-        }
-        ctx.restore();
+      // ── Human: health + skills ──
+      const h = { cx: sx + cw + gap + cw / 2, cy: sy + ch / 2 + 6 };
+      // Heart
+      ctx.save(); ctx.fillStyle = '#e05050'; ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.moveTo(h.cx - 30, h.cy - 14);
+      ctx.bezierCurveTo(h.cx - 30, h.cy - 28, h.cx - 14, h.cy - 28, h.cx - 14, h.cy - 14);
+      ctx.bezierCurveTo(h.cx - 14, h.cy - 28, h.cx, h.cy - 28, h.cx, h.cy - 14);
+      ctx.bezierCurveTo(h.cx, h.cy - 4, h.cx - 30, h.cy + 10, h.cx - 30, h.cy - 14);
+      ctx.fill(); ctx.restore();
+      txt('good health', h.cx - 20, h.cy + 6, { size: 10, color: '#2a6a3a' });
+      // Book / skills
+      ctx.save(); ctx.fillStyle = '#2a6a3a'; ctx.strokeStyle = '#1a4a2a'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(h.cx + 8, h.cy - 28, 30, 36, 3); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.globalAlpha = 0.3;
+      [h.cy - 18, h.cy - 10, h.cy - 2, h.cy + 6].forEach(ly => {
+        ctx.fillRect(h.cx + 13, ly, 20, 3);
       });
-      txt('productive garden beds', W * 0.5, cy + 80, { size: 11, color: '#888' });
+      ctx.restore();
+      txt('skills', h.cx + 23, h.cy + 20, { size: 10, color: '#2a6a3a' });
 
-      // Time arrow
-      arr(W * 0.07, H * 0.84, W * 0.93, H * 0.84, C.wealth, 1.5);
-      txt('accumulated over time', W / 2, H * 0.84 + 15, { size: 11, color: C.wealth });
+      // ── Social: relationships ──
+      const s2 = { cx: sx + cw / 2, cy: sy + ch + gap + ch / 2 + 6 };
+      figure(s2.cx - 28, s2.cy - 24, 0.52);
+      figure(s2.cx, s2.cy - 24, 0.52);
+      figure(s2.cx + 28, s2.cy - 24, 0.52);
+      // Connection lines
+      ctx.save(); ctx.strokeStyle = '#1a4a7a'; ctx.globalAlpha = 0.35; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(s2.cx - 28, s2.cy - 17); ctx.lineTo(s2.cx, s2.cy - 17); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(s2.cx, s2.cy - 17); ctx.lineTo(s2.cx + 28, s2.cy - 17); ctx.stroke();
+      ctx.restore();
+      txt('people who show up', s2.cx, s2.cy + 22, { size: 10, color: '#1a4a7a' });
 
-      notebox('Wealth is stored-up value. You can have a lot of wealth with very little money.',
-        null, C.wealth, H * 0.88);
+      // ── Security: access when needed ──
+      const sc = { cx: sx + cw + gap + cw / 2, cy: sy + ch + gap + ch / 2 + 6 };
+      // Shield
+      ctx.save(); ctx.fillStyle = '#d8c8e8'; ctx.strokeStyle = '#6a3a6a'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(sc.cx, sc.cy - 28);
+      ctx.lineTo(sc.cx + 28, sc.cy - 16);
+      ctx.lineTo(sc.cx + 28, sc.cy + 4);
+      ctx.bezierCurveTo(sc.cx + 28, sc.cy + 16, sc.cx, sc.cy + 24, sc.cx, sc.cy + 24);
+      ctx.bezierCurveTo(sc.cx, sc.cy + 24, sc.cx - 28, sc.cy + 16, sc.cx - 28, sc.cy + 4);
+      ctx.lineTo(sc.cx - 28, sc.cy - 16);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      txt('✓', sc.cx, sc.cy - 2, { size: 16, color: '#6a3a6a', weight: 'bold' });
+      ctx.restore();
+      txt('healthcare, legal, rest', sc.cx, sc.cy + 34, { size: 10, color: '#6a3a6a' });
+
+      notebox('Wealth with very little money: good health, trusted neighbors, a paid-off home, useful skills.',
+        'Plenty of money with little wealth: high income, poor health, no community, renting everything.', C.wealth, H * 0.875);
     }
 
     // ── step 3: MONEY ─────────────────────────────────────────────────────────
@@ -225,43 +287,53 @@
       figure(W * 0.78, H * 0.3, 0.75);
       figure(W * 0.90, H * 0.3, 0.75);
 
-      notebox('Money only works because everyone agrees it does.',
-        'It is not wealth — you cannot eat it. It is a claim that value exists somewhere.', C.money);
+      notebox('Money is a coordination tool — it lets strangers trade at scale without swapping goods directly.',
+        'It is only as real as the agreement behind it.', C.money);
     }
 
     // ── step 4: CAPITAL ───────────────────────────────────────────────────────
     function drawCapital() {
       clear(); banner('CAPITAL', C.capital);
 
-      const cy = H * 0.48;
+      const bw = 66, bh = 34, br = 5;
+      const xs = [W * 0.11, W * 0.25, W * 0.39];
+      const r1 = H * 0.34, r2 = H * 0.60;
 
-      // Capital items on left
-      const tools = [
-        { label: 'hoe', x: W * 0.13 },
-        { label: 'seeds', x: W * 0.26 },
-        { label: 'irrigation', x: W * 0.39 },
-      ];
-      tools.forEach(t => {
-        ctx.save(); ctx.fillStyle = C.capital; ctx.globalAlpha = 0.8;
-        ctx.beginPath(); rr(t.x - 26, cy - 32, 52, 40, 5); ctx.fill();
-        ctx.restore();
-        txt(t.label, t.x, cy - 12, { size: 12, color: '#fff', weight: 'bold' });
-        txt('capital', t.x, cy + 20, { size: 10, color: '#888' });
+      // Row 1: farm/garden
+      txt('farm', W * 0.25, r1 - 28, { size: 10, color: '#bbb' });
+      ['hoe', 'seeds', 'pump'].forEach((label, i) => {
+        ctx.save(); ctx.fillStyle = C.capital; ctx.globalAlpha = 0.85;
+        ctx.beginPath(); rr(xs[i] - bw / 2, r1 - bh / 2, bw, bh, br); ctx.fill(); ctx.restore();
+        txt(label, xs[i], r1, { size: 12, color: '#fff', weight: 'bold' });
       });
 
-      arr(W * 0.51, cy - 12, W * 0.62, cy - 12, C.capital, 2.5);
-      txt('produces', W * 0.565, cy - 28, { size: 11, color: C.capital });
+      // Row 2: industrial
+      txt('industry', W * 0.25, r2 - 28, { size: 10, color: '#bbb' });
+      ['factory', 'truck', 'software'].forEach((label, i) => {
+        ctx.save(); ctx.fillStyle = C.capital; ctx.globalAlpha = 0.6;
+        ctx.beginPath(); rr(xs[i] - bw / 2, r2 - bh / 2, bw, bh, br); ctx.fill(); ctx.restore();
+        txt(label, xs[i], r2, { size: 12, color: '#fff', weight: 'bold' });
+      });
 
-      // Tomatoes output
-      [
-        [W*0.70, cy-24, 18], [W*0.82, cy-28, 15],
-        [W*0.76, cy+2, 13],  [W*0.67, cy+6, 11],
-        [W*0.85, cy+4, 10],
-      ].forEach(([tx, ty, r]) => tomato(tx, ty, r));
-      txt('more value', W * 0.76, cy + 36, { size: 11, color: '#888' });
+      // "capital" label under each column
+      xs.forEach(x => txt('capital', x, r2 + 26, { size: 10, color: '#aaa' }));
+
+      // Arrow
+      const midY = H * 0.47;
+      arr(W * 0.52, midY, W * 0.63, midY, C.capital, 2.5);
+      txt('produces', W * 0.575, midY - 16, { size: 11, color: C.capital });
+
+      // Output: tomatoes (farm row) + dollars (industry row)
+      [[W*0.70,r1-18,17],[W*0.82,r1-22,14],[W*0.76,r1+6,12]].forEach(([tx,ty,r]) => tomato(tx,ty,r));
+      txt('crops', W * 0.76, r1 + 30, { size: 10, color: '#888' });
+
+      [['$',W*0.70,r2,22],['$',W*0.82,r2-8,18],['$',W*0.76,r2+12,16]].forEach(([s,tx,ty,sz]) => {
+        txt(s, tx, ty, { size: sz, weight: 'bold', color: '#2a7a2a' });
+      });
+      txt('goods / income', W * 0.76, r2 + 30, { size: 10, color: '#888' });
 
       notebox('Capital makes MORE value. Wealth is value stored. An apple is wealth.',
-        'An apple tree is capital — it keeps producing next year and the year after.', C.capital);
+        'An apple tree is capital — it keeps producing. A factory, a truck, and software work the same way.', C.capital);
     }
 
     // ── step 5: ASSET ─────────────────────────────────────────────────────────
@@ -431,11 +503,11 @@
       { draw: drawValue,
         desc: 'Value is usefulness. A tomato you grew has value because it feeds someone. Value is not the same as price — price is what someone pays at a specific moment; value is what a thing actually does. Value exists even when no money changes hands.' },
       { draw: drawWealth,
-        desc: 'Wealth is accumulated value. A full root cellar, a productive garden, a healthy forest — these are wealth. Wealth is stored-up capacity to meet needs or create more value. You can have a lot of wealth with very little money.' },
+        desc: 'Wealth is stored-up capacity to meet needs — tangible and intangible. A home you own. A full pantry. Good health (your body\'s ability to work and enjoy life without crisis). Skills that can always regenerate income. Relationships with people who would show up for you. These are all real wealth, even though none appear in a bank account. Things like vacations and cleaning services aren\'t wealth themselves — they\'re what wealth makes possible. You can have significant wealth with very little money, and significant money with very little wealth.' },
       { draw: drawMoney,
-        desc: 'Money is a token that stands for value — a shared promise that others will accept it in trade. It is not food or shelter on its own. It works because everyone agrees it does. That agreement is more fragile than it looks.' },
+        desc: 'Money is a coordination tool. It lets millions of strangers trade without having to directly swap goods — a doctor can get food without trading medicine for it, a farmer can get healthcare without trading tomatoes for it. Money solves that problem by being a widely accepted stand-in for value. What makes it unusual: it only works because everyone agrees it does. A pile of cash in a town where no one accepts it is worthless. The agreement is the money.' },
       { draw: drawCapital,
-        desc: 'Capital is wealth or resources that make MORE value. A seed is capital. An irrigation system is capital. A skilled worker, healthy soil, a tool set — all capital. The key: capital produces. Wealth just holds.' },
+        desc: 'Capital is wealth or resources that make MORE value. A pump, a factory, a truck, a software platform — all capital. So is a seed, a skilled worker, healthy soil. The key distinction: capital produces. Wealth just holds. An apple you picked is wealth. The apple tree is capital — it keeps producing next year and the year after.' },
       { draw: drawAsset,
         desc: 'An asset is anything you own that has value or earns income. Land, tools, savings, a house. But not all assets are capital: gold holds value but makes no more gold. An orchard is both an asset and capital — it holds value and keeps producing.' },
       { draw: drawDebt,
