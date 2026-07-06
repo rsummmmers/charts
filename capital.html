@@ -111,21 +111,21 @@
       const xs = [W*0.11, W*0.25, W*0.39];
       const r1 = H*0.34, r2 = H*0.60;
 
-      txt('farm', W*0.25, r1-28, {size:10, color:'#bbb'});
+      txt('farm', W*0.25, r1-28, {size:10, color:'#888'});
       ['hoe','seeds','pump'].forEach((label, i) => {
         ctx.save(); ctx.fillStyle = C.capital; ctx.globalAlpha = 0.85;
         ctx.beginPath(); rr(xs[i]-bw/2, r1-bh/2, bw, bh, br); ctx.fill(); ctx.restore();
         txt(label, xs[i], r1, {size:12, color:'#fff', weight:'bold'});
       });
 
-      txt('industry', W*0.25, r2-28, {size:10, color:'#bbb'});
+      txt('industry', W*0.25, r2-28, {size:10, color:'#888'});
       ['factory','truck','machine'].forEach((label, i) => {
         ctx.save(); ctx.fillStyle = C.capital; ctx.globalAlpha = 0.6;
         ctx.beginPath(); rr(xs[i]-bw/2, r2-bh/2, bw, bh, br); ctx.fill(); ctx.restore();
         txt(label, xs[i], r2, {size:12, color:'#fff', weight:'bold'});
       });
 
-      xs.forEach(x => txt('capital', x, r2+26, {size:10, color:'#aaa'}));
+      xs.forEach(x => txt('capital', x, r2+26, {size:10, color:'#777'}));
 
       const midY = H*0.47;
       arr(W*0.52, midY, W*0.63, midY, C.capital, 2.5);
@@ -143,8 +143,8 @@
       });
       txt('goods (products)', W*0.78, r2+14, {size:10, color:'#888'});
 
-      arr(W*0.65, H*0.82, W*0.96, H*0.82, '#888', 1);
-      txt('sold for → income', W*0.82, H*0.82-12, {size:9.5, color:'#aaa'});
+      arr(W*0.65, H*0.70, W*0.92, H*0.70, '#888', 1);
+      txt('sold for → income', W*0.79, H*0.70-12, {size:9.5, color:'#777'});
 
       notebox('Capital makes MORE value. Wealth is value stored. An apple is wealth.',
         'An apple tree is capital — it keeps producing. A factory and a truck work the same way.', C.capital);
