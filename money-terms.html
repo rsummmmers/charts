@@ -355,12 +355,16 @@
       clear(); banner('ASSET', C.asset);
 
       const items = [
-        { label: 'Land',     sub: 'holds value · can produce', color: C.value },
-        { label: 'House',    sub: 'shelter · equity',          color: C.money },
-        { label: 'Tools',    sub: 'produces more value',       color: C.capital },
-        { label: 'Savings',  sub: 'claim on future value',     color: '#555' },
+        { label: 'Land',    sub: 'holds value · can produce',
+          also: 'also: capital · wealth',            alsoColor: C.capital, color: C.value },
+        { label: 'House',   sub: 'shelter · equity',
+          also: 'also: wealth · capital (if rented)', alsoColor: C.wealth,  color: C.money },
+        { label: 'Tools',   sub: 'produces more value',
+          also: 'always capital',                     alsoColor: C.capital, color: C.capital },
+        { label: 'Savings', sub: 'claim on future value',
+          also: 'most liquid — closest to money',     alsoColor: C.money,   color: '#555' },
       ];
-      const cw = W * 0.38, ch = H * 0.25;
+      const cw = W * 0.38, ch = H * 0.26;
       const sx = W * 0.08, sy = H * 0.19;
       items.forEach((item, i) => {
         const col = i % 2, row = Math.floor(i / 2);
@@ -372,12 +376,13 @@
         ctx.globalAlpha = 0.55; ctx.strokeStyle = item.color; ctx.lineWidth = 1.5;
         ctx.beginPath(); rr(cx - cw / 2, cy - ch / 2, cw, ch, 8); ctx.stroke();
         ctx.restore();
-        txt(item.label, cx, cy - 8, { size: 14, weight: 'bold', color: item.color });
-        txt(item.sub, cx, cy + 12, { size: 10, color: '#888' });
+        txt(item.label, cx, cy - 14, { size: 14, weight: 'bold', color: item.color });
+        txt(item.sub,   cx, cy + 4,  { size: 10, color: '#888' });
+        txt(item.also,  cx, cy + 22, { size: 9,  color: item.alsoColor });
       });
 
-      notebox('An asset is anything you own that has value. Not all assets are capital:',
-        'Gold holds value but makes no more gold. An orchard is both an asset and capital.', C.asset);
+      notebox('An asset is anything you own that has value. Assets vary:',
+        'An orchard is both asset and capital. Savings are an asset but not capital.', C.asset);
     }
 
     // ── step 6: DEBT ──────────────────────────────────────────────────────────
