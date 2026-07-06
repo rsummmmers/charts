@@ -18,7 +18,7 @@
   <h1>Credit</h1>
   <p class="subtitle">Your reputation for paying back what you borrow</p>
   <canvas id="c" height="320"></canvas>
-  <p class="desc">Credit is your permission to borrow — your reputation for paying back. Good credit means you can borrow more money at lower cost. No credit means you cannot borrow at all. Credit is not money. It is the door that lets you access debt.</p>
+  <p class="desc">"Credit" has three different uses. In accounting, a credit is a right-side ledger entry (opposite of a debit). In everyday use, "I'll give you a $20 credit" means the seller owes <em>you</em> $20. In financial systems — the meaning used here — credit is your reputation for paying back, your permission to borrow. A credit rating or credit score measures this. Extending credit to someone means allowing them to take on debt. Credit and debt are always two sides of the same transaction: the lender extends credit, the borrower carries debt. Good credit means you can borrow more at lower cost. No credit means no access to debt at all.</p>
   <nav></nav>
 
   <script>
@@ -106,10 +106,10 @@
       ctx.restore();
 
       txt('no history', cx-r*0.8, cy+22, {size:10, color:'#c03020'});
-      txt('building',   cx,        cy+r*0.36, {size:10, color:'#b0b020'});
+      txt('building',   cx,        cy+r*0.36, {size:10, color:'#8a7020'});
       txt('trusted',    cx+r*0.8,  cy+22, {size:10, color:'#2a8a2a'});
 
-      txt('→ can borrow $500k at 4%', cx+r*0.42, cy-r*0.32, {size:11, color:'#2a8a2a', align:'left'});
+      txt('good credit → borrow $500k at 4%', W/2, cy+r*0.52, {size:11, color:'#2a8a2a'});
 
       notebox('Credit is your reputation for paying back what you borrow.',
         "Good credit = more money, lower cost. No credit = can't borrow. Credit is not money.", C.credit);
