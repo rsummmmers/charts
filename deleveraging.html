@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deleveraging</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2rem; max-width: 780px; margin: 0 auto; }
+    h1 { font-size: 1.25rem; font-weight: normal; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1.25rem; }
+    canvas { display: block; border: 1.5px solid #1a1a1a; border-radius: 4px; width: 100%; background: #fff; }
+    .desc { font-size: 0.88rem; color: #444; line-height: 1.65; margin: 1rem 0; min-height: 4.5em; }
+    nav { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+    button { font-family: 'Georgia', serif; font-size: 0.82rem; padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; cursor: pointer; border-radius: 3px; }
+    button:hover { background: #1a1a1a; color: #faf8f5; }
+    button:disabled { opacity: 0.3; cursor: default; }
+    .step-ct { font-size: 0.78rem; color: #aaa; margin-left: auto; }
+  </style>
+</head>
+<body>
+  <h1>Deleveraging</h1>
+  <p class="subtitle">What happens when an economy tries to pay down its debts all at once</p>
+  <canvas id="c" height="320"></canvas>
+  <p class="desc" id="desc"></p>
+  <nav>
+    <button id="prev">← Back</button>
+    <button id="next">Next →</button>
+    <span class="step-ct" id="ct"></span>
+  </nav>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth || 720;
+    let W = canvas.width, H = canvas.height;
+
+    const BC = '#3a1a5a';
+    const C = {
+      value:  '#2a7a2a', wealth: '#6a5a10', money: '#1a4a8a',
+      capital:'#7a3a10', asset:  '#4a1a7a', debt:  '#8a1a1a', credit:'#1a6a6a',
+    };
+
+    function clear() { ctx.fillStyle = '#faf8f5'; ctx.fillRect(0, 0, W, H); }
+
+    function txt(s, x, y, o) {
+      o = o || {};
+      ctx.save();
+      ctx.font = (o.weight||'normal') + ' ' + (o.size||13) + 'px Georgia,serif';
+      ctx.fillStyle = o.color || '#1a1a1a';
+      ctx.textAlign = o.align || 'center';
+      ctx.textBaseline = o.baseline || 'middle';
+      if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+      ctx.fillText(s, x, y);
+      ctx.restore();
+    }
+
+    function arr(x1, y1, x2, y2, color, lw) {
+      color = color||'#888'; lw = lw||1.5;
+      const ang = Math.atan2(y2-y1, x2-x1), hl = 9;
+      ctx.save();
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2-hl*Math.cos(ang-0.4), y2-hl*Math.sin(ang-0.4));
+      ctx.lineTo(x2-hl*Math.cos(ang+0.4), y2-hl*Math.sin(ang+0.4));
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    function rr(x, y, w, h, r) {
+      if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h);
+    }
+
+    function banner(label) {
+      ctx.save(); ctx.fillStyle = BC;
+      ctx.beginPath(); rr(0,0,W,50,0); ctx.fill();
+      ctx.font = 'bold 20px Georgia,serif'; ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, W/2, 25);
+      ctx.restore();
+    }
+
+    function notebox(text1, text2, y) {
+      y = y || H*0.78;
+      ctx.save();
+      ctx.fillStyle = BC+'18'; ctx.strokeStyle = BC+'55'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(W*0.05, y, W*0.9, text2?46:30, 5); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      if (text2) {
+        txt(text1, W/2, y+14, {size:11.5, color:BC, weight:'bold'});
+        txt(text2, W/2, y+31, {size:11, color:'#555'});
+      } else {
+        txt(text1, W/2, y+15, {size:11.5, color:'#555'});
+      }
+    }
+
+    // distance from center to edge of box in direction ang
+    function edgeDist(ang, hw, hh) {
+      const ca = Math.abs(Math.cos(ang));
+      const sa = Math.abs(Math.sin(ang));
+      if (ca < 0.001) return hh;
+      if (sa < 0.001) return hw;
+      return Math.min(hw/ca, hh/sa);
+    }
+
+    // ── Step 1: Symmetry ──────────────────────────────────────────────────────
+    function drawSymmetry() {
+      clear(); banner('DELEVERAGING');
+
+      txt('Loans create money.  Repaying them destroys it.', W/2, H*0.19, {size:13, weight:'bold'});
+
+      const bw = W*0.38, bh = 40;
+      const rbx = W*0.50, by1 = H*0.30, by2 = H*0.52;
+
+      // Row 1: loan issued
+      txt('Loan issued →', W*0.08, by1+bh/2, {size:11, color:'#555', align:'left'});
+      ctx.save(); ctx.fillStyle = C.value; ctx.globalAlpha = 0.85;
+      ctx.beginPath(); rr(rbx, by1, bw, bh, 5); ctx.fill(); ctx.restore();
+      txt('+$100k  enters economy', rbx+bw/2, by1+bh/2, {size:12, weight:'bold', color:'#fff'});
+
+      // Row 2: loan repaid
+      txt('Loan repaid →', W*0.08, by2+bh/2, {size:11, color:'#555', align:'left'});
+      ctx.save(); ctx.fillStyle = '#fff8f8'; ctx.globalAlpha = 1;
+      ctx.beginPath(); rr(rbx, by2, bw, bh, 5); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.strokeStyle = C.debt; ctx.globalAlpha = 0.65; ctx.lineWidth = 1.5;
+      ctx.setLineDash([5,4]);
+      ctx.beginPath(); rr(rbx, by2, bw, bh, 5); ctx.stroke(); ctx.restore();
+      txt('−$100k  leaves economy', rbx+bw/2, by2+bh/2, {size:12, weight:'bold', color:C.debt});
+
+      // Net-effect line
+      const ey = H*0.68;
+      txt('Net effect:', W*0.08, ey, {size:11, color:'#555', align:'left'});
+      txt('if repayments outpace new loans → money supply shrinks', W*0.59, ey, {size:11, color:'#1a1a1a'});
+
+      notebox('This is the opposite of money creation — and just as real.',
+        'Deleveraging shrinks the money supply. Paying down debt is also removing money from circulation.');
+    }
+
+    // ── Steps 2 & 3 share this bar-chart helper ───────────────────────────────
+    function balanceSheet(assetV, debtV) {
+      const baseY = H*0.79;
+      const scale = H*0.55 / 300;
+      const bw = 80, gap = 8;
+      const ax = W*0.28, dx = W*0.68;
+      const midX = (ax + bw/2 + dx - bw/2) / 2;
+
+      const assetH = assetV * scale;
+      const debtH  = debtV  * scale;
+      const assetTop = baseY - assetH;
+      const debtTop  = baseY - debtH;
+
+      // Asset bar
+      ctx.save(); ctx.fillStyle = C.value; ctx.globalAlpha = 0.75;
+      ctx.beginPath(); rr(ax-bw/2, assetTop, bw, assetH, 5); ctx.fill(); ctx.restore();
+      txt('$' + assetV + 'k', ax, baseY - assetH*0.5, {size:12, weight:'bold', color:'#fff'});
+      txt('ASSETS', ax, assetTop - 15, {size:10, weight:'bold', color:C.value});
+
+      // Debt bar
+      ctx.save(); ctx.fillStyle = C.debt; ctx.globalAlpha = 0.72;
+      ctx.beginPath(); rr(dx-bw/2, debtTop, bw, debtH, 5); ctx.fill(); ctx.restore();
+      txt('$' + debtV + 'k', dx, baseY - debtH*0.5, {size:12, weight:'bold', color:'#fff'});
+      txt('DEBTS', dx, debtTop - 15, {size:10, weight:'bold', color:C.debt});
+
+      const nw = assetV - debtV;
+      if (nw >= 0) {
+        // Positive net worth: show gap between debt top and asset top
+        ctx.save(); ctx.strokeStyle = '#888'; ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
+        ctx.setLineDash([4,3]);
+        ctx.beginPath(); ctx.moveTo(ax+bw/2, debtTop); ctx.lineTo(dx-bw/2, debtTop); ctx.stroke();
+        ctx.restore();
+        const midY = (assetTop + debtTop) / 2;
+        txt('+$' + nw + 'k', midX, midY-8, {size:12, weight:'bold', color:'#2a8a2a'});
+        txt('net worth', midX, midY+8, {size:10, color:'#2a8a2a'});
+      } else {
+        // Negative net worth: debt bar extends above asset bar
+        const overH = Math.abs(nw) * scale;
+        ctx.save(); ctx.fillStyle = '#cc1818'; ctx.globalAlpha = 0.45;
+        ctx.beginPath(); rr(dx-bw/2, debtTop, bw, overH, 4); ctx.fill(); ctx.restore();
+        // Dashed line at asset level
+        ctx.save(); ctx.strokeStyle = '#cc1818'; ctx.lineWidth = 1.2; ctx.globalAlpha = 0.5;
+        ctx.setLineDash([4,3]);
+        ctx.beginPath(); ctx.moveTo(ax+bw/2, assetTop); ctx.lineTo(dx-bw/2, assetTop); ctx.stroke();
+        ctx.restore();
+        const midY = (assetTop + debtTop) / 2;
+        txt('UNDERWATER', midX, midY-8, {size:11, weight:'bold', color:'#cc1818'});
+        txt('−$' + Math.abs(nw) + 'k net worth', midX, midY+9, {size:10, color:'#cc1818'});
+      }
+
+      // Base line
+      ctx.save(); ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(W*0.12, baseY); ctx.lineTo(W*0.88, baseY); ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawLeveraged() {
+      clear(); banner('DELEVERAGING');
+      balanceSheet(300, 240);
+      txt('4:1 leverage — 80% debt-funded', W/2, H*0.79+16, {size:10, color:'#aaa'});
+      notebox('Assets = Debts + Net Worth. High leverage works when asset prices hold.',
+        'The system hums as long as prices rise and income covers the payments.');
+    }
+
+    function drawUnderwater() {
+      clear(); banner('DELEVERAGING');
+      // Ghost of original asset bar (dashed outline only)
+      const baseY = H*0.79, scale = H*0.55/300, bw = 80, ax = W*0.28;
+      const wasH = 300*scale, nowH = 180*scale;
+      ctx.save(); ctx.strokeStyle = C.value; ctx.globalAlpha = 0.2; ctx.lineWidth = 1;
+      ctx.setLineDash([4,3]);
+      ctx.beginPath(); rr(ax-bw/2, baseY-wasH, bw, wasH-nowH, 0); ctx.stroke();
+      ctx.restore();
+      txt('was $300k', ax, baseY-wasH-10, {size:9, color:'#aaa'});
+      // Down arrow on asset bar
+      arr(ax+bw/2+8, baseY-wasH+4, ax+bw/2+8, baseY-nowH-4, '#c04040', 1.5);
+      txt('−$120k', ax+bw/2+32, baseY-(wasH+nowH)/2, {size:9, color:'#c04040'});
+      balanceSheet(180, 240);
+      txt('unchanged', W*0.68, H*0.79-240*scale-28, {size:9, color:'#bbb'});
+      notebox('Asset prices fell. Debts were set in nominal terms — they stay fixed.',
+        'Everyone owes more than they own. The only exit: pay down debt. Everyone tries at once.');
+    }
+
+    // ── Step 4: Deflationary Spiral ───────────────────────────────────────────
+    function drawSpiral() {
+      clear(); banner('DELEVERAGING');
+      txt('The Deflationary Spiral', W/2, H*0.17, {size:13, weight:'bold'});
+
+      const cx = W*0.50, cy = H*0.52, R = H*0.20;
+      const NW = 74, NH = 44;
+
+      const nodes = [
+        { lines:['Pay down','debt'],               color:C.debt,  a:-Math.PI/2 },
+        { lines:['Money supply','shrinks'],         color:C.money, a:-Math.PI/2+2*Math.PI/5 },
+        { lines:['Spending','falls'],               color:'#555',  a:-Math.PI/2+4*Math.PI/5 },
+        { lines:['Incomes','fall'],                 color:'#555',  a:-Math.PI/2+6*Math.PI/5 },
+        { lines:['Prices fall —','real debt grows'],color:C.debt,  a:-Math.PI/2+8*Math.PI/5 },
+      ];
+
+      // Arrows between nodes
+      nodes.forEach((n, i) => {
+        const m = nodes[(i+1) % nodes.length];
+        const nx = cx+Math.cos(n.a)*R, ny = cy+Math.sin(n.a)*R;
+        const mx = cx+Math.cos(m.a)*R, my = cy+Math.sin(m.a)*R;
+        const ang = Math.atan2(my-ny, mx-nx);
+        const d1 = edgeDist(ang, NW/2, NH/2) + 4;
+        const d2 = edgeDist(ang+Math.PI, NW/2, NH/2) + 8;
+        arr(nx+Math.cos(ang)*d1, ny+Math.sin(ang)*d1,
+            mx-Math.cos(ang)*d2, my-Math.sin(ang)*d2, '#ccc', 1.3);
+      });
+
+      // Node boxes
+      nodes.forEach(n => {
+        const nx = cx+Math.cos(n.a)*R, ny = cy+Math.sin(n.a)*R;
+        ctx.save();
+        ctx.fillStyle = n.color; ctx.globalAlpha = 0.09;
+        ctx.beginPath(); rr(nx-NW/2, ny-NH/2, NW, NH, 6); ctx.fill();
+        ctx.globalAlpha = 0.45; ctx.strokeStyle = n.color; ctx.lineWidth = 1.5;
+        ctx.beginPath(); rr(nx-NW/2, ny-NH/2, NW, NH, 6); ctx.stroke();
+        ctx.restore();
+        if (n.lines.length === 1) {
+          txt(n.lines[0], nx, ny, {size:10, weight:'bold', color:n.color});
+        } else {
+          txt(n.lines[0], nx, ny-9, {size:10, weight:'bold', color:n.color});
+          txt(n.lines[1], nx, ny+9, {size:10, weight:'bold', color:n.color});
+        }
+      });
+
+      notebox('Each step makes the next worse. Irving Fisher described this in 1933.',
+        'The more people try to pay off debt simultaneously, the harder paying it off becomes.');
+    }
+
+    // ── Step 5: Pathways Out ──────────────────────────────────────────────────
+    function drawPathways() {
+      clear(); banner('DELEVERAGING');
+      txt('Three ways the spiral ends', W/2, H*0.14, {size:13, weight:'bold'});
+
+      const paths = [
+        { title:'Default',   sub:['Debt written off','fast but painful','credit markets freeze'],     color:C.debt,   x:W*0.18 },
+        { title:'Austerity', sub:['Cut spending,','repay slowly','years to decades'],                 color:'#555',   x:W*0.50 },
+        { title:'Monetize',  sub:['Central bank buys','debt, creates money,','distributes via inflation'], color:C.money,  x:W*0.82 },
+      ];
+
+      const pw = W*0.27, ph = H*0.40, py = H*0.22;
+
+      paths.forEach(p => {
+        ctx.save();
+        ctx.fillStyle = p.color; ctx.globalAlpha = 0.08;
+        ctx.beginPath(); rr(p.x-pw/2, py, pw, ph, 8); ctx.fill();
+        ctx.globalAlpha = 0.4; ctx.strokeStyle = p.color; ctx.lineWidth = 1.5;
+        ctx.beginPath(); rr(p.x-pw/2, py, pw, ph, 8); ctx.stroke();
+        ctx.restore();
+        txt(p.title, p.x, py+20, {size:12, weight:'bold', color:p.color});
+        ctx.save(); ctx.strokeStyle = p.color; ctx.globalAlpha = 0.25; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(p.x-pw/2+10, py+34); ctx.lineTo(p.x+pw/2-10, py+34); ctx.stroke();
+        ctx.restore();
+        p.sub.forEach((line, i) => {
+          txt(line, p.x, py+52+i*19, {size:10, color:'#555'});
+        });
+      });
+
+      txt('Most real deleveragings use some combination of all three.', W/2, py+ph+14, {size:10, color:'#888'});
+      txt('US 1930s–40s · Japan 1990–2010 · Global 2008–15', W/2, py+ph+28, {size:10, color:'#bbb'});
+
+      notebox('No clean exits. Default is fast and painful. Austerity is slow and painful.',
+        'Monetizing debt spreads the cost via inflation — less visible, more politically manageable.');
+    }
+
+    // ── Steps ─────────────────────────────────────────────────────────────────
+    const STEPS = [
+      { draw: drawSymmetry,
+        desc: 'When you take out a loan, a bank creates new money — your deposit appears and so does the loan on the bank\'s books. When you repay it, that money disappears: the loan is cancelled and so is the deposit. Repaying loans is the mirror of money creation. In a debt-money system, paying back debt removes money from the economy just as surely as borrowing created it.' },
+      { draw: drawLeveraged,
+        desc: 'Leverage means borrowing to own more than you have. A household with $300k in assets and $240k in debt has a net worth of $60k — 4-to-1 leverage. Banks, businesses, and governments all operate this way. It works as long as asset prices hold and income covers the payments. The entire system is built on this assumption.' },
+      { draw: drawUnderwater,
+        desc: 'When asset prices fall, the debt doesn\'t fall with them. If the house drops from $300k to $180k, the mortgage is still $240k. Net worth goes from +$60k to −$60k. Multiply this across an economy — households, businesses, banks all simultaneously underwater — and everyone faces the same pressure: sell assets and pay down debt. But selling into a falling market pushes prices lower still.' },
+      { draw: drawSpiral,
+        desc: 'Everyone deleveraging at once creates a self-reinforcing loop. Paying down debt removes money from circulation. Less money means less spending. Less spending means less income. Less income means prices fall. Falling prices make the real burden of fixed debts grow heavier — which creates more urgency to pay down debt. Irving Fisher named this mechanism in 1933, watching the Great Depression unfold in real time.' },
+      { draw: drawPathways,
+        desc: 'Three things can break the spiral. Default or debt write-offs destroy debt quickly — but also destroy bank assets, freeze credit markets, and produce sharp recessions. Austerity stretches repayment over years or decades — slow, politically brutal, often producing a lost decade or more. Government money creation offsets the shrinking money supply, but distributes the cost through inflation rather than eliminating it. Every major deleveraging uses some mix of all three.' },
+    ];
+
+    let step = 0;
+    const descEl  = document.getElementById('desc');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const ctEl    = document.getElementById('ct');
+
+    function render() {
+      STEPS[step].draw();
+      descEl.textContent = STEPS[step].desc;
+      prevBtn.disabled = (step === 0);
+      nextBtn.disabled = (step === STEPS.length - 1);
+      ctEl.textContent  = (step + 1) + ' of ' + STEPS.length;
+    }
+
+    prevBtn.addEventListener('click', () => { if (step > 0) { step--; render(); } });
+    nextBtn.addEventListener('click', () => { if (step < STEPS.length-1) { step++; render(); } });
+
+    render();
+    window.addEventListener('resize', () => { canvas.width = canvas.offsetWidth; W = canvas.width; render(); });
+  })();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
