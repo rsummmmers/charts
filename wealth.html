@@ -151,14 +151,13 @@
       const s2 = { cx: sx+cw/2, cy: sy+ch+gap+ch/2+4 };
       const scol = '#1a4a7a';
       const figY = s2.cy - 18;
-      figure(s2.cx-26, figY, 0.48);
-      figure(s2.cx,    figY, 0.48);
-      figure(s2.cx+26, figY, 0.48);
+      const sfx = [sx+cw*0.2, sx+cw*0.5, sx+cw*0.8];
+      sfx.forEach(fx => figure(fx, figY, 0.48));
       ctx.save(); ctx.strokeStyle = scol; ctx.globalAlpha = 0.3; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(s2.cx-26,figY+6); ctx.lineTo(s2.cx+26,figY+6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sfx[0],figY+6); ctx.lineTo(sfx[2],figY+6); ctx.stroke();
       ctx.restore();
       const slabels = ['community','childcare','eldercare'];
-      [s2.cx-26, s2.cx, s2.cx+26].forEach((lx, i) => {
+      sfx.forEach((lx, i) => {
         txt(slabels[i], lx, s2.cy+22, {size:9.5, color:scol});
       });
 
