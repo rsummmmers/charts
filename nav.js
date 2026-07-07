@@ -34,7 +34,7 @@
       { file: 'stock-flow.html',         title: 'Stock vs. Flow Systems' },
       { file: 'threshold-failure.html',  title: 'Threshold Failure' },
       { file: 'offsets-problem.html',    title: 'The Offset Problem' },
-      { file: 'entropy.html',            title: 'Entropy' },
+      { file: 'entropy.html',            title: 'Laws of Thermodynamics' },
       { file: 'gravity-atmosphere.html', title: 'Gravity and Atmosphere' },
       { file: 'emergence.html',          title: 'Emergence' },
     ]},
