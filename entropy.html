@@ -20,7 +20,7 @@
 </head>
 <body>
   <h1>Laws of Thermodynamics</h1>
-  <p class="subtitle">Four physical laws that govern all energy — including every economic process</p>
+  <p class="subtitle">Four physical rules that govern all energy — explained plainly</p>
   <canvas id="c" height="320"></canvas>
   <p class="desc" id="desc"></p>
   <nav>
@@ -58,7 +58,7 @@
 
     function arr(x1, y1, x2, y2, color, lw) {
       color = color||'#888'; lw = lw||1.5;
-      const ang = Math.atan2(y2-y1, x2-x1), hl = 8;
+      const ang = Math.atan2(y2-y1, x2-x1), hl = 9;
       ctx.save();
       ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
       ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
@@ -68,11 +68,6 @@
       ctx.lineTo(x2-hl*Math.cos(ang+0.4), y2-hl*Math.sin(ang+0.4));
       ctx.closePath(); ctx.fill();
       ctx.restore();
-    }
-
-    function line(x1,y1,x2,y2,color,lw) {
-      ctx.save(); ctx.strokeStyle=color||'#888'; ctx.lineWidth=lw||1;
-      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
     }
 
     function banner(label) {
@@ -94,225 +89,293 @@
       txt(text2, W/2, y+31, {size:11, color:'#555'});
     }
 
-    function tempBox(cx, cy, label, temp, color) {
-      const bw = 90, bh = 64;
-      ctx.save(); ctx.fillStyle = color; ctx.globalAlpha = 0.15;
-      ctx.beginPath(); rr(cx-bw/2, cy-bh/2, bw, bh, 8); ctx.fill();
-      ctx.globalAlpha = 0.5; ctx.strokeStyle = color; ctx.lineWidth = 1.5;
-      ctx.beginPath(); rr(cx-bw/2, cy-bh/2, bw, bh, 8); ctx.stroke();
+    function stickFigure(px, py, sc, running) {
+      sc = sc||1;
+      ctx.save(); ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2*sc;
+      ctx.beginPath(); ctx.arc(px, py, 11*sc, 0, Math.PI*2); ctx.stroke();
+      if (running) {
+        ctx.beginPath(); ctx.moveTo(px, py+11*sc); ctx.lineTo(px+4*sc, py+38*sc); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px-18*sc, py+22*sc); ctx.lineTo(px+18*sc, py+26*sc); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px+4*sc, py+38*sc); ctx.lineTo(px-10*sc, py+60*sc); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px+4*sc, py+38*sc); ctx.lineTo(px+18*sc, py+56*sc); ctx.stroke();
+      } else {
+        ctx.beginPath(); ctx.moveTo(px, py+11*sc); ctx.lineTo(px, py+44*sc); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px-18*sc, py+24*sc); ctx.lineTo(px+18*sc, py+24*sc); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px, py+44*sc); ctx.lineTo(px-13*sc, py+68*sc); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px, py+44*sc); ctx.lineTo(px+13*sc, py+68*sc); ctx.stroke();
+      }
       ctx.restore();
-      txt(label, cx, cy-14, {size:10, weight:'bold', color:color});
-      txt(temp, cx, cy+6, {size:14, weight:'bold', color:color});
+    }
+
+    function sandwich(cx, cy, sc) {
+      sc = sc||1;
+      const bw = 64*sc, bh = 16*sc;
+      // Bottom bread
+      ctx.save(); ctx.fillStyle = '#c8902a'; ctx.globalAlpha = 0.9;
+      ctx.beginPath(); rr(cx-bw/2, cy+8*sc, bw, bh, 4*sc); ctx.fill(); ctx.restore();
+      // Filling
+      ctx.save(); ctx.fillStyle = '#6a9a3a'; ctx.globalAlpha = 0.85;
+      ctx.beginPath(); rr(cx-bw/2+4*sc, cy-4*sc, bw-8*sc, 14*sc, 2*sc); ctx.fill(); ctx.restore();
+      // Top bread
+      ctx.save(); ctx.fillStyle = '#c8902a'; ctx.globalAlpha = 0.9;
+      ctx.beginPath(); rr(cx-bw/2, cy-18*sc, bw, bh, 4*sc); ctx.fill(); ctx.restore();
+    }
+
+    function thermometer(cx, cy) {
+      // Tube
+      ctx.save(); ctx.fillStyle = '#ddd'; ctx.strokeStyle = '#999'; ctx.lineWidth = 1;
+      ctx.beginPath(); rr(cx-6, cy-44, 12, 52, 6); ctx.fill(); ctx.stroke();
+      // Mercury
+      ctx.fillStyle = '#cc2020';
+      ctx.beginPath(); rr(cx-3, cy-20, 6, 28, 3); ctx.fill();
+      // Bulb
+      ctx.beginPath(); ctx.arc(cx, cy+12, 9, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
     }
 
     // ── Zeroth Law ────────────────────────────────────────────────────────────
     function drawZeroth() {
-      clear(); banner('Zeroth Law · Thermal Equilibrium');
+      clear(); banner('Zeroth Law · Temperature Is Comparable');
 
-      txt('If A = B in temperature, and B = C in temperature, then A = C.', W/2, H*0.20, {size:11.5, weight:'bold'});
-      txt('Temperature is a real, comparable, transitive property of matter.', W/2, H*0.28, {size:10.5, color:'#555'});
+      txt('If two things are the same temperature as a third thing,', W/2, H*0.20, {size:12, weight:'bold'});
+      txt('they are the same temperature as each other.', W/2, H*0.29, {size:12, weight:'bold'});
 
-      // Three objects A, B (thermometer), C
-      const ay = H*0.52, bx = W*0.50, by = H*0.52, cy2 = H*0.52;
-      const ax = W*0.18, cx = W*0.82;
+      const midY = H*0.57;
 
-      // Connecting lines (equilibrium)
-      line(ax+46, ay, bx-30, by, '#b0b0b0', 1.5);
-      line(bx+30, by, cx-46, cy2, '#b0b0b0', 1.5);
+      // Left: hot cocoa mug
+      const lx = W*0.18;
+      ctx.save(); ctx.fillStyle = '#8b4513'; ctx.globalAlpha = 0.85;
+      ctx.beginPath(); rr(lx-28, midY-22, 56, 44, 6); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.fillStyle = '#a0522d'; ctx.globalAlpha = 0.5;
+      ctx.beginPath(); rr(lx+26, midY-10, 12, 20, 3); ctx.fill(); ctx.restore();
+      txt('72°C', lx, midY-3, {size:13, weight:'bold', color:'#fff'});
+      txt('hot cocoa', lx, midY+30, {size:10, color:'#888'});
+      // steam
+      [lx-8, lx, lx+8].forEach((sx, i) => {
+        ctx.save(); ctx.strokeStyle = '#c06020'; ctx.globalAlpha = 0.4; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(sx, midY-24);
+        ctx.quadraticCurveTo(sx+5, midY-34, sx, midY-44);
+        ctx.quadraticCurveTo(sx-5, midY-54, sx, midY-64);
+        ctx.stroke(); ctx.restore();
+      });
 
-      // Therefore A=C (dashed)
-      ctx.save(); ctx.strokeStyle = '#2a7a2a'; ctx.lineWidth = 1.5; ctx.setLineDash([6,4]);
-      ctx.beginPath(); ctx.moveTo(ax+46, ay+16); ctx.lineTo(cx-46, cy2+16); ctx.stroke();
+      // Center: thermometer
+      thermometer(W*0.50, midY+10);
+      txt('72°C', W*0.50, midY-40, {size:12, weight:'bold', color:BC});
+      txt('same reading', W*0.50, midY+30, {size:9.5, color:BC});
+
+      // Right: soup bowl
+      const rx = W*0.82;
+      ctx.save(); ctx.fillStyle = '#c04010'; ctx.globalAlpha = 0.15;
+      ctx.beginPath(); ctx.ellipse(rx, midY+10, 38, 14, 0, 0, Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 0.7; ctx.strokeStyle = '#c04010'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.ellipse(rx, midY+10, 38, 14, 0, 0, Math.PI*2); ctx.stroke();
       ctx.restore();
-      txt('∴ same temperature', W/2, ay+36, {size:10, color:'#2a7a2a', weight:'bold'});
+      ctx.save(); ctx.fillStyle = '#d4600a'; ctx.globalAlpha = 0.6;
+      ctx.beginPath(); ctx.ellipse(rx, midY, 36, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
+      txt('72°C', rx, midY, {size:13, weight:'bold', color:'#fff'});
+      txt('soup', rx, midY+30, {size:10, color:'#888'});
 
-      // A: hot coffee
-      tempBox(ax, ay, 'Coffee', '80°C', '#c06020');
-      // B: thermometer (the reference)
-      ctx.save(); ctx.fillStyle = '#4a3a6b'; ctx.globalAlpha = 0.15;
-      ctx.beginPath(); rr(bx-22, by-36, 44, 72, 6); ctx.fill();
-      ctx.globalAlpha = 0.5; ctx.strokeStyle = BC; ctx.lineWidth = 1.5;
-      ctx.beginPath(); rr(bx-22, by-36, 44, 72, 6); ctx.stroke();
-      ctx.restore();
-      txt('thermo-', bx, by-18, {size:9.5, weight:'bold', color:BC});
-      txt('meter', bx, by-4, {size:9.5, weight:'bold', color:BC});
-      txt('80°C', bx, by+18, {size:13, weight:'bold', color:BC});
-      // C: hot soup
-      tempBox(cx, cy2, 'Soup', '80°C', '#c04020');
+      // Connection lines
+      arr(lx+30, midY-4, W*0.50-10, midY-14, '#bbb', 1.5);
+      arr(W*0.50+10, midY-14, rx-30, midY-4, '#bbb', 1.5);
 
-      notebox('The thermometer works because temperature is transitive.',
-        'Objects at the same temperature will not exchange heat — even if they never touch each other directly.');
+      // Therefore
+      ctx.save(); ctx.strokeStyle = '#2a7a2a'; ctx.lineWidth = 1.5; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(lx+30, midY+14); ctx.lineTo(rx-30, midY+14); ctx.stroke(); ctx.restore();
+      txt('∴ same temperature — no heat will flow between them', W/2, midY+48, {size:10, color:'#2a7a2a'});
+
+      notebox('This is why a thermometer works.',
+        'It acts as the shared reference that lets you compare temperatures without touching things together.');
     }
 
     // ── First Law ─────────────────────────────────────────────────────────────
     function drawFirst() {
-      clear(); banner('First Law · Conservation of Energy');
+      clear(); banner('First Law · Nothing Disappears');
 
-      txt('Energy cannot be created or destroyed — only converted from one form to another.', W/2, H*0.20, {size:11.5, weight:'bold'});
+      txt('A kid eats a sandwich. The sandwich doesn\'t vanish.', W/2, H*0.20, {size:12, weight:'bold'});
+      txt('It turns into three things — and they all add up to what went in.', W/2, H*0.29, {size:11, color:'#555'});
 
-      // Input box (orange)
-      const iy = H*0.34, iw = W*0.20, ih = H*0.28, ix = W*0.05;
-      ctx.save(); ctx.fillStyle = '#e09820'; ctx.globalAlpha = 0.85;
-      ctx.beginPath(); rr(ix,iy,iw,ih,8); ctx.fill(); ctx.restore();
-      txt('ENERGY', ix+iw/2, iy+ih*0.36, {size:11, weight:'bold', color:'#fff'});
-      txt('IN', ix+iw/2, iy+ih*0.56, {size:11, color:'#fff'});
-      txt('100 units', ix+iw/2, iy+ih*0.78, {size:9.5, color:'rgba(255,255,255,0.8)'});
+      // Sandwich (left)
+      const sx = W*0.14, sy = H*0.55;
+      sandwich(sx, sy, 1.1);
+      txt('sandwich', sx, sy+28, {size:10, color:'#888'});
 
-      // Branch
-      const bx = ix+iw+8, midY = iy+ih/2;
-      line(bx, midY, bx+18, midY, '#999', 2);
-      line(bx+18, midY, bx+18, iy+ih*0.22, '#999', 2);
-      line(bx+18, midY, bx+18, iy+ih*0.78, '#999', 2);
+      // Arrow: eats
+      arr(sx+42, sy, W*0.34-8, sy, '#888', 2);
+      txt('eats it', (sx+42+W*0.34)/2, sy-14, {size:10, color:'#777'});
 
-      const obx = bx+22, obw = W*0.36;
+      // Kid eating (center)
+      stickFigure(W*0.34, sy-22, 0.85, false);
 
-      // Work output (green)
-      const wby = iy, wbh = ih*0.40;
-      ctx.save(); ctx.fillStyle = '#2a7a2a'; ctx.globalAlpha = 0.75;
-      ctx.beginPath(); rr(obx,wby,obw,wbh,8); ctx.fill(); ctx.restore();
-      line(bx+18, iy+ih*0.22, obx, wby+wbh/2, '#999', 2);
-      txt('USEFUL WORK', obx+obw/2, wby+wbh*0.38, {size:11, weight:'bold', color:'#fff'});
-      txt('~30–40% of input', obx+obw/2, wby+wbh*0.70, {size:10, color:'rgba(255,255,255,0.85)'});
+      // Three output arrows
+      const bx = W*0.34, by = sy;
 
-      // Heat output (red)
-      const hby = iy+ih*0.60, hbh = ih*0.40;
-      ctx.save(); ctx.fillStyle = '#b03010'; ctx.globalAlpha = 0.68;
-      ctx.beginPath(); rr(obx,hby,obw,hbh,8); ctx.fill(); ctx.restore();
-      line(bx+18, iy+ih*0.78, obx, hby+hbh/2, '#999', 2);
-      txt('WASTE HEAT', obx+obw/2, hby+hbh*0.38, {size:11, weight:'bold', color:'#fff'});
-      txt('~60–70% of input', obx+obw/2, hby+hbh*0.70, {size:10, color:'rgba(255,255,255,0.85)'});
+      // 1. Running energy (top right)
+      arr(bx+22, by-16, W*0.58, H*0.38, '#2a7a2a', 1.8);
+      stickFigure(W*0.64, H*0.34, 0.75, true);
+      txt('energy to run', W*0.70, H*0.31, {size:10, color:'#2a7a2a', align:'left'});
+      txt('around at recess', W*0.70, H*0.31+14, {size:10, color:'#2a7a2a', align:'left'});
 
-      // Examples on right
-      const ex = obx+obw+18;
-      txt('Every process:', ex, iy+ih*0.15, {size:10, color:'#555', align:'left'});
-      ['car engine', 'human body', 'power station', 'factory'].forEach((e,i) => {
-        txt('· ' + e, ex, iy+ih*0.15+20+i*18, {size:10, color:'#777', align:'left'});
+      // 2. Body heat (middle right)
+      arr(bx+24, by, W*0.58, by, '#c04020', 1.8);
+      [0,10,20].forEach(i => {
+        ctx.save(); ctx.strokeStyle = '#c04020'; ctx.globalAlpha = 0.5; ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(W*0.60+i, by);
+        ctx.quadraticCurveTo(W*0.60+i+6, by-10, W*0.60+i, by-20);
+        ctx.quadraticCurveTo(W*0.60+i-6, by-30, W*0.60+i, by-40);
+        ctx.stroke(); ctx.restore();
       });
+      txt('body heat', W*0.70, by-10, {size:10, color:'#c04020', align:'left'});
+      txt('(you get sweaty)', W*0.70, by+4, {size:10, color:'#c04020', align:'left'});
 
-      notebox('You cannot make energy — only convert it. Work + heat always equals input.',
-        'This is why "free energy" doesn\'t exist. Every machine needs a real energy source.');
+      // 3. Waste (bottom right)
+      arr(bx+22, by+16, W*0.58, H*0.72, '#8a6a20', 1.8);
+      ctx.save(); ctx.fillStyle = '#8a6a20'; ctx.globalAlpha = 0.55;
+      ctx.beginPath(); ctx.ellipse(W*0.62, H*0.74, 16, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
+      txt('bathroom trip later', W*0.70, H*0.72, {size:10, color:'#8a6a20', align:'left'});
+
+      notebox('First Law: Energy is never created or destroyed — only changed in form.',
+        'Running + sweating + digestion = exactly the energy that was in the sandwich. Nothing more, nothing less.');
     }
 
     // ── Second Law ────────────────────────────────────────────────────────────
     function drawSecond() {
       clear(); banner('Second Law · The One-Way Rule');
 
-      txt('Every real process increases the total disorder of the universe.', W/2, H*0.20, {size:11.5, weight:'bold'});
-      txt('Concentrated energy spreads out. Order disperses. This only goes one way.', W/2, H*0.28, {size:10.5, color:'#555'});
+      txt('Some things only go in one direction. Ever.', W/2, H*0.20, {size:12, weight:'bold'});
 
-      const midY = H*0.52;
-      const lcx = W*0.22, rcx = W*0.78;
+      const pw = W*0.40, ph = H*0.42, py = H*0.28;
+      const lx = W*0.04, rx = W*0.54;
 
-      // Left panel: ordered state
-      ctx.save(); ctx.fillStyle = '#2a5a8a'; ctx.globalAlpha = 0.10;
-      ctx.beginPath(); rr(lcx-70, midY-52, 140, 104, 8); ctx.fill();
-      ctx.globalAlpha = 0.35; ctx.strokeStyle = '#2a5a8a'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); rr(lcx-70, midY-52, 140, 104, 8); ctx.stroke();
+      // Left panel: CAN HAPPEN
+      ctx.save(); ctx.fillStyle = '#2a7a2a'; ctx.globalAlpha = 0.08;
+      ctx.beginPath(); rr(lx, py, pw, ph, 8); ctx.fill();
+      ctx.globalAlpha = 0.3; ctx.strokeStyle = '#2a7a2a'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(lx, py, pw, ph, 8); ctx.stroke(); ctx.restore();
+      txt('CAN HAPPEN', lx+pw/2, py+14, {size:10, weight:'bold', color:'#2a7a2a'});
+
+      // Egg intact → scrambled
+      const ecx = lx+pw/2, ecy = py+ph*0.45;
+      // Intact egg (oval)
+      ctx.save(); ctx.fillStyle = '#f5f0e0'; ctx.strokeStyle = '#c8b060'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.ellipse(ecx-pw*0.22, ecy, 18, 24, 0, 0, Math.PI*2);
+      ctx.fill(); ctx.stroke(); ctx.restore();
+      // Arrow
+      arr(ecx-pw*0.22+20, ecy, ecx-pw*0.06, ecy, '#2a7a2a', 1.5);
+      txt('drop it', ecx-pw*0.14, ecy-14, {size:9, color:'#2a7a2a'});
+      // Scrambled egg (blob)
+      ctx.save(); ctx.fillStyle = '#f0c040'; ctx.globalAlpha = 0.7; ctx.strokeStyle = '#c8a020'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(ecx+pw*0.08, ecy+4, 28, 14, 0.3, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.ellipse(ecx+pw*0.16, ecy-8, 20, 10, -0.2, 0, Math.PI*2); ctx.fill(); ctx.stroke();
       ctx.restore();
-      txt('ORDERED', lcx, midY-40, {size:10, weight:'bold', color:'#2a5a8a'});
-      txt('concentrated · low entropy', lcx, midY+46, {size:9, color:'#2a5a8a'});
-      [[-10,-18],[8,-14],[-4,-2],[10,6],[-8,14],[2,20],[-14,6]].forEach(([dx,dy]) => {
-        ctx.save(); ctx.fillStyle = '#2a5a8a'; ctx.globalAlpha = 0.65;
-        ctx.beginPath(); ctx.arc(lcx+dx, midY+dy, 7, 0, Math.PI*2); ctx.fill(); ctx.restore();
-      });
 
-      // One-way arrow
-      arr(lcx+72, midY, rcx-72, midY, '#444', 3);
-      txt('ONLY ONE WAY', W/2, midY-18, {size:10, weight:'bold', color:'#444'});
-      // No-return mark
-      ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.8;
-      ctx.beginPath(); ctx.moveTo(W/2-8, midY+14); ctx.lineTo(W/2+8, midY+28); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(W/2+8, midY+14); ctx.lineTo(W/2-8, midY+28); ctx.stroke();
-      ctx.restore();
-      txt('no return', W/2, midY+40, {size:9, color:'#cc2020'});
+      txt('drop an egg · mix cream in coffee', lx+pw/2, py+ph*0.80, {size:9.5, color:'#2a7a2a'});
+      txt('let your room get messy · burn wood', lx+pw/2, py+ph*0.92, {size:9.5, color:'#2a7a2a'});
 
-      // Right panel: disordered state
-      ctx.save(); ctx.fillStyle = '#888'; ctx.globalAlpha = 0.08;
-      ctx.beginPath(); rr(rcx-70, midY-52, 140, 104, 8); ctx.fill();
-      ctx.globalAlpha = 0.25; ctx.strokeStyle = '#999'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); rr(rcx-70, midY-52, 140, 104, 8); ctx.stroke();
-      ctx.restore();
-      txt('DISORDERED', rcx, midY-40, {size:10, weight:'bold', color:'#888'});
-      txt('dispersed · high entropy', rcx, midY+46, {size:9, color:'#888'});
-      [[-42,-28],[22,-38],[-20,-10],[46,4],[-36,20],[12,34],[38,22],[-8,40],[28,-18]].forEach(([dx,dy]) => {
-        ctx.save(); ctx.fillStyle = '#bbb'; ctx.globalAlpha = 0.55;
-        ctx.beginPath(); ctx.arc(rcx+dx*0.75, midY+dy*0.75, 5, 0, Math.PI*2); ctx.fill(); ctx.restore();
-      });
+      // Right panel: NEVER HAPPENS
+      ctx.save(); ctx.fillStyle = '#8a1a1a'; ctx.globalAlpha = 0.08;
+      ctx.beginPath(); rr(rx, py, pw, ph, 8); ctx.fill();
+      ctx.globalAlpha = 0.3; ctx.strokeStyle = '#8a1a1a'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(rx, py, pw, ph, 8); ctx.stroke(); ctx.restore();
+      txt('NEVER HAPPENS ON ITS OWN', rx+pw/2, py+14, {size:10, weight:'bold', color:'#8a1a1a'});
 
-      notebox('Cream in coffee. Wood burning to ash. Heat flowing to cold. None reverse on their own.',
-        'This law is why extraction is a one-way door — and why "recycling" and "carbon capture" have hard limits.');
+      // Scrambled → intact (with big X)
+      const rcx = rx+pw/2, rcy = py+ph*0.45;
+      // Scrambled (blob)
+      ctx.save(); ctx.fillStyle = '#f0c040'; ctx.globalAlpha = 0.5; ctx.strokeStyle = '#c8a020'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(rcx-pw*0.18, rcy+4, 22, 11, 0.3, 0, Math.PI*2); ctx.fill(); ctx.stroke(); ctx.restore();
+      // Arrow with X
+      const axs = rcx-pw*0.10, axe = rcx+pw*0.04;
+      ctx.save(); ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(axs, rcy); ctx.lineTo(axe, rcy); ctx.stroke(); ctx.restore();
+      // Big red X over arrow
+      ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 3; ctx.globalAlpha = 0.85;
+      const mx = (axs+axe)/2;
+      ctx.beginPath(); ctx.moveTo(mx-10, rcy-10); ctx.lineTo(mx+10, rcy+10); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(mx+10, rcy-10); ctx.lineTo(mx-10, rcy+10); ctx.stroke(); ctx.restore();
+      // Intact egg
+      ctx.save(); ctx.fillStyle = '#f5f0e0'; ctx.globalAlpha = 0.5; ctx.strokeStyle = '#c8b060'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.ellipse(rcx+pw*0.14, rcy, 18, 24, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      txt('un-scramble an egg · un-mix cream', rx+pw/2, py+ph*0.80, {size:9.5, color:'#8a1a1a'});
+      txt('clean a room by itself · un-burn wood', rx+pw/2, py+ph*0.92, {size:9.5, color:'#8a1a1a'});
+
+      notebox('Second Law: Disorder always increases. You can clean your room — but only by doing work.',
+        'And that work produces heat and waste elsewhere. The total disorder of everything always goes up.');
     }
 
     // ── Third Law ─────────────────────────────────────────────────────────────
     function drawThird() {
-      clear(); banner('Third Law · Absolute Zero');
+      clear(); banner('Third Law · You Can Never Get All the Way There');
 
-      txt('As temperature approaches absolute zero, entropy approaches its minimum.', W/2, H*0.20, {size:11.5, weight:'bold'});
-      txt('Absolute zero (−273°C) cannot be reached. Perfect efficiency is physically impossible.', W/2, H*0.28, {size:10.5, color:'#555'});
+      txt('There is a coldest possible temperature. You can never actually reach it.', W/2, H*0.20, {size:12, weight:'bold'});
+      txt('And because of that — no process can ever be perfectly efficient.', W/2, H*0.29, {size:11, color:'#555'});
 
-      // Temperature axis (horizontal) and entropy curve
-      const axX = W*0.10, axY = H*0.68, axW = W*0.55;
-      // Axes
-      line(axX, axY, axX+axW, axY, '#ccc', 1.5);
-      line(axX, H*0.30, axX, axY+8, '#ccc', 1.5);
-      txt('Temperature →', axX+axW/2, axY+18, {size:9.5, color:'#888'});
-      txt('Entropy', axX-14, H*0.48, {size:9.5, color:'#888'});
-      txt('↑', axX-14, H*0.40, {size:11, color:'#888'});
-
-      // Axis labels
-      txt('absolute zero', axX, axY+30, {size:9, color:'#c03020'});
-      txt('(unreachable)', axX, axY+42, {size:9, color:'#c03020'});
-      txt('room temp', axX+axW*0.5, axY+18, {size:9, color:'#888'});
-
-      // Entropy curve (approaches zero asymptotically as temp → 0)
-      ctx.save(); ctx.strokeStyle = BC; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.8;
-      ctx.beginPath();
-      for (let i = 0; i <= 100; i++) {
-        const t = i / 100;
-        const px = axX + t * axW;
-        // entropy ~ 0 at T=0, rising steeply then flattening
-        const ent = Math.pow(t, 0.45);
-        const py = axY - ent * (axY - H*0.32);
-        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.stroke(); ctx.restore();
-
-      // Vertical dashed line at absolute zero
-      ctx.save(); ctx.strokeStyle = '#c03020'; ctx.lineWidth = 1.2; ctx.globalAlpha = 0.5;
-      ctx.setLineDash([4,3]);
-      ctx.beginPath(); ctx.moveTo(axX, H*0.32); ctx.lineTo(axX, axY); ctx.stroke();
-      ctx.restore();
-
-      // Dot at curve origin
-      ctx.save(); ctx.fillStyle = '#c03020'; ctx.globalAlpha = 0.8;
-      ctx.beginPath(); ctx.arc(axX, axY, 5, 0, Math.PI*2); ctx.fill(); ctx.restore();
-
-      // Right side: what this means
-      const rx = W*0.70, ry = H*0.34;
-      txt('What this means:', rx, ry, {size:10.5, weight:'bold', color:'#555'});
-      const lines2 = [
-        ['No process can reach', 'absolute zero'],
-        ['No engine can be', '100% efficient'],
-        ['There is always', 'a minimum waste'],
+      // Staircase metaphor: each step gets smaller
+      const sx = W*0.10, sy = H*0.72, sw = W*0.50;
+      const steps = [
+        {label:'room temperature', w:sw*0.40, col:'#e06020'},
+        {label:'refrigerator', w:sw*0.28, col:'#2a7aaa'},
+        {label:'liquid nitrogen', w:sw*0.18, col:'#1a4a8a'},
+        {label:'almost there…', w:sw*0.10, col:'#4a3a6b'},
+        {label:'', w:sw*0.04, col:'#8a70a0'},
       ];
-      lines2.forEach(([l1,l2], i) => {
-        txt(l1, rx, ry+26+i*46, {size:10, color:'#555'});
-        txt(l2, rx, ry+40+i*46, {size:10, weight:'bold', color:BC});
+
+      let cx = sx;
+      const barH = H*0.10;
+      steps.forEach((s, i) => {
+        const barY = sy - (i+1)*barH*0.96 - i*4;
+        ctx.save(); ctx.fillStyle = s.col; ctx.globalAlpha = 0.75;
+        ctx.beginPath(); rr(cx, barY, s.w, barH, 4); ctx.fill(); ctx.restore();
+        if (s.label) {
+          txt(s.label, cx + s.w/2, barY + barH/2, {size: i < 3 ? 9 : 8.5, color:'#fff', weight: i===0?'bold':'normal'});
+        }
+        cx += s.w + 6;
       });
 
-      notebox('Perfect efficiency is not an engineering problem — it is a physical impossibility.',
-        'The Third Law sets a hard floor. You can improve how close you get, but never reach the limit.');
+      // Absolute zero line (dashed wall)
+      const wallX = cx + 12;
+      ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 2; ctx.setLineDash([5,4]); ctx.globalAlpha = 0.7;
+      ctx.beginPath(); ctx.moveTo(wallX, H*0.36); ctx.lineTo(wallX, sy+6); ctx.stroke(); ctx.restore();
+      txt('−273°C', wallX, H*0.34, {size:9.5, color:'#cc2020', weight:'bold'});
+      txt('absolute zero', wallX, H*0.34+14, {size:9, color:'#cc2020'});
+      txt('(unreachable)', wallX, H*0.34+26, {size:9, color:'#cc2020'});
+
+      // Arrow pointing at wall
+      arr(wallX-60, H*0.52, wallX-6, H*0.52, '#cc2020', 1.5);
+      txt('getting there takes', wallX-64, H*0.47, {size:9, color:'#777', align:'right'});
+      txt('more and more effort', wallX-64, H*0.47+13, {size:9, color:'#777', align:'right'});
+      txt('each step', wallX-64, H*0.47+26, {size:9, color:'#777', align:'right'});
+
+      // Right side: what it means
+      const rx = W*0.76;
+      txt('What this means:', rx, H*0.38, {size:10.5, weight:'bold', color:'#555'});
+      [
+        'No engine is ever 100% efficient',
+        'There is always some waste heat',
+        'Perfect cold is unreachable',
+        'These are laws of physics —',
+        'not engineering problems to solve',
+      ].forEach((line, i) => {
+        txt(line, rx, H*0.38+22+i*18, {size:9.5, color: i >= 3 ? BC : '#555'});
+      });
+
+      notebox('Third Law: Absolute zero is the floor. You approach it — but never arrive.',
+        'This is why "100% efficiency" is not an engineering goal. It is physically forbidden.');
     }
 
     const STEPS = [
       { draw: drawZeroth,
-        desc: 'The Zeroth Law establishes that temperature is a real, measurable, transitive property. If object A is in thermal equilibrium with object B (same temperature, no heat flows between them), and B is in equilibrium with C, then A and C are also in equilibrium — even if they\'ve never touched. This is why a thermometer works: it acts as the "B" that lets you compare temperatures of things you can\'t put side by side. Without this law, temperature wouldn\'t be a consistent, comparable quantity, and the other laws couldn\'t be stated.' },
+        desc: 'The Zeroth Law sounds like it\'s stating the obvious — but it\'s actually establishing something essential: temperature is a real, measurable, comparable thing. If your hot cocoa and a thermometer reach the same temperature, and the same thermometer dropped into soup also reads the same, then the cocoa and soup are the same temperature — even without touching each other. This is why a thermometer works at all. Without this law, "80 degrees" in your coffee wouldn\'t mean the same thing as "80 degrees" somewhere else. It lets us compare temperature anywhere, through a shared reference.' },
       { draw: drawFirst,
-        desc: 'The First Law: energy is conserved. It cannot be created or destroyed — only converted from one form to another. When you burn fuel, the chemical energy doesn\'t vanish: it becomes mechanical work, heat, light, and sound — and all of those add up to exactly what you started with. A car engine, a human body, a power station: all take in concentrated energy and produce useful work plus unavoidable waste heat. "Making energy" is a misnomer — you can only convert it. This is why every process needs a real energy source.' },
+        desc: 'The First Law: energy is never created or destroyed. A kid eats a sandwich. That sandwich doesn\'t disappear — it becomes energy to run around at recess, body heat (hence the sweating), and eventually some waste. All three of those things together add up to exactly the energy that was in the sandwich. Not more. Not less. This is why "free energy" doesn\'t exist. You can\'t build a machine that produces more power than you put in. Every process — a car engine, a solar panel, a human body — needs a real energy source, and everything that goes in comes out somewhere.' },
       { draw: drawSecond,
-        desc: 'The Second Law: every real process increases the total disorder (entropy) of the universe. Concentrated energy spreads out. Ordered things become disordered. Heat flows from hot to cold — never the reverse on its own. Cream stirred into coffee never unspreads. Wood burned to ash never re-forms. You can create local order — rebuild a house, grow a plant, charge a battery — but only by importing energy from outside, and that conversion adds more disorder to the total system than the local order it creates. The universe always trends toward more disorder.' },
+        desc: 'The Second Law: things fall apart on their own, but don\'t put themselves back together on their own. You can drop an egg and scramble it. You cannot un-scramble it. You can mix cream into coffee. You cannot un-mix it. A bedroom gets messy by itself — it never gets clean by itself. This is entropy: the universe reliably moves toward more disorder, never less. You can create order locally — clean the room, build a house, grow a plant — but only by doing work, and that work generates heat and waste somewhere else. The total disorder of everything always increases.' },
       { draw: drawThird,
-        desc: 'The Third Law: as a system\'s temperature approaches absolute zero (−273.15°C), its entropy approaches a minimum. Two consequences follow. First, absolute zero is unreachable — you can get arbitrarily close but never there, because each step of cooling takes more work than the last. Second, no engine or process can be perfectly efficient, because perfect efficiency would require operating at absolute zero. The Third Law sets a physical ceiling on how good any heat engine can ever be — not as a practical limitation but as a law of nature.' },
+        desc: 'The Third Law: there is a coldest possible temperature (−273.15°C, called absolute zero), and you can never actually reach it. Each step toward it requires more effort than the last — like trying to whisper quieter and quieter, there\'s always a little further to go. Because you can never get to absolute zero, you can never build a perfectly efficient engine — there\'s always some heat that escapes. This isn\'t a solvable engineering problem. It\'s a physical law. The Third Law sets a ceiling on how good any machine can ever be.' },
     ];
 
     let step = 0;
