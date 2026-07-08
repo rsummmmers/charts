@@ -312,55 +312,93 @@
       clear(); banner('Third Law · You Can Never Get All the Way There');
 
       txt('There is a coldest possible temperature. You can never actually reach it.', W/2, H*0.20, {size:12, weight:'bold'});
-      txt('And because of that — no process can ever be perfectly efficient.', W/2, H*0.29, {size:11, color:'#555'});
+      txt('Each step toward it takes more effort than the last.', W/2, H*0.29, {size:11, color:'#555'});
 
-      // Staircase metaphor: each step gets smaller
-      const sx = W*0.10, sy = H*0.72, sw = W*0.50;
-      const steps = [
-        {label:'room temperature', w:sw*0.40, col:'#e06020'},
-        {label:'refrigerator', w:sw*0.28, col:'#2a7aaa'},
-        {label:'liquid nitrogen', w:sw*0.18, col:'#1a4a8a'},
-        {label:'almost there…', w:sw*0.10, col:'#4a3a6b'},
-        {label:'', w:sw*0.04, col:'#8a70a0'},
+      // Vertical thermometer — warm at top, cold at bottom
+      const tx = W*0.14, tTop = H*0.37, tBot = H*0.68, tW = 16;
+      const tubeH = tBot - tTop;
+
+      // Tube background
+      ctx.save(); ctx.fillStyle = '#e8e8e8'; ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); rr(tx-tW/2, tTop, tW, tubeH, tW/2); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      // Bulb
+      ctx.save(); ctx.fillStyle = '#cc2020'; ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(tx, tBot+11, 12, 0, Math.PI*2); ctx.fill(); ctx.stroke(); ctx.restore();
+
+      // Mercury (warm orange at top, fading to red at bottom)
+      const grad = ctx.createLinearGradient(0, tTop, 0, tBot);
+      grad.addColorStop(0, '#e06020');
+      grad.addColorStop(1, '#cc2020');
+      ctx.save(); ctx.fillStyle = grad;
+      ctx.beginPath(); rr(tx-tW/2+3, tTop+4, tW-6, tubeH-4, (tW-6)/2); ctx.fill(); ctx.restore();
+
+      // Temperature markers — positions along tube (warm=top, cold=bottom)
+      const markers = [
+        { t:'20°C',    label:'room temperature',  pct:0.04, col:'#c06020' },
+        { t:'4°C',     label:'refrigerator',       pct:0.20, col:'#2a7aaa' },
+        { t:'−196°C',  label:'liquid nitrogen',    pct:0.60, col:'#1a4a8a' },
+        { t:'−272°C',  label:'almost there…',      pct:0.91, col:BC        },
+        { t:'−273°C',  label:'absolute zero',      pct:1.00, col:'#cc2020' },
       ];
 
-      let cx = sx;
-      const barH = H*0.10;
-      steps.forEach((s, i) => {
-        const barY = sy - (i+1)*barH*0.96 - i*4;
-        ctx.save(); ctx.fillStyle = s.col; ctx.globalAlpha = 0.75;
-        ctx.beginPath(); rr(cx, barY, s.w, barH, 4); ctx.fill(); ctx.restore();
-        if (s.label) {
-          txt(s.label, cx + s.w/2, barY + barH/2, {size: i < 3 ? 9 : 8.5, color:'#fff', weight: i===0?'bold':'normal'});
+      const lx = tx + tW/2 + 10; // labels start here
+
+      markers.forEach((m, i) => {
+        const my = tTop + m.pct * tubeH;
+        const isFloor = i === markers.length - 1;
+
+        if (isFloor) {
+          // Dashed floor line extending across
+          ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 1.5;
+          ctx.setLineDash([5,4]); ctx.globalAlpha = 0.7;
+          ctx.beginPath(); ctx.moveTo(tx-tW/2-6, my); ctx.lineTo(lx+220, my); ctx.stroke();
+          ctx.restore();
+          txt(m.t + '  ' + m.label, lx, my-7, {size:9, weight:'bold', color:'#cc2020', align:'left'});
+          txt('← unreachable', lx, my+7, {size:8.5, color:'#cc2020', align:'left'});
+        } else {
+          // Tick mark
+          ctx.save(); ctx.strokeStyle = m.col; ctx.lineWidth = 1.2;
+          ctx.beginPath(); ctx.moveTo(tx+tW/2, my); ctx.lineTo(tx+tW/2+7, my); ctx.stroke();
+          ctx.restore();
+          txt(m.t + '  ' + m.label, lx, my, {size:9, color:m.col, align:'left'});
         }
-        cx += s.w + 6;
       });
 
-      // Absolute zero line (dashed wall)
-      const wallX = cx + 12;
-      ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 2; ctx.setLineDash([5,4]); ctx.globalAlpha = 0.7;
-      ctx.beginPath(); ctx.moveTo(wallX, H*0.36); ctx.lineTo(wallX, sy+6); ctx.stroke(); ctx.restore();
-      txt('−273°C', wallX, H*0.34, {size:9.5, color:'#cc2020', weight:'bold'});
-      txt('absolute zero', wallX, H*0.34+14, {size:9, color:'#cc2020'});
-      txt('(unreachable)', wallX, H*0.34+26, {size:9, color:'#cc2020'});
+      // "each step harder" bracket on left side of tube
+      const effortSteps = [
+        { y0: tTop + markers[0].pct*tubeH, y1: tTop + markers[1].pct*tubeH, label:'easy' },
+        { y0: tTop + markers[1].pct*tubeH, y1: tTop + markers[2].pct*tubeH, label:'hard' },
+        { y0: tTop + markers[2].pct*tubeH, y1: tTop + markers[3].pct*tubeH, label:'very hard' },
+        { y0: tTop + markers[3].pct*tubeH, y1: tBot,                         label:'near impossible' },
+      ];
+      const bx = tx - tW/2 - 6;
+      effortSteps.forEach(e => {
+        const mid = (e.y0 + e.y1) / 2;
+        ctx.save(); ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(bx, e.y0+1); ctx.lineTo(bx-8, e.y0+1);
+        ctx.lineTo(bx-8, e.y1-1); ctx.lineTo(bx, e.y1-1);
+        ctx.stroke(); ctx.restore();
+        txt(e.label, bx-10, mid, {size:7.5, color:'#aaa', align:'right'});
+      });
 
-      // Arrow pointing at wall
-      arr(wallX-60, H*0.52, wallX-6, H*0.52, '#cc2020', 1.5);
-      txt('getting there takes', wallX-64, H*0.47, {size:9, color:'#777', align:'right'});
-      txt('more and more effort', wallX-64, H*0.47+13, {size:9, color:'#777', align:'right'});
-      txt('each step', wallX-64, H*0.47+26, {size:9, color:'#777', align:'right'});
-
-      // Right side: what it means
-      const rx = W*0.76;
+      // Right column: what this means
+      const rx = W*0.62;
       txt('What this means:', rx, H*0.38, {size:10.5, weight:'bold', color:'#555'});
       [
-        'No engine is ever 100% efficient',
-        'There is always some waste heat',
-        'Perfect cold is unreachable',
-        'These are laws of physics —',
-        'not engineering problems to solve',
+        'No engine can ever be',
+        '100% efficient',
+        '',
+        'There is always some',
+        'leftover waste heat',
+        '',
+        'Not an engineering problem —',
+        'a law of physics',
       ].forEach((line, i) => {
-        txt(line, rx, H*0.38+22+i*18, {size:9.5, color: i >= 3 ? BC : '#555'});
+        if (!line) return;
+        const isBold = line.includes('law of physics') || line === '100% efficient' || line.includes('always some');
+        txt(line, rx, H*0.38+20+i*17, {size:9.5, color: isBold ? BC : '#555'});
       });
 
       notebox('Third Law: Absolute zero is the floor. You approach it — but never arrive.',
