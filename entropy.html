@@ -240,169 +240,189 @@
         'Running + sweating + digestion = exactly the energy that was in the sandwich. Nothing more, nothing less.');
     }
 
-    // ── Second Law ────────────────────────────────────────────────────────────
+    // ── Lego brick helpers ────────────────────────────────────────────────────
+    function legoBrick(cx, cy, w, h, col, angle) {
+      ctx.save(); ctx.translate(cx, cy); if (angle) ctx.rotate(angle);
+      ctx.fillStyle = col; ctx.globalAlpha = 0.88;
+      ctx.beginPath(); rr(-w/2, -h/2, w, h, 2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.beginPath(); rr(-w/2+2, -h/2+2, w-4, h*0.35, 1); ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.22)'; ctx.lineWidth = 0.8; ctx.globalAlpha = 1;
+      ctx.beginPath(); rr(-w/2, -h/2, w, h, 2); ctx.stroke();
+      ctx.restore();
+    }
+
+    const BKCOLS = ['#cc2020','#e09020','#2060cc','#20a040','#cccc20','#cc40a0','#808080'];
+
+    function legoWall(cx, cy, sc) {
+      sc = sc||1;
+      const bw = 24*sc, bh = 13*sc, gap = 1;
+      // 4 rows, staggered
+      [
+        [[-24,-19.5],[0,-19.5],[24,-19.5]],
+        [[-12,-6.5], [12,-6.5],[36,-6.5],[-36,-6.5]],
+        [[-24,6.5],  [0,6.5],  [24,6.5]],
+        [[-12,19.5], [12,19.5],[36,19.5],[-36,19.5]],
+      ].forEach((row, r) => {
+        row.forEach(([dx,dy], c) => {
+          legoBrick(cx+dx*sc, cy+dy*sc, bw-gap, bh-gap, BKCOLS[(r*4+c)%BKCOLS.length], 0);
+        });
+      });
+    }
+
+    function legoPile(cx, cy, sc) {
+      sc = sc||1;
+      const bricks = [
+        [-30,22,0.42],[-6,30,-0.28],[22,18,0.55],[-22,8,-0.18],
+        [34,28,0.30],[8,38,-0.48],[-28,36,0.12],[16,10,0.62],
+        [38,12,-0.22],[-8,48,0.38],[28,42,0.18],[-18,20,-0.40],
+      ];
+      bricks.forEach(([dx,dy,a],i) => {
+        legoBrick(cx+dx*sc, cy+dy*sc, 22*sc, 12*sc, BKCOLS[i%BKCOLS.length], a);
+      });
+    }
+
+    // ── Second Law · Entropy ──────────────────────────────────────────────────
     function drawSecond() {
-      clear(); banner('Second Law · The One-Way Rule');
+      clear(); banner('Second Law · Entropy · The One-Way Rule');
 
-      txt('Some things only go in one direction. Ever.', W/2, H*0.20, {size:12, weight:'bold'});
+      txt('Disorder always increases. Some things only go in one direction. Ever.', W/2, H*0.20, {size:11.5, weight:'bold'});
 
-      const pw = W*0.40, ph = H*0.42, py = H*0.28;
-      const lx = W*0.04, rx = W*0.54;
+      const pw = W*0.37, ph = H*0.38, py = H*0.29;
+      const lx = W*0.04, rx = W*0.56;
 
       // Left panel: CAN HAPPEN
       ctx.save(); ctx.fillStyle = '#2a7a2a'; ctx.globalAlpha = 0.08;
       ctx.beginPath(); rr(lx, py, pw, ph, 8); ctx.fill();
       ctx.globalAlpha = 0.3; ctx.strokeStyle = '#2a7a2a'; ctx.lineWidth = 1.5;
       ctx.beginPath(); rr(lx, py, pw, ph, 8); ctx.stroke(); ctx.restore();
-      txt('CAN HAPPEN', lx+pw/2, py+14, {size:10, weight:'bold', color:'#2a7a2a'});
+      txt('CAN HAPPEN', lx+pw/2, py+13, {size:10, weight:'bold', color:'#2a7a2a'});
+      legoWall(lx+pw/2, py+ph*0.52, 0.72);
+      txt('organized Lego castle', lx+pw/2, py+ph*0.90, {size:9, color:'#2a7a2a'});
 
-      // Egg intact → scrambled
-      const ecx = lx+pw/2, ecy = py+ph*0.45;
-      // Intact egg (oval)
-      ctx.save(); ctx.fillStyle = '#f5f0e0'; ctx.strokeStyle = '#c8b060'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.ellipse(ecx-pw*0.22, ecy, 18, 24, 0, 0, Math.PI*2);
-      ctx.fill(); ctx.stroke(); ctx.restore();
-      // Arrow
-      arr(ecx-pw*0.22+20, ecy, ecx-pw*0.06, ecy, '#2a7a2a', 1.5);
-      txt('drop it', ecx-pw*0.14, ecy-14, {size:9, color:'#2a7a2a'});
-      // Scrambled egg (blob)
-      ctx.save(); ctx.fillStyle = '#f0c040'; ctx.globalAlpha = 0.7; ctx.strokeStyle = '#c8a020'; ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.ellipse(ecx+pw*0.08, ecy+4, 28, 14, 0.3, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-      ctx.ellipse(ecx+pw*0.16, ecy-8, 20, 10, -0.2, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-      ctx.restore();
-
-      txt('drop an egg · mix cream in coffee', lx+pw/2, py+ph*0.80, {size:9.5, color:'#2a7a2a'});
-      txt('let your room get messy · burn wood', lx+pw/2, py+ph*0.92, {size:9.5, color:'#2a7a2a'});
+      // Center one-way arrow
+      const acx = W*0.48, acy = py+ph*0.50;
+      arr(lx+pw+6, acy, rx-6, acy, '#555', 2.5);
+      txt('knock', acx, acy-14, {size:9, weight:'bold', color:'#555'});
+      txt('it over', acx, acy-2, {size:9, weight:'bold', color:'#555'});
+      ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 2; ctx.globalAlpha = 0.75;
+      ctx.beginPath(); ctx.moveTo(acx-7, acy+12); ctx.lineTo(acx+7, acy+24); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(acx+7, acy+12); ctx.lineTo(acx-7, acy+24); ctx.stroke(); ctx.restore();
+      txt('no return', acx, acy+34, {size:8.5, color:'#cc2020'});
 
       // Right panel: NEVER HAPPENS
       ctx.save(); ctx.fillStyle = '#8a1a1a'; ctx.globalAlpha = 0.08;
       ctx.beginPath(); rr(rx, py, pw, ph, 8); ctx.fill();
       ctx.globalAlpha = 0.3; ctx.strokeStyle = '#8a1a1a'; ctx.lineWidth = 1.5;
       ctx.beginPath(); rr(rx, py, pw, ph, 8); ctx.stroke(); ctx.restore();
-      txt('NEVER HAPPENS ON ITS OWN', rx+pw/2, py+14, {size:10, weight:'bold', color:'#8a1a1a'});
+      txt('NEVER HAPPENS ON ITS OWN', rx+pw/2, py+13, {size:10, weight:'bold', color:'#8a1a1a'});
+      legoPile(rx+pw/2, py+ph*0.56, 0.70);
+      txt('scattered pile of bricks', rx+pw/2, py+ph*0.90, {size:9, color:'#8a1a1a'});
 
-      // Scrambled → intact (with big X)
-      const rcx = rx+pw/2, rcy = py+ph*0.45;
-      // Scrambled (blob)
-      ctx.save(); ctx.fillStyle = '#f0c040'; ctx.globalAlpha = 0.5; ctx.strokeStyle = '#c8a020'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.ellipse(rcx-pw*0.18, rcy+4, 22, 11, 0.3, 0, Math.PI*2); ctx.fill(); ctx.stroke(); ctx.restore();
-      // Arrow with X
-      const axs = rcx-pw*0.10, axe = rcx+pw*0.04;
-      ctx.save(); ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(axs, rcy); ctx.lineTo(axe, rcy); ctx.stroke(); ctx.restore();
-      // Big red X over arrow
-      ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 3; ctx.globalAlpha = 0.85;
-      const mx = (axs+axe)/2;
-      ctx.beginPath(); ctx.moveTo(mx-10, rcy-10); ctx.lineTo(mx+10, rcy+10); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(mx+10, rcy-10); ctx.lineTo(mx-10, rcy+10); ctx.stroke(); ctx.restore();
-      // Intact egg
-      ctx.save(); ctx.fillStyle = '#f5f0e0'; ctx.globalAlpha = 0.5; ctx.strokeStyle = '#c8b060'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.ellipse(rcx+pw*0.14, rcy, 18, 24, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke(); ctx.restore();
+      // Coffee cooling strip below panels
+      const cy2 = py+ph+16, cstrip = W*0.88, csx = W*0.06;
+      txt('Heat always moves from hot → cold. Never the other way.', W/2, cy2+8, {size:10, color:'#555'});
+      const cups = [
+        {label:'just poured', temp:'hot', col:'#cc4010'},
+        {label:'10 min later', temp:'warm', col:'#c07030'},
+        {label:'an hour later', temp:'room temp', col:'#888888'},
+      ];
+      cups.forEach((c, i) => {
+        const cupX = csx + (i+0.5)*(cstrip/3);
+        const cupY = cy2+26;
+        // mug
+        ctx.save(); ctx.fillStyle = c.col; ctx.globalAlpha = 0.75;
+        ctx.beginPath(); rr(cupX-14, cupY-10, 28, 22, 3); ctx.fill();
+        ctx.strokeStyle = c.col; ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
+        ctx.beginPath(); rr(cupX+12, cupY-4, 6, 12, 3); ctx.stroke(); ctx.restore();
+        txt(c.label, cupX, cupY+18, {size:8.5, color:'#888'});
+        if (i < 2) arr(cupX+22, cupY+4, cupX+cstrip/3-22, cupY+4, '#ccc', 1.2);
+      });
 
-      txt('un-scramble an egg · un-mix cream', rx+pw/2, py+ph*0.80, {size:9.5, color:'#8a1a1a'});
-      txt('clean a room by itself · un-burn wood', rx+pw/2, py+ph*0.92, {size:9.5, color:'#8a1a1a'});
-
-      notebox('Second Law: Disorder always increases. You can clean your room — but only by doing work.',
-        'And that work produces heat and waste elsewhere. The total disorder of everything always goes up.');
+      notebox('Second Law: Energy spreads out. Order falls apart. This is entropy.',
+        'It\'s also why your coffee gets cold — heat moves from hot to cold until they equalise.');
     }
 
     // ── Third Law ─────────────────────────────────────────────────────────────
     function drawThird() {
       clear(); banner('Third Law · You Can Never Get All the Way There');
 
-      txt('There is a coldest possible temperature. You can never actually reach it.', W/2, H*0.20, {size:12, weight:'bold'});
-      txt('Each step toward it takes more effort than the last.', W/2, H*0.29, {size:11, color:'#555'});
+      txt('There is a coldest possible temperature: −273°C.', W/2, H*0.20, {size:12, weight:'bold'});
+      txt('Each step toward it takes more effort than the last — and you never actually arrive.', W/2, H*0.28, {size:10.5, color:'#555'});
 
-      // Vertical thermometer — warm at top, cold at bottom
-      const tx = W*0.14, tTop = H*0.37, tBot = H*0.68, tW = 16;
-      const tubeH = tBot - tTop;
+      // Shrinking boxes — each one smaller than the last, warm→cold top→bottom
+      const boxLeft = W*0.06, boxRight = W*0.58, boxW = boxRight - boxLeft;
+      const startY = H*0.35, gap = 8, floorY = H*0.83;
 
-      // Tube background
-      ctx.save(); ctx.fillStyle = '#e8e8e8'; ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); rr(tx-tW/2, tTop, tW, tubeH, tW/2); ctx.fill(); ctx.stroke(); ctx.restore();
-
-      // Bulb
-      ctx.save(); ctx.fillStyle = '#cc2020'; ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.arc(tx, tBot+11, 12, 0, Math.PI*2); ctx.fill(); ctx.stroke(); ctx.restore();
-
-      // Mercury (warm orange at top, fading to red at bottom)
-      const grad = ctx.createLinearGradient(0, tTop, 0, tBot);
-      grad.addColorStop(0, '#e06020');
-      grad.addColorStop(1, '#cc2020');
-      ctx.save(); ctx.fillStyle = grad;
-      ctx.beginPath(); rr(tx-tW/2+3, tTop+4, tW-6, tubeH-4, (tW-6)/2); ctx.fill(); ctx.restore();
-
-      // Temperature markers — positions along tube (warm=top, cold=bottom)
-      const markers = [
-        { t:'20°C',    label:'room temperature',  pct:0.04, col:'#c06020' },
-        { t:'4°C',     label:'refrigerator',       pct:0.20, col:'#2a7aaa' },
-        { t:'−196°C',  label:'liquid nitrogen',    pct:0.60, col:'#1a4a8a' },
-        { t:'−272°C',  label:'almost there…',      pct:0.91, col:BC        },
-        { t:'−273°C',  label:'absolute zero',      pct:1.00, col:'#cc2020' },
+      const steps = [
+        {temp:'20°C',   name:'room temperature', effort:'easy',            col:'#a05010', bg:'#f8ede0'},
+        {temp:'4°C',    name:'refrigerator',      effort:'harder',          col:'#2a70a8', bg:'#e0eef8'},
+        {temp:'−196°C', name:'liquid nitrogen',   effort:'very hard',       col:'#1a468a', bg:'#dce4f4'},
+        {temp:'−272°C', name:'almost there',      effort:'near impossible', col:'#3a2a68', bg:'#e8e2f4'},
       ];
 
-      const lx = tx + tW/2 + 10; // labels start here
+      // Heights shrink: ratio 3 : 2.2 : 1.6 : 1.0
+      const ratios = [3, 2.2, 1.6, 1.0];
+      const totalR = ratios.reduce((a,b) => a+b, 0);
+      const availH = floorY - startY - gap*(steps.length-1) - 14;
+      const unitH  = availH / totalR;
+      const heights = ratios.map(r => Math.round(r * unitH));
 
-      markers.forEach((m, i) => {
-        const my = tTop + m.pct * tubeH;
-        const isFloor = i === markers.length - 1;
+      let y = startY;
+      steps.forEach((s, i) => {
+        const bh = heights[i], midY = y + bh/2;
 
-        if (isFloor) {
-          // Dashed floor line extending across
-          ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 1.5;
-          ctx.setLineDash([5,4]); ctx.globalAlpha = 0.7;
-          ctx.beginPath(); ctx.moveTo(tx-tW/2-6, my); ctx.lineTo(lx+220, my); ctx.stroke();
-          ctx.restore();
-          txt(m.t + '  ' + m.label, lx, my-7, {size:9, weight:'bold', color:'#cc2020', align:'left'});
-          txt('← unreachable', lx, my+7, {size:8.5, color:'#cc2020', align:'left'});
+        ctx.save(); ctx.fillStyle = s.bg;
+        ctx.beginPath(); rr(boxLeft, y, boxW, bh, 3); ctx.fill();
+        ctx.fillStyle = s.col;
+        ctx.fillRect(boxLeft, y, 5, bh);
+        ctx.globalAlpha = 0.35; ctx.strokeStyle = s.col; ctx.lineWidth = 1;
+        ctx.beginPath(); rr(boxLeft, y, boxW, bh, 3); ctx.stroke();
+        ctx.restore();
+
+        if (bh >= 42) {
+          txt(s.temp,   boxLeft+boxW/2, midY-10, {size:13, weight:'bold', color:s.col});
+          txt(s.name,   boxLeft+boxW/2, midY+2,  {size:10.5, color:'#555'});
+          txt(s.effort, boxLeft+boxW/2, midY+14, {size:9, color:BC});
+        } else if (bh >= 26) {
+          txt(s.temp, boxLeft+boxW/2, midY-6, {size:12, weight:'bold', color:s.col});
+          txt(s.name + '  ·  ' + s.effort, boxLeft+boxW/2, midY+7, {size:9.5, color:'#555'});
+        } else if (bh >= 16) {
+          txt(s.temp + '   ' + s.name + '  ·  ' + s.effort, boxLeft+boxW/2, midY, {size:9, color:s.col, weight:'bold'});
         } else {
-          // Tick mark
-          ctx.save(); ctx.strokeStyle = m.col; ctx.lineWidth = 1.2;
-          ctx.beginPath(); ctx.moveTo(tx+tW/2, my); ctx.lineTo(tx+tW/2+7, my); ctx.stroke();
-          ctx.restore();
-          txt(m.t + '  ' + m.label, lx, my, {size:9, color:m.col, align:'left'});
+          txt(s.temp + '   ' + s.name, boxLeft+boxW/2, midY, {size:8.5, color:s.col});
         }
+
+        y += bh + gap;
       });
 
-      // "each step harder" bracket on left side of tube
-      const effortSteps = [
-        { y0: tTop + markers[0].pct*tubeH, y1: tTop + markers[1].pct*tubeH, label:'easy' },
-        { y0: tTop + markers[1].pct*tubeH, y1: tTop + markers[2].pct*tubeH, label:'hard' },
-        { y0: tTop + markers[2].pct*tubeH, y1: tTop + markers[3].pct*tubeH, label:'very hard' },
-        { y0: tTop + markers[3].pct*tubeH, y1: tBot,                         label:'near impossible' },
-      ];
-      const bx = tx - tW/2 - 6;
-      effortSteps.forEach(e => {
-        const mid = (e.y0 + e.y1) / 2;
-        ctx.save(); ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(bx, e.y0+1); ctx.lineTo(bx-8, e.y0+1);
-        ctx.lineTo(bx-8, e.y1-1); ctx.lineTo(bx, e.y1-1);
-        ctx.stroke(); ctx.restore();
-        txt(e.label, bx-10, mid, {size:7.5, color:'#aaa', align:'right'});
-      });
+      // Absolute zero floor
+      y += 6;
+      ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 2;
+      ctx.setLineDash([6,4]); ctx.globalAlpha = 0.8;
+      ctx.beginPath(); ctx.moveTo(boxLeft-8, y); ctx.lineTo(boxRight+8, y); ctx.stroke();
+      ctx.restore();
+      txt('−273°C  ·  absolute zero  ·  unreachable', boxLeft+boxW/2, y+13, {size:10.5, weight:'bold', color:'#cc2020'});
 
       // Right column: what this means
-      const rx = W*0.62;
-      txt('What this means:', rx, H*0.38, {size:10.5, weight:'bold', color:'#555'});
+      const rx = W*0.64, rw = W*0.32;
+      txt('What this means:', rx+rw/2, H*0.36, {size:10.5, weight:'bold', color:'#555'});
       [
-        'No engine can ever be',
-        '100% efficient',
-        '',
-        'There is always some',
-        'leftover waste heat',
-        '',
-        'Not an engineering problem —',
-        'a law of physics',
-      ].forEach((line, i) => {
-        if (!line) return;
-        const isBold = line.includes('law of physics') || line === '100% efficient' || line.includes('always some');
-        txt(line, rx, H*0.38+20+i*17, {size:9.5, color: isBold ? BC : '#555'});
+        {t:'No engine can ever be',      col:'#555'},
+        {t:'100% efficient',             col:BC},
+        {t:'',                           col:''},
+        {t:'There is always',            col:'#555'},
+        {t:'some waste heat',            col:'#555'},
+        {t:'',                           col:''},
+        {t:'Not an engineering problem', col:'#555'},
+        {t:'— a law of physics',         col:BC},
+      ].forEach((l, i) => {
+        if (!l.t) return;
+        txt(l.t, rx+rw/2, H*0.36+20+i*17, {size:9.5, color:l.col});
       });
 
       notebox('Third Law: Absolute zero is the floor. You approach it — but never arrive.',
-        'This is why "100% efficiency" is not an engineering goal. It is physically forbidden.');
+        '"100% efficiency" is not an engineering goal. It is physically forbidden.');
     }
 
     const STEPS = [
