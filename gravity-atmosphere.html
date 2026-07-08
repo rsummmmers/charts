@@ -74,42 +74,58 @@
 
     // ── Step 1: Gravity holds the atmosphere ─────────────────────────────────
     function step1() {
-      // Space gradient
-      const g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0, '#0a0a1a');
-      g.addColorStop(0.45, '#1a3a6a');
-      g.addColorStop(0.65, '#4a8abf');
-      g.addColorStop(1, '#7abf50');
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      // Three clear horizontal bands: space / atmosphere / Earth
+      const spaceBot = Math.round(H * 0.20);
+      const atmBot   = Math.round(H * 0.74);
+
+      // Space band
+      ctx.fillStyle = '#07070e'; ctx.fillRect(0, 0, W, spaceBot);
+
+      // Atmosphere band
+      const ag = ctx.createLinearGradient(0, spaceBot, 0, atmBot);
+      ag.addColorStop(0, '#0c1a30'); ag.addColorStop(0.4, '#1a4082');
+      ag.addColorStop(0.8, '#3a80b8'); ag.addColorStop(1, '#68a8ca');
+      ctx.fillStyle = ag; ctx.fillRect(0, spaceBot, W, atmBot - spaceBot);
+
+      // Earth surface band
+      const eg = ctx.createLinearGradient(0, atmBot, 0, H);
+      eg.addColorStop(0, '#3a7a30'); eg.addColorStop(1, '#1e4a18');
+      ctx.fillStyle = eg; ctx.fillRect(0, atmBot, W, H - atmBot);
 
       // Stars
       ctx.save(); ctx.fillStyle = '#fff';
-      [[0.08,0.05],[0.22,0.12],[0.55,0.08],[0.78,0.04],[0.91,0.15],[0.35,0.18],[0.65,0.16]].forEach(([fx,fy]) => {
+      [[0.10,0.04],[0.24,0.10],[0.42,0.07],[0.60,0.03],[0.74,0.14],
+       [0.88,0.07],[0.33,0.16],[0.82,0.17],[0.53,0.12]].forEach(([fx,fy]) => {
+        ctx.globalAlpha = 0.8;
         ctx.beginPath(); ctx.arc(fx*W, fy*H, 1.5, 0, Math.PI*2); ctx.fill();
       });
       ctx.restore();
 
-      // Earth arc at bottom
-      ctx.save(); ctx.fillStyle = '#3a7a30';
-      ctx.beginPath(); ctx.arc(W/2, H*1.35, W*0.85, 0, Math.PI, true); ctx.fill(); ctx.restore();
+      // Zone labels (left column)
+      txt('SPACE', W*0.08, spaceBot * 0.52, {size:9.5, color:'#555', align:'center'});
+      txt('ATMO-', W*0.08, (spaceBot+atmBot)/2 - 9, {size:9.5, color:'#7ab0d0', weight:'bold', align:'center'});
+      txt('SPHERE', W*0.08, (spaceBot+atmBot)/2 + 9, {size:9.5, color:'#7ab0d0', weight:'bold', align:'center'});
+      txt('EARTH', W*0.08, atmBot + (H-atmBot)*0.45, {size:9.5, color:'#5a9a40', weight:'bold', align:'center'});
 
-      // Atmosphere layer
-      ctx.save(); ctx.globalAlpha = 0.35; ctx.fillStyle = '#4a9adf';
-      ctx.beginPath(); ctx.arc(W/2, H*1.35, W*0.85 + 44, 0, Math.PI, true);
-      ctx.arc(W/2, H*1.35, W*0.85, 0, Math.PI, false);
-      ctx.closePath(); ctx.fill(); ctx.restore();
-
-      txt('atmosphere', W/2, H*0.52, { size: 12, color: '#ddeeff', weight: 'bold' });
-
-      // Gravity arrows pointing down
-      [[0.2, 0.28], [0.5, 0.22], [0.8, 0.28]].forEach(([fx, fy]) => {
-        arr(fx*W, fy*H, fx*W, (fy+0.18)*H, '#f5c030', 2);
+      // Air molecule dots scattered through atmosphere
+      ctx.save();
+      [[0.25,0.28],[0.38,0.52],[0.28,0.74],[0.50,0.34],[0.58,0.64],[0.54,0.84],
+       [0.74,0.38],[0.70,0.70],[0.82,0.56],[0.64,0.48],[0.42,0.46],[0.80,0.82]].forEach(([fx,fy]) => {
+        const my = spaceBot + fy*(atmBot - spaceBot);
+        ctx.fillStyle = '#aad0ec'; ctx.globalAlpha = 0.45;
+        ctx.beginPath(); ctx.arc(fx*W, my, 3.5, 0, Math.PI*2); ctx.fill();
       });
-      txt('gravity', W*0.5, H*0.17, { size: 12, color: '#f5c030', weight: 'bold' });
-      txt('pulls everything toward Earth — including air molecules', W/2, H*0.09, { size: 11, color: '#ddd' });
+      ctx.restore();
 
-      // Label: space
-      txt('space', W*0.06, H*0.1, { size: 11, color: '#888', align: 'left' });
+      // Gravity arrows — full height of atmosphere band
+      [W*0.34, W*0.52, W*0.72].forEach(ax => {
+        arr(ax, spaceBot + 14, ax, atmBot - 12, '#f5c030', 2.2);
+      });
+
+      // Labels
+      txt('gravity', W*0.52, spaceBot + 34, {size:13, weight:'bold', color:'#f5c030'});
+      txt('pulls every air molecule toward Earth\'s surface', W*0.52, spaceBot + 53, {size:10.5, color:'#d0980c'});
+      txt('Without gravity, our atmosphere would drift off into space.', W*0.52, atmBot + 16, {size:10, color:'#7ab060'});
     }
 
     // ── Step 2: Without gravity ───────────────────────────────────────────────
