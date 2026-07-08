@@ -3,366 +3,169 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visualizations of Money, Debt, and Growth Implications</title>
+  <title>Permanomics — Interactive Models</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Georgia', serif; background: #faf8f5; color: #1a1a1a; padding: 2.5rem 2rem; max-width: 780px; margin: 0 auto; line-height: 1.6; }
-    header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #1a1a1a; }
-    h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
-    .subtitle { font-size: 0.9rem; color: #777; font-style: italic; }
-    .intro { font-size: 0.88rem; color: #555; margin-bottom: 1rem; max-width: 620px; line-height: 1.7; }
+    body {
+      font-family: 'Georgia', serif;
+      background: #faf8f5;
+      color: #1a1a1a;
+      padding: 2rem;
+      max-width: 820px;
+      margin: 0 auto;
+    }
 
-    .section-head { margin: 2rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 1.5px solid #1a1a1a; display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
-    .section-title { font-size: 1rem; font-weight: bold; letter-spacing: -0.01em; }
-    .section-sub { font-size: 0.8rem; color: #888; }
+    h1 { font-size: 1.3rem; font-weight: normal; letter-spacing: -0.01em; margin-bottom: 0.15rem; }
+    .tagline { font-size: 0.82rem; color: #888; margin-bottom: 1.75rem; }
 
-    .models { display: flex; flex-direction: column; gap: 0.75rem; }
-    .model-card { display: flex; align-items: stretch; border: 1.5px solid #ddd; border-radius: 8px; overflow: hidden; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
-    .model-card:hover { border-color: #999; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .model-num { display: flex; align-items: center; justify-content: center; width: 52px; font-size: 1.2rem; font-weight: bold; flex-shrink: 0; color: white; }
-    .model-body { padding: 0.9rem 1.1rem; flex: 1; }
-    .model-title { font-size: 0.97rem; font-weight: bold; margin-bottom: 0.2rem; color: #1a1a1a; }
-    .model-desc { font-size: 0.82rem; color: #555; line-height: 1.55; }
-    .model-tag { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.05em; color: #aaa; margin-top: 0.35rem; }
-    .model-arrow { display: flex; align-items: center; padding: 0 0.9rem; color: #bbb; font-size: 1.1rem; flex-shrink: 0; }
+    .thesis {
+      border-left: 3px solid #1a1a1a;
+      padding: 0.65rem 1.15rem;
+      margin-bottom: 2.5rem;
+      background: #f4f2ee;
+    }
+    .thesis p { font-size: 0.95rem; line-height: 1.72; color: #333; }
 
-    .footer-note { font-size: 0.78rem; color: #aaa; margin-top: 2rem; font-style: italic; border-top: 1px solid #eee; padding-top: 1rem; }
+    a.def { color: #1a1a1a; text-underline-offset: 2px; text-decoration-color: #bbb; }
+    a.def:hover { text-decoration-color: #1a1a1a; }
 
+    .act { margin-bottom: 2.25rem; }
+    .act-eyebrow {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: #bbb;
+      margin-bottom: 0.18rem;
+    }
+    .act-title {
+      font-size: 1.05rem;
+      font-weight: normal;
+      padding-bottom: 0.35rem;
+      border-bottom: 1.5px solid #1a1a1a;
+      margin-bottom: 0.6rem;
+    }
+    .act-desc {
+      font-size: 0.82rem;
+      color: #666;
+      margin-bottom: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .group { margin-bottom: 0.8rem; }
+    .group-label {
+      font-size: 0.70rem;
+      color: #aaa;
+      margin-bottom: 0.38rem;
+      letter-spacing: 0.03em;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .chip {
+      font-family: 'Georgia', serif;
+      font-size: 0.72rem;
+      text-decoration: none;
+      color: #555;
+      border: 1px solid #ddd;
+      background: #fff;
+      padding: 0.2rem 0.55rem;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+    .chip:hover { color: #1a1a1a; border-color: #888; background: #f0eeeb; }
+
+    .divider { border: none; border-top: 1px solid #e5e5e5; margin: 1.75rem 0 1.5rem; }
+
+    .ref-eyebrow {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: #ccc;
+      margin-bottom: 0.5rem;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Visualizations of Money, Debt, and Growth Implications</h1>
-    <p class="subtitle">Twenty-eight interactive models in five groups</p>
-  </header>
-  <p class="intro">Each model stands alone — you can start anywhere. The first group defines the vocabulary. Then: how banks create money and why interest creates a built-in growth problem; what rules exist and what they can't fix; what the economy leaves out of its accounting; and how biophysical systems actually work.</p>
 
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-head" id="definitions">
-    <span class="section-title">Money Concept Definitions</span>
-    <span class="section-sub">Eight foundational words — and how they relate to each other</span>
-  </div>
-  <div class="models">
+  <h1>Permanomics</h1>
+  <p class="tagline">Twenty-eight interactive models — money, energy, and what falls between them</p>
 
-    <a class="model-card" href="value.html">
-      <div class="model-num" style="background:#2a7a2a;">1</div>
-      <div class="model-body">
-        <div class="model-title">Value</div>
-        <div class="model-desc">Usefulness. A tomato you grew has value because it feeds someone. Value is not the same as price — price is what someone pays at a specific moment; value is what a thing actually does. Value exists even when no money changes hands.</div>
-        <div class="model-tag">Usefulness · value ≠ price · no money required</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="wealth.html">
-      <div class="model-num" style="background:#6a5a10;">2</div>
-      <div class="model-body">
-        <div class="model-title">Wealth</div>
-        <div class="model-desc">Stored-up capacity to meet needs — tangible and intangible. A home you own. Good health. Skills that regenerate income. Relationships with people who would show up for you. All real wealth, even though none appear in a bank account.</div>
-        <div class="model-tag">Tangible · human · social · security · wealth ≠ money</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="money.html">
-      <div class="model-num" style="background:#1a4a8a;">3</div>
-      <div class="model-body">
-        <div class="model-title">Money</div>
-        <div class="model-desc">A coordination tool. It lets millions of strangers trade without swapping goods directly. What makes it unusual: it only works because everyone agrees it does. A pile of cash in a town where no one accepts it is worthless. The agreement is the money.</div>
-        <div class="model-tag">Coordination tool · shared agreement · stranger trade · money ≠ wealth</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="capital.html">
-      <div class="model-num" style="background:#7a3a10;">4</div>
-      <div class="model-body">
-        <div class="model-title">Capital</div>
-        <div class="model-desc">Wealth or resources that make MORE value. A pump, a factory, a truck. So is a seed, a skilled worker, healthy soil. The key distinction: capital produces. Wealth just holds. An apple is wealth. The apple tree is capital — it keeps producing.</div>
-        <div class="model-tag">Produces value · capital vs. wealth · farm · industry</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="asset.html">
-      <div class="model-num" style="background:#4a1a7a;">5</div>
-      <div class="model-body">
-        <div class="model-title">Asset</div>
-        <div class="model-desc">Anything you own that holds value or earns income. Land, tools, savings, a house. Not all assets are capital: an orchard is both an asset and capital. Savings are an asset but not capital — they hold value but don't make more.</div>
-        <div class="model-tag">Holds value · earns income · asset vs. capital · overlap indicators</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="debt.html">
-      <div class="model-num" style="background:#8a1a1a;">6</div>
-      <div class="model-body">
-        <div class="model-title">Debt</div>
-        <div class="model-desc">Borrowed value that must be paid back — usually with interest. You receive something now and owe back more than you received. The interest gap is real: more is always owed back than was created, which is why debt-based economies require continuous growth.</div>
-        <div class="model-tag">Borrowed value · interest gap · more owed than exists · growth requirement</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="credit.html">
-      <div class="model-num" style="background:#1a6a6a;">7</div>
-      <div class="model-body">
-        <div class="model-title">Credit</div>
-        <div class="model-desc">Your permission to borrow — your reputation for paying back. Good credit means you can borrow more at lower cost. No credit means you cannot borrow at all. Credit is not money. It is the door that lets you access debt.</div>
-        <div class="model-tag">Permission to borrow · reputation · credit ≠ money · the debt door</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="price.html">
-      <div class="model-num" style="background:#8a5a10;">8</div>
-      <div class="model-body">
-        <div class="model-title">Price</div>
-        <div class="model-desc">Not the same as value. Price is what someone agrees to pay at one specific moment — shaped by supply, urgency, and bargaining power. The same tomato is $2.99 at a grocery store, $0 from a neighbor's garden, and $8.00 after a drought. The value (it feeds you) doesn't change. The price swings with context.</div>
-        <div class="model-tag">Price ≠ value · same thing, different context · moment of exchange</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="connections.html">
-      <div class="model-num" style="background:#3a3a3a;">9</div>
-      <div class="model-body">
-        <div class="model-title">How They Connect</div>
-        <div class="model-desc">These eight terms form a system. Value gets stored as wealth. Wealth gets represented as money. Capital uses wealth to produce more value. Assets hold value or produce income. Debt is borrowed money. Credit opens the debt door. Price measures value at a specific moment. When someone says "I have money," they might mean any of these.</div>
-        <div class="model-tag">Value · wealth · money · capital · asset · debt · credit · price · the relationships</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
+  <div class="thesis">
+    <p>Financial systems run on rules about <a class="def" href="money.html">money</a>: what counts as an <a class="def" href="asset.html">asset</a>, how <a class="def" href="debt.html">debt</a> is created, what gets <a class="def" href="price.html">priced</a>. Physical systems run on thermodynamics and biophysical limits — rules that don't negotiate. These models explain both. The incompatibility between them is what this series is about.</p>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-head" id="banking">
-    <span class="section-title">How Banks Create Money</span>
-    <span class="section-sub">The mechanics of money creation, and why interest creates a built-in problem</span>
-  </div>
-  <div class="models">
+  <!-- ── Act 1: The Financial World ────────────────────────────────────────── -->
+  <div class="act">
+    <div class="act-eyebrow">Act 1</div>
+    <div class="act-title">The Financial World</div>
+    <p class="act-desc">How <a class="def" href="money.html">money</a>, <a class="def" href="debt.html">debt</a>, and <a class="def" href="credit.html">credit</a> are created and multiplied — and the rules that are supposed to constrain them.</p>
 
-    <a class="model-card" href="money-multiplier.html">
-      <div class="model-num" style="background:#1a6b3c;">1</div>
-      <div class="model-body">
-        <div class="model-title">The Money Multiplier</div>
-        <div class="model-desc">Your $100 deposit becomes $1,000 in loans — how? Banks lend out most of what you deposit. The next person deposits that money somewhere else. That bank lends it out again. Every step creates new money, but every dollar created starts as someone's debt. Move the slider to see how the rules change the math.</div>
-        <div class="model-tag">How loans create new money · every dollar is a debt · the reserve rule</div>
+    <div class="group" id="banking">
+      <div class="group-label">How banks create money</div>
+      <div class="chips">
+        <a class="chip" href="money-multiplier.html">The Money Multiplier</a>
+        <a class="chip" href="debt-copies.html">The Debt Copy Problem</a>
+        <a class="chip" href="interest-ratchet.html">The Interest Ratchet</a>
+        <a class="chip" href="interest-comparison.html">The Interest Variable</a>
+        <a class="chip" href="deleveraging.html">Deleveraging</a>
       </div>
-      <div class="model-arrow">→</div>
-    </a>
+    </div>
 
-    <a class="model-card" href="debt-copies.html">
-      <div class="model-num" style="background:#2a5c34;">2</div>
-      <div class="model-body">
-        <div class="model-title">The Debt Copy Problem</div>
-        <div class="model-desc">Banks create the amount you borrowed — but not the extra you owe as interest. So where does the interest come from? This model uses a simple game to show why the system always has more owed than it has money to pay. This isn't a mistake or a scam. It's how the system was designed.</div>
-        <div class="model-tag">Why there's always more owed than exists · where the interest gap comes from</div>
+    <div class="group" id="rules">
+      <div class="group-label">How the financial system is governed</div>
+      <div class="chips">
+        <a class="chip" href="capital-requirements.html">Three Banking Guardrails</a>
+        <a class="chip" href="risk-modeling.html">Risk Models</a>
+        <a class="chip" href="public-private-credit.html">Public vs. Private Credit</a>
+        <a class="chip" href="ponzi.html">The Ponzi Comparison</a>
       </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="interest-ratchet.html">
-      <div class="model-num" style="background:#7b3f00;">3</div>
-      <div class="model-body">
-        <div class="model-title">The Interest Ratchet</div>
-        <div class="model-desc">When you pay back a loan with interest, you pay back more than was created. But no one created the extra. This model shows how the gap between money that exists and money that is owed keeps growing — and can only grow. Drag the rate and time sliders to see how fast.</div>
-        <div class="model-tag">Growing gap · more owed than exists · drag to explore</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="interest-comparison.html">
-      <div class="model-num" style="background:#1a3a6b;">4</div>
-      <div class="model-body">
-        <div class="model-title">The Interest Variable</div>
-        <div class="model-desc">Every detail stays the same except one: whether loans carry interest. Toggle back and forth to see exactly where the problem enters the picture. Everything else is identical. Only interest changes.</div>
-        <div class="model-tag">One variable changed · A/B comparison · isolates the mechanism</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="deleveraging.html">
-      <div class="model-num" style="background:#3a1a5a;">5</div>
-      <div class="model-body">
-        <div class="model-title">Deleveraging</div>
-        <div class="model-desc">When everyone tries to pay down debt at once, a self-reinforcing loop begins: paying debt removes money, spending falls, incomes fall, prices fall, the real burden of debt grows — which increases urgency to pay. Irving Fisher described this deflationary spiral in 1933. Step through how leverage builds, how it breaks, and what eventually ends the spiral.</div>
-        <div class="model-tag">Debt repayment destroys money · deflationary spiral · Fisher 1933 · default · austerity · monetize</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
+    </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-head" id="rules">
-    <span class="section-title">How the Financial System Is Governed</span>
-    <span class="section-sub">What controls exist, what they can and can't fix, and what a different design looks like</span>
-  </div>
-  <div class="models">
-
-    <a class="model-card" href="capital-requirements.html">
-      <div class="model-num" style="background:#1a3a6b;">6</div>
-      <div class="model-body">
-        <div class="model-title">Three Banking Guardrails</div>
-        <div class="model-desc">Banks operate under three sets of rules designed to prevent three types of failure: bank runs (everyone tries to withdraw at once), bad loans (too many go unpaid), and insolvency (the bank owes more than it has). Step through each guardrail — who sets it, what it covers — and what all three have in common: none of them address the interest gap.</div>
-        <div class="model-tag">Bank run · loan default · insolvency · what the rules cover · what they don't</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="risk-modeling.html">
-      <div class="model-num" style="background:#5b2d8e;">7</div>
-      <div class="model-body">
-        <div class="model-title">Risk Models and a Changing World</div>
-        <div class="model-desc">Banks use math models to predict how often bad things will happen. These models look at the past 20–30 years and assume the future will look the same. In a stable world, this works. But when the climate is shifting, so-called "once in a hundred years" events can start happening every ten years. The model prints a number that looks right. It isn't.</div>
-        <div class="model-tag">Past data · shifting baselines · when the model is wrong · climate and finance</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="public-private-credit.html">
-      <div class="model-num" style="background:#1a4a6b;">12</div>
-      <div class="model-body">
-        <div class="model-title">Public vs. Private Credit Creation</div>
-        <div class="model-desc">Both public banks and private banks create money the same way. The difference is where the interest goes. Private banks: interest goes to shareholders. Public banks: interest goes back to the public. That one change affects whether the system requires continuous private growth just to stay afloat. Step through the mechanism and trace where the money goes.</div>
-        <div class="model-tag">Where interest goes · public bank · the growth requirement · Bank of North Dakota</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="ponzi.html">
-      <div class="model-num" style="background:#7b2d00;">13</div>
-      <div class="model-body">
-        <div class="model-title">The Ponzi Comparison</div>
-        <div class="model-desc">A Ponzi scheme (named after Charles Ponzi, who ran a famous fraud in 1920) needs a constant stream of new money to pay old promises. An interest-bearing banking system needs continuous new growth to service existing loans. These two systems share a structural feature. They differ in intent, in what they produce, and in what happens when growth stops. Step through both to see where they match — and where they don't.</div>
-        <div class="model-tag">Same structure · different intent · requires growth · what happens when it stops</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
+  <!-- ── Act 2: The Physical World ─────────────────────────────────────────── -->
+  <div class="act" id="biophysical">
+    <div class="act-eyebrow">Act 2</div>
+    <div class="act-title">The Physical World</div>
+    <p class="act-desc">The thermodynamic and biophysical systems the economy runs inside of. Unlike financial <a class="def" href="capital.html">capital</a>, these cannot be manufactured or replaced.</p>
+    <div class="chips">
+      <a class="chip" href="stock-flow.html">Stock vs. Flow Systems</a>
+      <a class="chip" href="threshold-failure.html">Threshold Failure</a>
+      <a class="chip" href="offsets-problem.html">The Offset Problem</a>
+      <a class="chip" href="entropy.html">Laws of Thermodynamics</a>
+      <a class="chip" href="gravity-atmosphere.html">Gravity and Atmosphere</a>
+      <a class="chip" href="emergence.html">Emergence</a>
+    </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-head" id="missing">
-    <span class="section-title">What the Economy Leaves Out</span>
-    <span class="section-sub">The hidden foundation the economy runs on — and doesn't pay for</span>
-  </div>
-  <div class="models">
-
-    <a class="model-card" href="daly-economy.html">
-      <div class="model-num" style="background:#1a5c3a;">5</div>
-      <div class="model-body">
-        <div class="model-title">Daly's Missing Substrate</div>
-        <div class="model-desc">The standard picture of the economy shows money moving between households and businesses — but nothing about where goods come from. Herman Daly (1938–2022), an ecological economist, pointed out what's missing: the living world, the sun's energy, resources that get used up, and waste that has to go somewhere. Step through what the model doesn't show.</div>
-        <div class="model-tag">The standard economic model · what's left out · Herman Daly · the living world</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="ledger-boundary.html">
-      <div class="model-num" style="background:#2a5c34;">9</div>
-      <div class="model-body">
-        <div class="model-title">The Incomplete Ledger</div>
-        <div class="model-desc">Every accounting system draws a line: what's inside gets counted, what's outside doesn't exist — not because it isn't real, but because the accounting wasn't built to see it. Step through what the standard economic ledger leaves out: the work of nature, the work of caregivers, and the costs passed on to people in the future.</div>
-        <div class="model-tag">What gets counted · costs left off the bill · care work · future generations</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="hidden-foundation.html">
-      <div class="model-num" style="background:#5b2d8e;">14</div>
-      <div class="model-body">
-        <div class="model-title">The Hidden Foundation</div>
-        <div class="model-desc">The economy runs on three inputs it doesn't fully pay for: 300 million years of stored solar energy in fossil fuels (priced only at the cost of getting it out, not replacing it); $10–39 trillion per year of care work done mostly by women (invisible to GDP); and $125–145 trillion per year of services provided by living ecosystems (invisible until they fail). The visible economy sits on a foundation it doesn't pay for.</div>
-        <div class="model-tag">Fossil fuel subsidy · unpaid care work · ecosystem services · hidden transfer · what's not in the price</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="bucket-nomics.html">
-      <div class="model-num" style="background:#5b4010;">15</div>
-      <div class="model-body">
-        <div class="model-title">Bucket-nomics</div>
-        <div class="model-desc">A rain-harvesting system costs more upfront than buying water from a pipe. Standard economic analysis says it doesn't "make sense" — because it compares the upfront cost to today's water price. That price doesn't include the ecological cost of where the water comes from, or how the price will change over the next 20 years. This model charts what happens when you include the full picture.</div>
-        <div class="model-tag">Upfront cost · backward-looking pricing · full accounting · 20-year chart</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
+  <!-- ── Act 3: The Gap ─────────────────────────────────────────────────────── -->
+  <div class="act" id="missing">
+    <div class="act-eyebrow">Act 3</div>
+    <div class="act-title">The Gap</div>
+    <p class="act-desc">What the financial ledger leaves out: the <a class="def" href="value.html">value</a> of clean water, the <a class="def" href="wealth.html">wealth</a> of a stable climate, the cost of things no one has to <a class="def" href="price.html">price</a>.</p>
+    <div class="chips">
+      <a class="chip" href="daly-economy.html">Daly's Missing Substrate</a>
+      <a class="chip" href="ledger-boundary.html">The Incomplete Ledger</a>
+      <a class="chip" href="hidden-foundation.html">The Hidden Foundation</a>
+      <a class="chip" href="bucket-nomics.html">Bucket-nomics</a>
+    </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-head" id="biophysical">
-    <span class="section-title">How Biophysical Systems Work</span>
-    <span class="section-sub">The physical rules nature runs on — and why they don't respond to economic tools the way we assume</span>
+  <!-- ── Definitions ────────────────────────────────────────────────────────── -->
+  <hr class="divider">
+  <div id="definitions">
+    <div class="ref-eyebrow">Reference — Definitions</div>
+    <div class="chips">
+      <a class="chip" href="value.html">Value</a>
+      <a class="chip" href="wealth.html">Wealth</a>
+      <a class="chip" href="money.html">Money</a>
+      <a class="chip" href="capital.html">Capital</a>
+      <a class="chip" href="asset.html">Asset</a>
+      <a class="chip" href="debt.html">Debt</a>
+      <a class="chip" href="credit.html">Credit</a>
+      <a class="chip" href="price.html">Price</a>
+      <a class="chip" href="connections.html">How They Connect</a>
+    </div>
   </div>
-  <div class="models">
 
-    <a class="model-card" href="stock-flow.html">
-      <div class="model-num" style="background:#1a5c6b;">8</div>
-      <div class="model-body">
-        <div class="model-title">Stock vs. Flow Systems</div>
-        <div class="model-desc">Three types of water systems: a flowing river (only exists while it's raining), a rain barrel (stores water, drains when used), and a living pond (stores water AND helps maintain the conditions that let it hold more). Each responds differently when the rain stops. Most economic models assume everything works like the barrel. Most living systems are the pond.</div>
-        <div class="model-tag">Flow · stock · hybrid · when the rain stops · different failure modes</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="threshold-failure.html">
-      <div class="model-num" style="background:#7b1a1a;">10</div>
-      <div class="model-body">
-        <div class="model-title">Threshold Failure</div>
-        <div class="model-desc">Two systems under the same pressure. One gets worse gradually — pull back the stress and it recovers. The other holds steady, then suddenly collapses to a much worse state — and doesn't recover when the stress is removed. Most living systems are the second kind. Most policies assume the first. Interactive pressure slider.</div>
-        <div class="model-tag">Gradual vs. sudden · collapse · doesn't reverse · how living systems break</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="offsets-problem.html">
-      <div class="model-num" style="background:#5b2d00;">11</div>
-      <div class="model-body">
-        <div class="model-title">The Offset Problem</div>
-        <div class="model-desc">Carbon offsets and cap-and-trade let companies pay to damage the environment. They are tools for managing harm at a price — not for questioning whether the harm should happen. Neither accounts for the fact that living systems can cross a point of no return. Step through what each does, what both miss, and what a different starting point looks like.</div>
-        <div class="model-tag">Carbon offsets · cap and trade · you can't buy back a tipping point · the baseline question</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="entropy.html">
-      <div class="model-num" style="background:#4a3a6b;">16</div>
-      <div class="model-body">
-        <div class="model-title">Entropy: Why Things Only Go One Way</div>
-        <div class="model-desc">Mix cream into coffee and you can't un-mix it. Tear a piece of bread and it doesn't repair itself. Burn wood and you can't turn the smoke back into wood. This is entropy — the physical law that says energy and matter always move toward disorder, never backward. Every economic process runs on energy, and every use of energy produces waste heat that can't be recaptured. Understanding entropy means understanding why "recycling" and "efficiency" have hard limits.</div>
-        <div class="model-tag">Entropy · energy quality · disorder · why extraction is a one-way door · thermodynamic limits</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="gravity-atmosphere.html">
-      <div class="model-num" style="background:#2a3a5c;">17</div>
-      <div class="model-body">
-        <div class="model-title">Gravity, Atmosphere, and the Water Cycle</div>
-        <div class="model-desc">Gravity holds our atmosphere in place — without it, the gases that make breathing possible would drift into space. It pulls water down through watersheds, drives the water cycle, and shapes every physical system on Earth. These are the background conditions every economy runs inside of — they didn't appear on the invoice because no one made them, and no one can replace them. They are not resources. They are the container.</div>
-        <div class="model-tag">Gravity · atmosphere · water cycle · background conditions · what we can't replace</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-    <a class="model-card" href="emergence.html">
-      <div class="model-num" style="background:#1a4a4a;">18</div>
-      <div class="model-body">
-        <div class="model-title">Emergence</div>
-        <div class="model-desc">A murmuration of starlings moves as one fluid shape — but no single bird is in charge. A brain produces thought, but no individual neuron thinks. A forest regulates its own climate, but no single tree controls the weather. Emergence happens when a group of simple parts produces something that none of the parts could produce alone. Living systems are full of it. Economic models largely ignore it — which is one reason they fail to predict how ecosystems respond to stress.</div>
-        <div class="model-tag">Emergence · the whole is more than its parts · self-organization · what models miss</div>
-      </div>
-      <div class="model-arrow">→</div>
-    </a>
-
-  </div><!-- end biophysical .models -->
-
-  <p class="footer-note">Group 1: seven foundational definitions — value, wealth, money, capital, asset, debt, credit. Group 2: how banks create money and why interest creates a built-in growth problem. Group 3: banking rules, risk models, and an alternative design. Group 4: what the economy leaves out — fossil energy, care work, ecological services, full-cost accounting. Group 5: how biophysical systems work — flow vs. stock, threshold failure, offsets, entropy, gravity and atmosphere.</p>
   <script src="nav.js"></script>
 </body>
 </html>
