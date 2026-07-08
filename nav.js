@@ -1,6 +1,33 @@
 (function () {
   const SECTIONS = [
-    { id: 'definitions', short: 'Definitions', name: 'Money Concept Definitions', models: [
+    { id: 'banking', short: 'Financial', name: 'The Financial World — How Money Is Created', models: [
+      { file: 'money-multiplier.html',    title: 'The Money Multiplier' },
+      { file: 'debt-copies.html',         title: 'The Debt Copy Problem' },
+      { file: 'interest-ratchet.html',    title: 'The Interest Ratchet' },
+      { file: 'interest-comparison.html', title: 'The Interest Variable' },
+      { file: 'deleveraging.html',         title: 'Deleveraging' },
+    ]},
+    { id: 'rules', short: 'Governance', name: 'The Financial World — How the System Is Governed', models: [
+      { file: 'capital-requirements.html',  title: 'Three Banking Guardrails' },
+      { file: 'risk-modeling.html',         title: 'Risk Models' },
+      { file: 'public-private-credit.html', title: 'Public vs. Private Credit' },
+      { file: 'ponzi.html',                 title: 'The Ponzi Comparison' },
+    ]},
+    { id: 'biophysical', short: 'Physical', name: 'The Physical World — Biophysical Systems', models: [
+      { file: 'entropy.html',            title: 'Laws of Thermodynamics' },
+      { file: 'gravity-atmosphere.html', title: 'Gravity and Atmosphere' },
+      { file: 'stock-flow.html',         title: 'Stock vs. Flow Systems' },
+      { file: 'threshold-failure.html',  title: 'Threshold Failure' },
+      { file: 'emergence.html',          title: 'Emergence' },
+      { file: 'offsets-problem.html',    title: 'The Offset Problem' },
+    ]},
+    { id: 'missing', short: 'The Gap', name: 'The Gap — What the Economy Leaves Out', models: [
+      { file: 'daly-economy.html',      title: "Daly's Missing Substrate" },
+      { file: 'ledger-boundary.html',   title: 'The Incomplete Ledger' },
+      { file: 'hidden-foundation.html', title: 'The Hidden Foundation' },
+      { file: 'bucket-nomics.html',     title: 'Bucket-nomics' },
+    ]},
+    { id: 'definitions', short: 'Reference', name: 'Reference — Money Concept Definitions', models: [
       { file: 'value.html',       title: 'Value' },
       { file: 'wealth.html',      title: 'Wealth' },
       { file: 'money.html',       title: 'Money' },
@@ -10,33 +37,6 @@
       { file: 'credit.html',      title: 'Credit' },
       { file: 'price.html',       title: 'Price' },
       { file: 'connections.html', title: 'How They Connect' },
-    ]},
-    { id: 'banking', short: 'Banking', name: 'How Banks Create Money', models: [
-      { file: 'money-multiplier.html',    title: 'The Money Multiplier' },
-      { file: 'debt-copies.html',         title: 'The Debt Copy Problem' },
-      { file: 'interest-ratchet.html',    title: 'The Interest Ratchet' },
-      { file: 'interest-comparison.html', title: 'The Interest Variable' },
-      { file: 'deleveraging.html',         title: 'Deleveraging' },
-    ]},
-    { id: 'rules', short: 'Guardrails', name: 'How the Financial System Is Governed', models: [
-      { file: 'capital-requirements.html',  title: 'Three Banking Guardrails' },
-      { file: 'risk-modeling.html',         title: 'Risk Models' },
-      { file: 'public-private-credit.html', title: 'Public vs. Private Credit' },
-      { file: 'ponzi.html',                 title: 'The Ponzi Comparison' },
-    ]},
-    { id: 'missing', short: 'Missing Costs', name: 'What the Economy Leaves Out', models: [
-      { file: 'daly-economy.html',      title: "Daly's Missing Substrate" },
-      { file: 'ledger-boundary.html',   title: 'The Incomplete Ledger' },
-      { file: 'hidden-foundation.html', title: 'The Hidden Foundation' },
-      { file: 'bucket-nomics.html',     title: 'Bucket-nomics' },
-    ]},
-    { id: 'biophysical', short: 'Biophysical', name: 'How Biophysical Systems Work', models: [
-      { file: 'stock-flow.html',         title: 'Stock vs. Flow Systems' },
-      { file: 'threshold-failure.html',  title: 'Threshold Failure' },
-      { file: 'offsets-problem.html',    title: 'The Offset Problem' },
-      { file: 'entropy.html',            title: 'Laws of Thermodynamics' },
-      { file: 'gravity-atmosphere.html', title: 'Gravity and Atmosphere' },
-      { file: 'emergence.html',          title: 'Emergence' },
     ]},
   ];
 
@@ -68,12 +68,12 @@
   home.href = 'index.html';
   home.textContent = 'All models';
   home.style.cssText = [
-    'font-size:0.7rem', 'color:#888', 'text-decoration:none',
+    'font-size:0.7rem', 'color:#555', 'text-decoration:none',
     'display:flex', 'align-items:center', 'padding:0 0.9rem',
     'border-right:1.5px solid #e0e0e0', 'white-space:nowrap', 'flex-shrink:0'
   ].join(';');
   home.onmouseenter = () => home.style.color = '#1a1a1a';
-  home.onmouseleave = () => home.style.color = '#888';
+  home.onmouseleave = () => home.style.color = '#555';
   hdr.appendChild(home);
 
   // Section tabs
@@ -92,14 +92,14 @@
       'font-size:0.72rem', 'text-decoration:none', 'white-space:nowrap',
       'display:flex', 'align-items:center', 'padding:0 0.9rem',
       'border-right:1px solid #ececec',
-      'color:' + (isActive ? '#1a1a1a' : '#888'),
+      'color:' + (isActive ? '#1a1a1a' : '#555'),
       'font-weight:' + (isActive ? 'bold' : 'normal'),
       'border-bottom:' + (isActive ? '2.5px solid #1a1a1a' : '2.5px solid transparent'),
       'box-sizing:border-box'
     ].join(';');
     if (!isActive) {
       tab.onmouseenter = () => { tab.style.color = '#1a1a1a'; tab.style.background = '#f0eeeb'; };
-      tab.onmouseleave = () => { tab.style.color = '#888'; tab.style.background = ''; };
+      tab.onmouseleave = () => { tab.style.color = '#555'; tab.style.background = ''; };
     }
     tabWrap.appendChild(tab);
   });
@@ -127,23 +127,23 @@
 
   const lbl = document.createElement('span');
   lbl.textContent = sec.name;
-  lbl.style.cssText = 'color:#bbb;flex-grow:1;font-size:0.7rem;';
+  lbl.style.cssText = 'color:#666;flex-grow:1;font-size:0.7rem;';
   row.appendChild(lbl);
 
   const pos = document.createElement('span');
-  pos.textContent = (idx + 1) + ' of ' + sec.models.length;
-  pos.style.cssText = 'color:#ccc;font-size:0.7rem;';
+  pos.textContent = (idx + 1) + ' of ' + sec.models.length;
+  pos.style.cssText = 'color:#888;font-size:0.7rem;';
   row.appendChild(pos);
 
   function navLink(file, title, dir) {
     const dot = document.createElement('span');
-    dot.textContent = '·'; dot.style.color = '#e0e0e0';
+    dot.textContent = '·'; dot.style.color = '#ccc';
     const a = document.createElement('a');
     a.href = file;
     a.textContent = dir === 'prev' ? ('← ' + title) : (title + ' →');
-    a.style.cssText = 'color:#aaa;text-decoration:none;';
+    a.style.cssText = 'color:#555;text-decoration:none;';
     a.onmouseenter = () => a.style.color = '#1a1a1a';
-    a.onmouseleave = () => a.style.color = '#aaa';
+    a.onmouseleave = () => a.style.color = '#555';
     row.appendChild(dot);
     row.appendChild(a);
   }
@@ -173,11 +173,11 @@
       'white-space:nowrap', "font-family:'Georgia',serif",
       isCurrent
         ? 'background:#1a1a1a;color:#fff;cursor:default;'
-        : 'color:#888;border:1px solid #e8e8e8;background:#faf8f5;'
+        : 'color:#555;border:1px solid #e8e8e8;background:#faf8f5;'
     ].join(';');
     if (!isCurrent) {
       chip.onmouseenter = () => { chip.style.color = '#1a1a1a'; chip.style.borderColor = '#999'; };
-      chip.onmouseleave = () => { chip.style.color = '#888'; chip.style.borderColor = '#e8e8e8'; };
+      chip.onmouseleave = () => { chip.style.color = '#555'; chip.style.borderColor = '#e8e8e8'; };
     }
     picker.appendChild(chip);
   });
