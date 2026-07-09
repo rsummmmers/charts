@@ -82,11 +82,13 @@
     function notebox(text1, text2) {
       const y = H*0.78;
       ctx.save();
-      ctx.fillStyle = BC+'18'; ctx.strokeStyle = BC+'55'; ctx.lineWidth = 1;
+      ctx.fillStyle = '#faf8f5';
+      ctx.beginPath(); rr(W*0.05, y, W*0.9, 46, 5); ctx.fill();
+      ctx.fillStyle = BC+'20'; ctx.strokeStyle = BC+'55'; ctx.lineWidth = 1;
       ctx.beginPath(); rr(W*0.05, y, W*0.9, 46, 5); ctx.fill(); ctx.stroke();
       ctx.restore();
       txt(text1, W/2, y+14, {size:11.5, color:BC, weight:'bold'});
-      txt(text2, W/2, y+31, {size:11, color:'#555'});
+      txt(text2, W/2, y+31, {size:11, color:'#333'});
     }
 
     function stickFigure(px, py, sc, running) {
@@ -149,7 +151,7 @@
       ctx.save(); ctx.fillStyle = '#a0522d'; ctx.globalAlpha = 0.5;
       ctx.beginPath(); rr(lx+26, midY-10, 12, 20, 3); ctx.fill(); ctx.restore();
       txt('72°C', lx, midY-3, {size:13, weight:'bold', color:'#fff'});
-      txt('hot cocoa', lx, midY+30, {size:10, color:'#888'});
+      txt('hot cocoa', lx, midY+30, {size:10, color:'#444'});
       // steam
       [lx-8, lx, lx+8].forEach((sx, i) => {
         ctx.save(); ctx.strokeStyle = '#c06020'; ctx.globalAlpha = 0.4; ctx.lineWidth = 1.5;
@@ -174,7 +176,7 @@
       ctx.save(); ctx.fillStyle = '#d4600a'; ctx.globalAlpha = 0.6;
       ctx.beginPath(); ctx.ellipse(rx, midY, 36, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
       txt('72°C', rx, midY, {size:13, weight:'bold', color:'#fff'});
-      txt('soup', rx, midY+30, {size:10, color:'#888'});
+      txt('soup', rx, midY+30, {size:10, color:'#444'});
 
       // Connection lines
       arr(lx+30, midY-4, W*0.50-10, midY-14, '#bbb', 1.5);
@@ -194,16 +196,16 @@
       clear(); banner('First Law · Nothing Disappears');
 
       txt('A kid eats a sandwich. The sandwich doesn\'t vanish.', W/2, H*0.20, {size:12, weight:'bold'});
-      txt('It turns into three things — and they all add up to what went in.', W/2, H*0.29, {size:11, color:'#555'});
+      txt('It turns into three things — and they all add up to what went in.', W/2, H*0.29, {size:11, color:'#333'});
 
       // Sandwich (left)
       const sx = W*0.14, sy = H*0.55;
       sandwich(sx, sy, 1.1);
-      txt('sandwich', sx, sy+28, {size:10, color:'#888'});
+      txt('sandwich', sx, sy+28, {size:10, color:'#444'});
 
       // Arrow: eats
       arr(sx+42, sy, W*0.34-8, sy, '#888', 2);
-      txt('eats it', (sx+42+W*0.34)/2, sy-14, {size:10, color:'#777'});
+      txt('eats it', (sx+42+W*0.34)/2, sy-14, {size:10, color:'#333'});
 
       // Kid eating (center)
       stickFigure(W*0.34, sy-22, 0.85, false);
@@ -288,7 +290,7 @@
 
       txt('Disorder always increases. Some things only go in one direction. Ever.', W/2, H*0.20, {size:11.5, weight:'bold'});
 
-      const pw = W*0.37, ph = H*0.38, py = H*0.29;
+      const pw = W*0.37, ph = H*0.32, py = H*0.29;
       const lx = W*0.04, rx = W*0.56;
 
       // Left panel: CAN HAPPEN
@@ -303,8 +305,8 @@
       // Center one-way arrow
       const acx = W*0.48, acy = py+ph*0.50;
       arr(lx+pw+6, acy, rx-6, acy, '#555', 2.5);
-      txt('knock', acx, acy-14, {size:9, weight:'bold', color:'#555'});
-      txt('it over', acx, acy-2, {size:9, weight:'bold', color:'#555'});
+      txt('knock', acx, acy-14, {size:9, weight:'bold', color:'#333'});
+      txt('it over', acx, acy-2, {size:9, weight:'bold', color:'#333'});
       ctx.save(); ctx.strokeStyle = '#cc2020'; ctx.lineWidth = 2; ctx.globalAlpha = 0.75;
       ctx.beginPath(); ctx.moveTo(acx-7, acy+12); ctx.lineTo(acx+7, acy+24); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(acx+7, acy+12); ctx.lineTo(acx-7, acy+24); ctx.stroke(); ctx.restore();
@@ -320,23 +322,22 @@
       txt('scattered pile of bricks', rx+pw/2, py+ph*0.90, {size:9, color:'#8a1a1a'});
 
       // Coffee cooling strip below panels
-      const cy2 = py+ph+16, cstrip = W*0.88, csx = W*0.06;
-      txt('Heat always moves from hot → cold. Never the other way.', W/2, cy2+8, {size:10, color:'#555'});
+      const cy2 = py+ph+10, cstrip = W*0.88, csx = W*0.06;
+      txt('Heat always moves from hot → cold. Never the other way.', W/2, cy2+8, {size:10, color:'#333'});
       const cups = [
-        {label:'just poured', temp:'hot', col:'#cc4010'},
-        {label:'10 min later', temp:'warm', col:'#c07030'},
-        {label:'an hour later', temp:'room temp', col:'#888888'},
+        {label:'just poured',  col:'#cc4010'},
+        {label:'10 min later', col:'#c07030'},
+        {label:'an hour later',col:'#888888'},
       ];
       cups.forEach((c, i) => {
         const cupX = csx + (i+0.5)*(cstrip/3);
-        const cupY = cy2+26;
-        // mug
+        const cupY = cy2+22;
         ctx.save(); ctx.fillStyle = c.col; ctx.globalAlpha = 0.75;
-        ctx.beginPath(); rr(cupX-14, cupY-10, 28, 22, 3); ctx.fill();
+        ctx.beginPath(); rr(cupX-12, cupY-8, 24, 16, 3); ctx.fill();
         ctx.strokeStyle = c.col; ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
-        ctx.beginPath(); rr(cupX+12, cupY-4, 6, 12, 3); ctx.stroke(); ctx.restore();
-        txt(c.label, cupX, cupY+18, {size:8.5, color:'#888'});
-        if (i < 2) arr(cupX+22, cupY+4, cupX+cstrip/3-22, cupY+4, '#ccc', 1.2);
+        ctx.beginPath(); rr(cupX+10, cupY-3, 5, 10, 3); ctx.stroke(); ctx.restore();
+        txt(c.label, cupX, cupY+12, {size:8.5, color:'#333'});
+        if (i < 2) arr(cupX+16, cupY+2, cupX+cstrip/3-16, cupY+2, '#999', 1.2);
       });
 
       notebox('Second Law: Energy spreads out. Order falls apart. This is entropy.',
@@ -348,7 +349,7 @@
       clear(); banner('Third Law · You Can Never Get All the Way There');
 
       txt('There is a coldest possible temperature: −273°C.', W/2, H*0.20, {size:12, weight:'bold'});
-      txt('Each step toward it takes more effort than the last — and you never actually arrive.', W/2, H*0.28, {size:10.5, color:'#555'});
+      txt('Each step toward it takes more effort than the last — and you never actually arrive.', W/2, H*0.28, {size:10.5, color:'#333'});
 
       // Shrinking boxes — each one smaller than the last, warm→cold top→bottom
       const boxLeft = W*0.06, boxRight = W*0.58, boxW = boxRight - boxLeft;
@@ -382,11 +383,11 @@
 
         if (bh >= 42) {
           txt(s.temp,   boxLeft+boxW/2, midY-10, {size:13, weight:'bold', color:s.col});
-          txt(s.name,   boxLeft+boxW/2, midY+2,  {size:10.5, color:'#555'});
+          txt(s.name,   boxLeft+boxW/2, midY+2,  {size:10.5, color:'#333'});
           txt(s.effort, boxLeft+boxW/2, midY+14, {size:9, color:BC});
         } else if (bh >= 26) {
           txt(s.temp, boxLeft+boxW/2, midY-6, {size:12, weight:'bold', color:s.col});
-          txt(s.name + '  ·  ' + s.effort, boxLeft+boxW/2, midY+7, {size:9.5, color:'#555'});
+          txt(s.name + '  ·  ' + s.effort, boxLeft+boxW/2, midY+7, {size:9.5, color:'#333'});
         } else if (bh >= 16) {
           txt(s.temp + '   ' + s.name + '  ·  ' + s.effort, boxLeft+boxW/2, midY, {size:9, color:s.col, weight:'bold'});
         } else {
@@ -406,15 +407,15 @@
 
       // Right column: what this means
       const rx = W*0.64, rw = W*0.32;
-      txt('What this means:', rx+rw/2, H*0.36, {size:10.5, weight:'bold', color:'#555'});
+      txt('What this means:', rx+rw/2, H*0.36, {size:10.5, weight:'bold', color:'#333'});
       [
-        {t:'No engine can ever be',      col:'#555'},
+        {t:'No engine can ever be',      col:'#333'},
         {t:'100% efficient',             col:BC},
         {t:'',                           col:''},
-        {t:'There is always',            col:'#555'},
-        {t:'some waste heat',            col:'#555'},
+        {t:'There is always',            col:'#333'},
+        {t:'some waste heat',            col:'#333'},
         {t:'',                           col:''},
-        {t:'Not an engineering problem', col:'#555'},
+        {t:'Not an engineering problem', col:'#333'},
         {t:'— a law of physics',         col:BC},
       ].forEach((l, i) => {
         if (!l.t) return;
