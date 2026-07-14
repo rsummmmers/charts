@@ -53,6 +53,25 @@
     .b2 { background: #fff8ed; border: 1px solid #f0d89a; } .b2 .ctx-title { color: #7b3f00; }
     .b3 { background: #f4f4f0; border: 1px solid #ddd; } .b3 .ctx-title { color: #444; }
     .b4 { background: #f5f0fa; border: 1px solid #d4b8f0; } .b4 .ctx-title { color: #5b2d8e; }
+
+    /* Headline: two ways to price the water */
+    .price-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.6rem 0 0.6rem; }
+    @media (max-width: 560px) { .price-compare { grid-template-columns: 1fr; } }
+    .pc-col { border-radius: 8px; padding: 1rem 1.1rem; border: 1.5px solid #ddd; }
+    .pc-kid { background: #f0f9f4; border-color: #b8dfc6; }
+    .pc-econ { background: #fff8ed; border-color: #f0d89a; }
+    .pc-head { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; font-weight: bold; margin-bottom: 0.2rem; }
+    .pc-kid .pc-head { color: #1a6b3c; } .pc-econ .pc-head { color: #7b3f00; }
+    .pc-price { font-size: 0.78rem; color: #666; margin-bottom: 0.7rem; }
+    .pc-price b { color: #1a1a1a; }
+    .pc-rows { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .pc-rows td { padding: 0.22rem 0; color: #444; vertical-align: top; }
+    .pc-num { text-align: right; font-weight: bold; color: #1a1a1a; white-space: nowrap; padding-left: 0.6rem; }
+    .pc-result { margin-top: 0.75rem; padding-top: 0.7rem; border-top: 1px solid rgba(0,0,0,0.12); }
+    .pc-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: #999; }
+    .pc-big { font-size: 2rem; font-weight: bold; line-height: 1.1; margin: 0.15rem 0; }
+    .pc-big-green { color: #1a6b3c; } .pc-big-amber { color: #b8860b; }
+    .pc-quote { font-size: 0.82rem; font-style: italic; color: #666; }
   </style>
 </head>
 <body>
@@ -68,6 +87,40 @@
   </header>
 
   <p class="intro">Some infrastructure works by capturing a free, ongoing input — rain, sunlight, wind, ecosystem services. You buy the vessel once. After that, the input just arrives. The economy has trouble pricing this because it is used to valuing things by what they cost to operate, not what they cost to own. When the operating cost is zero, the standard frame produces the wrong answer.</p>
+
+  <!-- ── Headline: two ways to price the same bucket of water ──────────── -->
+  <div class="section-label">Two ways to price the water</div>
+  <hr class="section-rule">
+  <div class="price-compare">
+    <div class="pc-col pc-kid">
+      <div class="pc-head">Elementary-school logic</div>
+      <div class="pc-price">Purchase price: <b>$5</b> (one 5-gallon bucket)</div>
+      <table class="pc-rows">
+        <tr><td>The bucket</td><td class="pc-num">$5, once</td></tr>
+        <tr><td>The rain</td><td class="pc-num">free</td></tr>
+      </table>
+      <div class="pc-result">
+        <div class="pc-label">Cost of the water in the bucket</div>
+        <div class="pc-big pc-big-green">$0</div>
+        <div class="pc-quote">"It's rain. It fell out of the sky."</div>
+      </div>
+    </div>
+    <div class="pc-col pc-econ">
+      <div class="pc-head">Economist's logic (LCOE)</div>
+      <div class="pc-price">Purchase price: <b>$5</b> (one 5-gallon bucket)</div>
+      <table class="pc-rows">
+        <tr><td>Bucket, as capital cost</td><td class="pc-num">$5</td></tr>
+        <tr><td>Amortized over 8-yr life @ 7%</td><td class="pc-num">≈ $0.84 / yr</td></tr>
+        <tr><td>Water captured &amp; used</td><td class="pc-num">≈ 420 gal / yr</td></tr>
+      </table>
+      <div class="pc-result">
+        <div class="pc-label">Levelized cost of the water</div>
+        <div class="pc-big pc-big-amber">≈ $0.002 / gal</div>
+        <div class="pc-quote">Cheap — about half the price of city water — but "not free."</div>
+      </div>
+    </div>
+  </div>
+  <p class="section-intro" style="margin-top:0.9rem">Same $5 bucket, same rain, two answers. The child says the water is free, because it is. The economist runs a levelized-cost calculation and gets a small positive number — cheaper than tap, but not zero. Both are "right" inside their own frame. The rest of this page is about what the economist's number quietly leaves out: that the rain would have fallen anyway, that the bucket keeps working for decades, that the water is cleaner and already on-site.</p>
 
   <!-- ── Chart 1: The Bucket ────────────────────────────────────────── -->
   <div class="section-label">Part 1 — The bucket</div>
@@ -289,7 +342,7 @@ function b1draw(phase) {
     cx2.font = 'bold 14px Georgia,serif';
     cx2.textAlign = 'center';
     cx2.fillText('$5', tagX + 45, tagY + 5);
-    cx2.font = '10px Georgia,serif';
+    cx2.font = '12px Georgia,serif';
     cx2.fillStyle = '#888';
     cx2.fillText('one time', tagX + 45, tagY + 18);
     /* String to bucket */
@@ -307,7 +360,7 @@ function b1draw(phase) {
     cx2.fillStyle = '#444';
     cx2.textAlign = 'center';
     cx2.fillText('The bucket', cx, bTop + bH + 28);
-    cx2.font = '11px Georgia,serif';
+    cx2.font = '12px Georgia,serif';
     cx2.fillStyle = '#888';
     cx2.fillText('empty. waiting.', cx, bTop + bH + 44);
     cx2.restore();
@@ -330,7 +383,7 @@ function b1draw(phase) {
     cx2.font = 'bold 20px Georgia,serif';
     cx2.fillStyle = '#1a6b3c';
     cx2.fillText('$0', cx, bTop + bH + 54);
-    cx2.font = '10px Georgia,serif';
+    cx2.font = '12px Georgia,serif';
     cx2.fillStyle = '#888';
     cx2.fillText('same next year. same the year after.', cx, bTop + bH + 70);
     cx2.restore();
@@ -360,7 +413,7 @@ function b1draw(phase) {
       cx2.strokeStyle = 'rgba(0,0,0,0.15)';
       cx2.beginPath(); cx2.moveTo(x, tlY); cx2.lineTo(x, tlY + 5); cx2.stroke();
       cx2.fillStyle = '#888';
-      cx2.font = '10px Georgia,serif';
+      cx2.font = '12px Georgia,serif';
       cx2.textAlign = 'center';
       cx2.fillText('yr ' + yr, x, tlY + 17);
     });
@@ -379,7 +432,7 @@ function b1draw(phase) {
     cx2.stroke();
     cx2.setLineDash([]);
     cx2.fillStyle = '#1a3a6b';
-    cx2.font = '10px Georgia,serif';
+    cx2.font = '12px Georgia,serif';
     cx2.textAlign = 'left';
     cx2.fillText('Bucket cost: $5 (flat)', tlX0 + 4, tlY - bucketCost * yscale - 6);
 
@@ -436,8 +489,8 @@ function b1draw(phase) {
       cx2.strokeStyle = 'rgba(0,0,0,0.07)';
       cx2.lineWidth = 1;
       cx2.beginPath(); cx2.moveTo(tlX0, pyB(v)); cx2.lineTo(tlX1, pyB(v)); cx2.stroke();
-      cx2.fillStyle = 'rgba(0,0,0,0.35)';
-      cx2.font = '10px Georgia,serif';
+      cx2.fillStyle = 'rgba(0,0,0,0.6)';
+      cx2.font = '12px Georgia,serif';
       cx2.textAlign = 'right';
       cx2.fillText('$' + v.toLocaleString(), tlX0 - 4, pyB(v) + 4);
     });
@@ -451,7 +504,7 @@ function b1draw(phase) {
       cx2.strokeStyle = 'rgba(0,0,0,0.12)';
       cx2.beginPath(); cx2.moveTo(x, tlY); cx2.lineTo(x, tlY + 4); cx2.stroke();
       cx2.fillStyle = '#888';
-      cx2.font = '10px Georgia,serif';
+      cx2.font = '12px Georgia,serif';
       cx2.textAlign = 'center';
       cx2.fillText('yr ' + yr, x, tlY + 15);
     });
@@ -469,7 +522,7 @@ function b1draw(phase) {
     cx2.stroke();
     cx2.fillStyle = '#b91c1c';
     cx2.textAlign = 'left';
-    cx2.font = '10px Georgia,serif';
+    cx2.font = '12px Georgia,serif';
     cx2.fillText('Keep buying water (price rising 5%/yr)', pxB(3), pyB(cumBuy) - 10);
     cx2.fillText('Total at yr 20: $' + Math.round(cumBuy).toLocaleString(), pxB(14), pyB(cumBuy) + 14);
 
@@ -500,7 +553,7 @@ function b1draw(phase) {
 
     /* Rain cloud above timeline */
     drawCloud(cx2, pxB(10), b1H * 0.06, 48, 18);
-    cx2.font = '10px Georgia,serif';
+    cx2.font = '12px Georgia,serif';
     cx2.fillStyle = '#3b82f6';
     cx2.textAlign = 'center';
     cx2.fillText('free input, every year', pxB(10), b1H * 0.06 + 30);
@@ -517,7 +570,7 @@ function b1draw(phase) {
       cx2.font = 'bold 10px Georgia,serif';
       cx2.textAlign = 'right';
       cx2.fillText('$' + Math.round(cumBuy - bucketCost).toLocaleString() + ' more', gX - 4, (gapTop + gapBot) / 2 + 4);
-      cx2.font = '10px Georgia,serif';
+      cx2.font = '12px Georgia,serif';
       cx2.fillText('spent buying water', gX - 4, (gapTop + gapBot) / 2 + 16);
       cx2.fillText('vs. owning the bucket', gX - 4, (gapTop + gapBot) / 2 + 28);
     }
@@ -750,7 +803,7 @@ function b2draw(phase) {
 
     /* Row labels */
     b2ctx.save();
-    b2ctx.font = '10px Georgia,serif';
+    b2ctx.font = '12px Georgia,serif';
     b2ctx.fillStyle = '#aaa';
     b2ctx.textAlign = 'left';
     b2ctx.fillText('one-time purchase ↓', 8, rowTop + 10);
@@ -833,7 +886,7 @@ function b2draw(phase) {
     b2ctx.save();
     const legY = b2H * 0.06;
     b2ctx.fillStyle = '#444'; b2ctx.fillRect(startX, legY, 12, 12);
-    b2ctx.fillStyle = '#444'; b2ctx.font = '10px Georgia,serif'; b2ctx.textAlign = 'left';
+    b2ctx.fillStyle = '#444'; b2ctx.font = '12px Georgia,serif'; b2ctx.textAlign = 'left';
     b2ctx.fillText('own the system (upfront + maintenance × 20 yr)', startX + 16, legY + 10);
     b2ctx.fillStyle = '#e5e5e5'; b2ctx.fillRect(startX, legY + 18, 12, 12);
     b2ctx.strokeStyle = '#aaa'; b2ctx.lineWidth = 1; b2ctx.strokeRect(startX, legY + 18, 12, 12);
@@ -846,7 +899,7 @@ function b2draw(phase) {
       if (v > maxVal) return;
       const y = baseY - barH(v);
       b2ctx.beginPath(); b2ctx.moveTo(startX - 4, y); b2ctx.lineTo(b2W * 0.96, y); b2ctx.stroke();
-      b2ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      b2ctx.fillStyle = 'rgba(0,0,0,0.55)';
       b2ctx.font = '9px Georgia,serif';
       b2ctx.textAlign = 'right';
       b2ctx.fillText('$' + (v/1000) + 'k', startX - 6, y + 4);
@@ -967,23 +1020,23 @@ function draw(s) {
     if(v>maxY)return;
     const y=py(v);
     ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+chartW,y);ctx.stroke();
-    ctx.fillStyle='rgba(0,0,0,0.35)';ctx.font='10px Georgia,serif';ctx.textAlign='right';
+    ctx.fillStyle='rgba(0,0,0,0.6)';ctx.font='12px Georgia,serif';ctx.textAlign='right';
     ctx.fillText('$'+v.toLocaleString(),padL-6,y+4);
   });
   [0,5,10,15,20].forEach(yr=>{
     const x=px(yr);
     ctx.strokeStyle='rgba(0,0,0,0.15)';
     ctx.beginPath();ctx.moveTo(x,padT+chartH);ctx.lineTo(x,padT+chartH+4);ctx.stroke();
-    ctx.fillStyle='rgba(0,0,0,0.45)';ctx.font='10px Georgia,serif';ctx.textAlign='center';
+    ctx.fillStyle='rgba(0,0,0,0.65)';ctx.font='12px Georgia,serif';ctx.textAlign='center';
     ctx.fillText('yr '+yr,x,padT+chartH+15);
   });
   ctx.strokeStyle='rgba(0,0,0,0.25)';ctx.lineWidth=1.5;
   ctx.beginPath();ctx.moveTo(padL,padT);ctx.lineTo(padL,padT+chartH);ctx.lineTo(padL+chartW,padT+chartH);ctx.stroke();
   ctx.restore();
   ctx.save();ctx.translate(14,padT+chartH/2);ctx.rotate(-Math.PI/2);
-  ctx.fillStyle='rgba(0,0,0,0.4)';ctx.font='10px Georgia,serif';ctx.textAlign='center';
+  ctx.fillStyle='rgba(0,0,0,0.58)';ctx.font='12px Georgia,serif';ctx.textAlign='center';
   ctx.fillText('cumulative value / cost ($)',0,0);ctx.restore();
-  ctx.fillStyle='rgba(0,0,0,0.4)';ctx.font='10px Georgia,serif';ctx.textAlign='center';
+  ctx.fillStyle='rgba(0,0,0,0.58)';ctx.font='12px Georgia,serif';ctx.textAlign='center';
   ctx.fillText('years',padL+chartW/2,H-6);
   function drawLine(key,dashPattern,alpha=1){
     ctx.save();ctx.strokeStyle=COLORS[key];ctx.lineWidth=2.2;ctx.globalAlpha=alpha;
@@ -1002,9 +1055,9 @@ function draw(s) {
     if(xYear&&s.show.includes('valBackward')){
       const x=px(xYear),y=py(data[xYear].valBackward);
       ctx.save();ctx.fillStyle='#92600a';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();
-      ctx.font='11px Georgia,serif';ctx.textAlign='left';
+      ctx.font='12px Georgia,serif';ctx.textAlign='left';
       ctx.fillText('payback yr ~'+xYear,x+8,y-6);
-      ctx.fillStyle='rgba(146,96,10,0.15)';ctx.font='10px Georgia,serif';
+      ctx.fillStyle='rgba(146,96,10,0.7)';ctx.font='12px Georgia,serif';
       ctx.fillText('(standard analysis stops here)',x+8,y+8);ctx.restore();
     }
   }
@@ -1014,7 +1067,7 @@ function draw(s) {
     if(xYear2){
       const x=px(xYear2),y=py(data[xYear2].valFull);
       ctx.save();ctx.fillStyle='#1a6b3c';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();
-      ctx.font='11px Georgia,serif';ctx.textAlign='left';
+      ctx.font='12px Georgia,serif';ctx.textAlign='left';
       ctx.fillText('full value crossover yr ~'+xYear2,x+8,y-6);ctx.restore();
     }
   }
@@ -1022,7 +1075,7 @@ function draw(s) {
     const x=px(4);
     ctx.save();ctx.strokeStyle='rgba(26,107,60,0.4)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
     ctx.beginPath();ctx.moveTo(x,padT);ctx.lineTo(x,padT+chartH);ctx.stroke();
-    ctx.setLineDash([]);ctx.fillStyle='#1a6b3c';ctx.font='10px Georgia,serif';ctx.textAlign='center';
+    ctx.setLineDash([]);ctx.fillStyle='#1a6b3c';ctx.font='12px Georgia,serif';ctx.textAlign='center';
     ctx.fillText('system matures',x,padT-4);ctx.restore();
   }
   if(s.note==='gap'){
@@ -1038,7 +1091,7 @@ function draw(s) {
     ctx.fillText('backward price',xG+10,(yFull+yBack)/2+6);
     ctx.fillText("doesn't see",xG+10,(yFull+yBack)/2+18);ctx.restore();
   }
-  const lx=px(YEARS)+6;ctx.font='10px Georgia,serif';
+  const lx=px(YEARS)+6;ctx.font='12px Georgia,serif';
   if(s.show.includes('commodity')){ctx.fillStyle=COLORS.commodity;ctx.textAlign='left';ctx.fillText('$'+Math.round(data[YEARS].commodity).toLocaleString(),lx,py(data[YEARS].commodity)+4);}
   if(s.show.includes('valFull')){ctx.fillStyle=COLORS.valFull;ctx.textAlign='left';ctx.fillText('$'+Math.round(data[YEARS].valFull).toLocaleString(),lx,py(data[YEARS].valFull)+4);}
 }
