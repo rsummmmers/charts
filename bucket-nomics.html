@@ -95,7 +95,7 @@
 
   <div class="hero-wrap"><canvas id="hero"></canvas></div>
 
-  <p class="intro">Some infrastructure works by capturing a free, ongoing input — rain, sunlight, wind, ecosystem services. You buy the vessel once. After that, the input just arrives. The economy has trouble pricing this because it is used to valuing things by what they cost to operate, not what they cost to own. When the operating cost is zero, the standard frame produces the wrong answer.</p>
+  <p class="intro">Some infrastructure works by capturing a free, ongoing input — rain, sunlight, wind, ecosystem services. You buy the vessel once. After that, the input just arrives. The economy has trouble pricing this because it is used to valuing things by what they cost to operate, not what they cost to own. When the operating cost is zero, the standard frame produces the wrong answer. The bucket itself is a <em>stock</em> — a holding place — sitting inside a <em>flow</em>: rain falls, the bucket holds it, you draw it down (see <a href="stock-flow.html" style="color:#1a5c3a;border-bottom:1px dotted #1a5c3a;text-decoration:none">stock &amp; flow</a>).</p>
 
   <!-- ── Headline: two ways to price the same bucket of water ──────────── -->
   <div class="section-label">Two ways to price the water</div>
@@ -336,7 +336,7 @@ function b1draw(phase) {
 
   const YEARS = 20;
   const bucketCost = 5;
-  const annualBuy = 180;
+  const annualBuy = 20;
   const buyRise = 0.05;
 
   if (phase === 'bucket') {
@@ -498,7 +498,7 @@ function b1draw(phase) {
 
     cx2.save();
     /* Grid lines */
-    [500, 1000, 1500, 2000, 2500].forEach(v => {
+    [200, 400, 600, 800].forEach(v => {
       if (v > maxVal) return;
       cx2.strokeStyle = 'rgba(0,0,0,0.07)';
       cx2.lineWidth = 1;
@@ -639,27 +639,29 @@ let b2step = 0;
 let b2c, b2ctx, b2W, b2H;
 
 const SYSTEMS = [
-  { name: 'Rain barrel\n/ cistern',  input: 'Rain',             upfront: 800,   annualFree: 180, annualPaid: 0,   fuelAlt: 'Municipal water',    fuelCost: 180,   fuelRise: 0.05, color: '#3b82f6', icon: 'rain'   },
-  { name: 'Solar\npanel',            input: 'Sunlight',         upfront: 12000, annualFree: 900, annualPaid: 20,  fuelAlt: 'Grid electricity',   fuelCost: 900,   fuelRise: 0.04, color: '#d97706', icon: 'sun'    },
-  { name: 'Wind\nturbine',           input: 'Wind',             upfront: 30000, annualFree: 2000,annualPaid: 100, fuelAlt: 'Grid electricity',   fuelCost: 2000,  fuelRise: 0.04, color: '#6366f1', icon: 'wind'   },
-  { name: 'Aquifer\n/ well',         input: 'Groundwater*',     upfront: 8000,  annualFree: 400, annualPaid: 50,  fuelAlt: 'Municipal water',    fuelCost: 400,   fuelRise: 0.05, color: '#0891b2', icon: 'aquifer'},
-  { name: 'Pocket\nforest',          input: 'Ecosystem\nservices', upfront: 2000, annualFree: 600, annualPaid: 50, fuelAlt: 'Landscaping\n+ inputs', fuelCost: 1200, fuelRise: 0.03, color: '#1a6b3c', icon: 'forest' },
+  { name: 'Reusable\nbag',   upfront: 2,     annualPaid: 0,   fuelAlt: 'Single-use\nbags',      fuelCost: 12,   fuelRise: 0.03, color: '#6b7280', icon: 'bag',   natural: false },
+  { name: '$5 bucket',       upfront: 5,     annualPaid: 0,   fuelAlt: 'Municipal\nwater',      fuelCost: 20,   fuelRise: 0.05, color: '#3b82f6', icon: 'rain',  natural: true  },
+  { name: 'Coffee\nmug',     upfront: 18,    annualPaid: 0,   fuelAlt: 'Disposable\ncups',      fuelCost: 90,   fuelRise: 0.03, color: '#8b5cf6', icon: 'mug',   natural: false },
+  { name: 'Apple\ntree',     upfront: 40,    annualPaid: 5,   fuelAlt: 'Store-bought\napples',  fuelCost: 120,  fuelRise: 0.03, color: '#b91c1c', icon: 'apple', natural: true  },
+  { name: 'Pocket\nforest',  upfront: 2000,  annualPaid: 50,  fuelAlt: 'Landscaping\n+ inputs', fuelCost: 1200, fuelRise: 0.03, color: '#1a6b3c', icon: 'forest', natural: true },
+  { name: 'Solar\npanel',    upfront: 12000, annualPaid: 20,  fuelAlt: 'Grid\nelectricity',     fuelCost: 900,  fuelRise: 0.04, color: '#d97706', icon: 'sun',   natural: true  },
+  { name: 'Wind\nturbine',   upfront: 30000, annualPaid: 100, fuelAlt: 'Grid\nelectricity',     fuelCost: 2000, fuelRise: 0.04, color: '#6366f1', icon: 'wind',  natural: true  },
 ];
 
 const B2_STEPS = [
   {
-    label: "Step 1 of 3 — The structure",
-    lesson: "<strong>Five different systems. One structure.</strong> Each requires a one-time capital investment. Each captures a free, ongoing input — rain, sunlight, wind, groundwater, ecosystem services. After the upfront cost, the marginal cost of the input is near zero. This is the same logic as the bucket, applied at different scales.",
+    label: "Step 1 of 3 — The pattern",
+    lesson: "<strong>Different objects. One structure.</strong> Each is bought once, then used again and again in place of something you'd otherwise keep buying. A reusable bag, a $5 bucket, a coffee mug, an apple tree, a pocket forest, a solar panel, a wind turbine — from a couple of dollars to tens of thousands. The shape is identical at every scale: one upfront cost, then near-zero marginal cost.",
     phase: 'grid'
   },
   {
     label: "Step 2 of 3 — The 20-year comparison",
-    lesson: "<strong>The alternative to each system is buying the input indefinitely.</strong> Grid electricity, municipal water, purchased fertilizer and landscaping services — all have prices that rise over time. The 20-year cumulative cost of buying the input almost always exceeds the upfront cost of owning the vessel that captures it for free. The longer the horizon, the more obvious this is.",
+    lesson: "<strong>The alternative is buying the throwaway version forever.</strong> Single-use bags, disposable cups, store-bought apples, grid electricity, municipal water — each has a price that rises over time. Over 20 years the cumulative cost of buying almost always dwarfs the one-time purchase. (Shown on a <em>log scale</em> — otherwise the $2 bag and the $30,000 turbine couldn't share an axis.)",
     phase: 'bars'
   },
   {
-    label: "Step 3 of 3 — What the standard model misses",
-    lesson: "<strong>*The aquifer caveat.</strong> Groundwater is free in the sense that it falls as rain and is stored in the ground — but aquifer drawdown means many regions are spending a finite stored resource. This is the difference between a stock and a flow. Rain is a renewable flow. Fossil groundwater is a stock being drawn down. The bucket-nomics frame works cleanly for renewable inputs. For fossil stocks — including oil, gas, and many aquifers — the 'free input' assumption depends on how long the stock lasts. Living systems (forests, wetlands, healthy soil) produce flows, not stocks. That's part of what makes them different.",
+    label: "Step 3 of 3 — Natural vs. man-made",
+    lesson: "<strong>Bought-once is necessary, but not the whole story — the input has to be free.</strong> The <span style='color:#1a6b3c;font-weight:bold'>green</span> items capture a free <em>natural</em> flow: rain, sun, wind, an apple tree's photosynthesis. The <span style='color:#5c6570;font-weight:bold'>grey</span> ones (bag, mug) are man-made and just save you from buying disposables — real savings, but no free natural input. And it can blur: a battery is man-made and stores grid power you pay for — unless it's charged by your own solar, in which case the stored input is free again. Bucket-nomics is sharpest where the vessel is cheap and the input is a free, renewable, natural flow.",
     phase: 'caveat'
   }
 ];
@@ -752,6 +754,33 @@ function drawMiniIcon(ctx, type, cx, cy, size, color) {
     ctx.beginPath();
     ctx.moveTo(cx, cy + size*0.1); ctx.lineTo(cx, cy + size*0.38);
     ctx.stroke();
+  } else if (type === 'bag') {
+    /* Reusable tote */
+    const w = size*0.5, h = size*0.55;
+    ctx.strokeStyle = color; ctx.lineWidth = 1.8;
+    ctx.strokeRect(cx - w/2, cy - h*0.15, w, h);
+    ctx.beginPath(); ctx.arc(cx - w*0.22, cy - h*0.15, w*0.17, Math.PI, 0); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx + w*0.22, cy - h*0.15, w*0.17, Math.PI, 0); ctx.stroke();
+  } else if (type === 'mug') {
+    /* Coffee mug + steam */
+    const w = size*0.42, h = size*0.48;
+    ctx.strokeStyle = color; ctx.lineWidth = 1.8;
+    ctx.strokeRect(cx - w/2, cy - h/2, w, h);
+    ctx.beginPath(); ctx.arc(cx + w/2, cy, h*0.24, -Math.PI*0.5, Math.PI*0.5); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - w*0.12, cy - h*0.72);
+    ctx.quadraticCurveTo(cx + w*0.06, cy - h*0.9, cx - w*0.04, cy - h*0.6);
+    ctx.stroke();
+  } else if (type === 'apple') {
+    /* Apple tree: green canopy, trunk, red apples */
+    ctx.fillStyle = '#1a6b3c';
+    ctx.beginPath(); ctx.arc(cx, cy - size*0.08, size*0.33, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#7b3f00'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(cx, cy + size*0.22); ctx.lineTo(cx, cy + size*0.42); ctx.stroke();
+    ctx.fillStyle = '#b91c1c';
+    [[-0.13,-0.14],[0.14,-0.04],[0.02,0.13]].forEach(([dx,dy]) => {
+      ctx.beginPath(); ctx.arc(cx + size*dx, cy + size*dy, size*0.07, 0, Math.PI*2); ctx.fill();
+    });
   }
   ctx.restore();
 }
@@ -762,163 +791,130 @@ function b2draw(phase) {
   b2ctx.fillRect(0, 0, b2W, b2H);
 
   if (phase === 'grid') {
-    /* Grid of 5 systems showing structure */
-    const cols = 5;
+    const cols = SYSTEMS.length;
     const colW = b2W / cols;
-    const iconSize = Math.min(colW * 0.38, b2H * 0.2);
-    const rowTop = b2H * 0.08;
+    const iconSize = Math.min(colW * 0.34, b2H * 0.18);
+    const rowTop = b2H * 0.1;
 
     SYSTEMS.forEach((sys, i) => {
       const cx = colW * (i + 0.5);
-      const cy = rowTop + b2H * 0.2;
+      const cy = rowTop + b2H * 0.16;
 
-      /* Icon */
       drawMiniIcon(b2ctx, sys.icon, cx, cy, iconSize, sys.color);
 
-      /* Name */
       b2ctx.save();
-      b2ctx.fillStyle = '#1a1a1a';
-      b2ctx.font = `${Math.min(11, colW * 0.13)}px Georgia,serif`;
       b2ctx.textAlign = 'center';
+
+      /* Name */
+      b2ctx.fillStyle = '#1a1a1a';
+      b2ctx.font = `${Math.min(12, colW * 0.14)}px Georgia,serif`;
       const lines = sys.name.split('\n');
-      lines.forEach((ln, li) => {
-        b2ctx.fillText(ln, cx, cy + iconSize * 0.7 + 14 + li * 14);
-      });
+      lines.forEach((ln, li) => b2ctx.fillText(ln, cx, cy + iconSize * 0.7 + 14 + li * 13));
 
-      /* Input label */
-      const inputY = cy + iconSize * 0.7 + 14 + (lines.length) * 14 + 10;
-      b2ctx.font = `bold ${Math.min(10, colW * 0.11)}px Georgia,serif`;
-      b2ctx.fillStyle = sys.color;
-      b2ctx.fillText('Input:', cx, inputY);
-      const inputLines = sys.input.split('\n');
-      inputLines.forEach((ln, li) => {
-        b2ctx.font = `${Math.min(10, colW * 0.11)}px Georgia,serif`;
-        b2ctx.fillStyle = sys.color;
-        b2ctx.fillText(ln, cx, inputY + 12 + li * 11);
-      });
-
-      /* Free badge */
-      const freeY = inputY + 12 + inputLines.length * 11 + 14;
-      b2ctx.fillStyle = '#f0f9f4';
-      b2ctx.strokeStyle = '#1a6b3c';
+      /* Natural / man-made badge */
+      const badgeY = cy + iconSize * 0.7 + 14 + lines.length * 13 + 12;
+      const nat = sys.natural;
+      b2ctx.fillStyle = nat ? '#f0f9f4' : '#eef0f2';
+      b2ctx.strokeStyle = nat ? '#1a6b3c' : '#9aa2ac';
       b2ctx.lineWidth = 1;
-      roundRect(b2ctx, cx - colW*0.28, freeY - 12, colW*0.56, 20, 4);
+      roundRect(b2ctx, cx - colW*0.42, badgeY - 12, colW*0.84, 19, 4);
       b2ctx.fill(); b2ctx.stroke();
-      b2ctx.fillStyle = '#1a6b3c';
-      b2ctx.font = `bold ${Math.min(10, colW*0.1)}px Georgia,serif`;
-      b2ctx.fillText(sys.icon === 'aquifer' ? 'free*' : 'free', cx, freeY + 3);
+      b2ctx.fillStyle = nat ? '#1a6b3c' : '#5c6570';
+      b2ctx.font = `${Math.min(10, colW*0.105)}px Georgia,serif`;
+      b2ctx.fillText(nat ? 'free natural input' : 'man-made', cx, badgeY + 2);
 
-      /* Upfront cost */
+      /* Replaces + upfront cost */
+      b2ctx.fillStyle = '#999';
+      b2ctx.font = `${Math.min(9.5, colW*0.1)}px Georgia,serif`;
+      b2ctx.fillText('vs. ' + sys.fuelAlt.replace('\n', ' '), cx, badgeY + 20);
       b2ctx.fillStyle = '#7b3f00';
-      b2ctx.font = `${Math.min(10, colW*0.1)}px Georgia,serif`;
-      b2ctx.fillText('Cost: $' + sys.upfront.toLocaleString(), cx, freeY + 22);
+      b2ctx.font = `bold ${Math.min(12, colW*0.12)}px Georgia,serif`;
+      b2ctx.fillText('$' + sys.upfront.toLocaleString(), cx, badgeY + 38);
       b2ctx.restore();
     });
 
-    /* Row labels */
+    /* Row label */
     b2ctx.save();
     b2ctx.font = '12px Georgia,serif';
     b2ctx.fillStyle = '#aaa';
     b2ctx.textAlign = 'left';
-    b2ctx.fillText('one-time purchase ↓', 8, rowTop + 10);
+    b2ctx.fillText('bought once · cheapest → priciest →', 8, rowTop - 8);
     b2ctx.restore();
 
   } else if (phase === 'bars' || phase === 'caveat') {
-    /* Bar chart: 20-yr total cost — own system vs. buy input */
+    /* Bar chart: 20-yr total cost — own it once vs. keep buying (LOG scale) */
     const YEARS = 20;
-    const maxBarH = b2H * 0.55;
-    const barW = (b2W * 0.88) / (SYSTEMS.length * 2 + SYSTEMS.length * 0.5);
-    const gap = barW * 0.5;
+    const maxBarH = b2H * 0.5;
+    const barW = (b2W * 0.9) / (SYSTEMS.length * 2.6);
+    const gap = barW * 0.45;
     const groupW = barW * 2 + gap;
-    const startX = b2W * 0.07;
-    const baseY = b2H * 0.82;
+    const startX = b2W * 0.08;
+    const baseY = b2H * 0.8;
 
-    /* Find max value */
-    let maxVal = 0;
-    SYSTEMS.forEach(sys => {
+    const vMin = 1;
+    let vMax = 0;
+    const rows = SYSTEMS.map(sys => {
       let cumFuel = 0;
       for (let y = 1; y <= YEARS; y++) cumFuel += sys.fuelCost * Math.pow(1 + sys.fuelRise, y - 1);
       const ownCost = sys.upfront + sys.annualPaid * YEARS;
-      maxVal = Math.max(maxVal, cumFuel, ownCost);
+      vMax = Math.max(vMax, cumFuel, ownCost);
+      return { sys, cumFuel, ownCost };
     });
-    maxVal *= 1.12;
+    vMax *= 1.3;
+    const lMin = Math.log10(vMin), lMax = Math.log10(vMax);
+    function barH(v) { return Math.max(0, (Math.log10(Math.max(v, vMin)) - lMin) / (lMax - lMin)) * maxBarH; }
+    function fmt(v) { return v >= 1000 ? '$' + Math.round(v / 1000) + 'k' : '$' + Math.round(v); }
 
-    function barH(v) { return (v / maxVal) * maxBarH; }
+    /* Y-axis log gridlines */
+    b2ctx.save();
+    [1, 10, 100, 1000, 10000, 100000].forEach(v => {
+      if (v > vMax) return;
+      const y = baseY - barH(v);
+      b2ctx.strokeStyle = 'rgba(0,0,0,0.08)'; b2ctx.lineWidth = 1;
+      b2ctx.beginPath(); b2ctx.moveTo(startX - 4, y); b2ctx.lineTo(b2W * 0.97, y); b2ctx.stroke();
+      b2ctx.fillStyle = 'rgba(0,0,0,0.5)'; b2ctx.font = '10px Georgia,serif'; b2ctx.textAlign = 'right';
+      b2ctx.fillText(fmt(v), startX - 6, y + 4);
+    });
+    b2ctx.restore();
 
-    SYSTEMS.forEach((sys, i) => {
-      const gx = startX + i * (groupW + barW * 0.4);
+    rows.forEach((r, i) => {
+      const sys = r.sys;
+      const gx = startX + i * (groupW + barW * 0.5);
+      const ownH = barH(r.ownCost), fuelH = barH(r.cumFuel);
 
-      let cumFuel = 0;
-      for (let y = 1; y <= YEARS; y++) cumFuel += sys.fuelCost * Math.pow(1 + sys.fuelRise, y - 1);
-      const ownCost = sys.upfront + sys.annualPaid * YEARS;
-
-      /* Own system bar */
-      const ownH = barH(ownCost);
       b2ctx.save();
-      b2ctx.fillStyle = sys.color;
-      b2ctx.globalAlpha = 0.85;
+      /* Own-it-once bar */
+      b2ctx.fillStyle = sys.color; b2ctx.globalAlpha = 0.85;
       b2ctx.fillRect(gx, baseY - ownH, barW, ownH);
-      b2ctx.globalAlpha = 1;
-      b2ctx.strokeStyle = sys.color;
-      b2ctx.lineWidth = 1;
+      b2ctx.globalAlpha = 1; b2ctx.strokeStyle = sys.color; b2ctx.lineWidth = 1;
       b2ctx.strokeRect(gx, baseY - ownH, barW, ownH);
-
-      /* Buy input bar */
-      const fuelH = barH(cumFuel);
+      /* Keep-buying bar */
       b2ctx.fillStyle = '#e5e5e5';
       b2ctx.fillRect(gx + barW + gap, baseY - fuelH, barW, fuelH);
-      b2ctx.strokeStyle = '#aaa';
-      b2ctx.strokeRect(gx + barW + gap, baseY - fuelH, barW, fuelH);
-
-      /* Labels above bars */
+      b2ctx.strokeStyle = '#aaa'; b2ctx.strokeRect(gx + barW + gap, baseY - fuelH, barW, fuelH);
+      /* Value labels */
+      b2ctx.textAlign = 'center'; b2ctx.font = 'bold 9px Georgia,serif';
       b2ctx.fillStyle = sys.color;
-      b2ctx.font = 'bold 9px Georgia,serif';
-      b2ctx.textAlign = 'center';
-      b2ctx.fillText('$' + Math.round(ownCost / 1000) + 'k', gx + barW / 2, baseY - ownH - 4);
-      b2ctx.fillStyle = '#888';
-      b2ctx.fillText('$' + Math.round(cumFuel / 1000) + 'k', gx + barW + gap + barW / 2, baseY - fuelH - 4);
-
-      /* System name */
+      b2ctx.fillText(fmt(r.ownCost), gx + barW / 2, baseY - ownH - 4);
+      b2ctx.fillStyle = '#777';
+      b2ctx.fillText(fmt(r.cumFuel), gx + barW + gap + barW / 2, baseY - fuelH - 4);
+      /* Name (green if natural, grey if man-made) */
       const nameLines = sys.name.split('\n');
-      b2ctx.fillStyle = '#444';
+      b2ctx.fillStyle = sys.natural ? '#1a6b3c' : '#5c6570';
       b2ctx.font = '9px Georgia,serif';
-      nameLines.forEach((ln, li) => {
-        b2ctx.fillText(ln, gx + barW + gap / 2, baseY + 12 + li * 10);
-      });
-
-      /* Aquifer asterisk if caveat phase */
-      if (phase === 'caveat' && sys.icon === 'aquifer') {
-        b2ctx.fillStyle = '#b91c1c';
-        b2ctx.font = 'bold 14px Georgia,serif';
-        b2ctx.fillText('*', gx + barW / 2, baseY - ownH - 18);
-      }
-
+      nameLines.forEach((ln, li) => b2ctx.fillText(ln, gx + barW + gap / 2, baseY + 12 + li * 10));
       b2ctx.restore();
     });
 
     /* Legend */
     b2ctx.save();
-    const legY = b2H * 0.06;
+    const legY = b2H * 0.05;
     b2ctx.fillStyle = '#444'; b2ctx.fillRect(startX, legY, 12, 12);
-    b2ctx.fillStyle = '#444'; b2ctx.font = '12px Georgia,serif'; b2ctx.textAlign = 'left';
-    b2ctx.fillText('own the system (upfront + maintenance × 20 yr)', startX + 16, legY + 10);
+    b2ctx.font = '11px Georgia,serif'; b2ctx.textAlign = 'left'; b2ctx.fillStyle = '#444';
+    b2ctx.fillText('own it once (upfront + upkeep × 20 yr)', startX + 16, legY + 10);
     b2ctx.fillStyle = '#e5e5e5'; b2ctx.fillRect(startX, legY + 18, 12, 12);
     b2ctx.strokeStyle = '#aaa'; b2ctx.lineWidth = 1; b2ctx.strokeRect(startX, legY + 18, 12, 12);
-    b2ctx.fillStyle = '#888'; b2ctx.fillText('keep buying the input (20 yr, rising price)', startX + 16, legY + 28);
-
-    /* Y-axis ticks */
-    b2ctx.strokeStyle = 'rgba(0,0,0,0.08)';
-    b2ctx.lineWidth = 1;
-    [10000, 20000, 30000, 40000].forEach(v => {
-      if (v > maxVal) return;
-      const y = baseY - barH(v);
-      b2ctx.beginPath(); b2ctx.moveTo(startX - 4, y); b2ctx.lineTo(b2W * 0.96, y); b2ctx.stroke();
-      b2ctx.fillStyle = 'rgba(0,0,0,0.55)';
-      b2ctx.font = '9px Georgia,serif';
-      b2ctx.textAlign = 'right';
-      b2ctx.fillText('$' + (v/1000) + 'k', startX - 6, y + 4);
-    });
-
+    b2ctx.fillStyle = '#888'; b2ctx.fillText('keep buying it (20 yr) — log scale', startX + 16, legY + 28);
     b2ctx.restore();
   }
 }
