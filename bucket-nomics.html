@@ -54,6 +54,9 @@
     .b3 { background: #f4f4f0; border: 1px solid #ddd; } .b3 .ctx-title { color: #444; }
     .b4 { background: #f5f0fa; border: 1px solid #d4b8f0; } .b4 .ctx-title { color: #5b2d8e; }
 
+    .hero-wrap { border-radius: 8px; background: linear-gradient(#e9f2fb, #f8f8f4); border: 1.5px solid #e2e2dc; margin: 0.4rem 0 1.4rem; overflow: hidden; }
+    .hero-wrap canvas { display: block; width: 100%; }
+
     /* Headline: two ways to price the water */
     .price-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.6rem 0 0.6rem; }
     @media (max-width: 560px) { .price-compare { grid-template-columns: 1fr; } }
@@ -72,6 +75,10 @@
     .pc-big { font-size: 2rem; font-weight: bold; line-height: 1.1; margin: 0.15rem 0; }
     .pc-big-green { color: #1a6b3c; } .pc-big-amber { color: #b8860b; }
     .pc-quote { font-size: 0.82rem; font-style: italic; color: #666; }
+    .pc-caveats { margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px dashed rgba(123,63,0,0.3); font-size: 0.77rem; color: #7b3f00; line-height: 1.55; }
+    .pc-caveats p { margin: 0.3rem 0; }
+    .pc-caveats p:first-child { font-weight: bold; margin-bottom: 0.1rem; }
+    .pc-caveats b { color: #b8860b; }
   </style>
 </head>
 <body>
@@ -85,6 +92,8 @@
     <h1>Bucket-nomics</h1>
     <p class="subtitle">Buy the vessel once. The input is free.</p>
   </header>
+
+  <div class="hero-wrap"><canvas id="hero"></canvas></div>
 
   <p class="intro">Some infrastructure works by capturing a free, ongoing input — rain, sunlight, wind, ecosystem services. You buy the vessel once. After that, the input just arrives. The economy has trouble pricing this because it is used to valuing things by what they cost to operate, not what they cost to own. When the operating cost is zero, the standard frame produces the wrong answer.</p>
 
@@ -118,9 +127,14 @@
         <div class="pc-big pc-big-amber">≈ $0.002 / gal</div>
         <div class="pc-quote">Cheap — about half the price of city water — but "not free."</div>
       </div>
+      <div class="pc-caveats">
+        <p>Two things this number can't do:</p>
+        <p><b>①</b> It isn't knowable until the bucket <em>dies.</em> A per-gallon price needs the lifetime total of gallons — which isn't in until you retire the bucket. Until then the figure is a forecast, not a measurement.</p>
+        <p><b>②</b> It charges the whole $5 to <em>water.</em> The same bucket is also a seat, a step-stool, a tool caddy, a hauler between rains. Split the $5 across everything it does and the "cost of the water" only gets blurrier.</p>
+      </div>
     </div>
   </div>
-  <p class="section-intro" style="margin-top:0.9rem">Same $5 bucket, same rain, two answers. The child says the water is free, because it is. The economist runs a levelized-cost calculation and gets a small positive number — cheaper than tap, but not zero. Both are "right" inside their own frame. The rest of this page is about what the economist's number quietly leaves out: that the rain would have fallen anyway, that the bucket keeps working for decades, that the water is cleaner and already on-site.</p>
+  <p class="section-intro" style="margin-top:0.9rem">Same $5 bucket, same rain, two answers. The child says the water is free, because it is. The economist runs a levelized-cost calculation and gets a small positive number — cheaper than tap, but not zero. Both are "right" inside their own frame. The rest of this page is about what the economist's number quietly leaves out: that the rain would have fallen anyway, that the bucket keeps working for decades, that the water is cleaner and already on-site — and that the very same bucket is doing five other jobs between rains.</p>
 
   <!-- ── Chart 1: The Bucket ────────────────────────────────────────── -->
   <div class="section-label">Part 1 — The bucket</div>
@@ -238,7 +252,7 @@ function b1render() {
   b1draw(s.phase);
 }
 
-function drawBucket(ctx, cx, bTop, bW, bH, fillFrac, fillColor) {
+function drawBucket(ctx, cx, bTop, bW, bH, fillFrac, fillColor, strokeColor) {
   /* Trapezoidal bucket: wider at top, narrower at bottom */
   const bBot = bTop + bH;
   const bTopL = cx - bW / 2, bTopR = cx + bW / 2;
@@ -268,7 +282,7 @@ function drawBucket(ctx, cx, bTop, bW, bH, fillFrac, fillColor) {
 
   /* Bucket outline */
   ctx.save();
-  ctx.strokeStyle = '#555';
+  ctx.strokeStyle = strokeColor || '#555';
   ctx.lineWidth = 2.5;
   ctx.beginPath();
   ctx.moveTo(bTopL, bTop);
@@ -1103,8 +1117,46 @@ function resize() {
   W=canvas.width;H=canvas.height;ctx=canvas.getContext('2d');render();
 }
 
-window.addEventListener('resize', () => { b1resize(); b2resize(); resize(); });
-b1resize(); b2resize(); resize();
+/* ─────────────────────────────────────────────────────────────────
+   HERO — always-visible $5 bucket catching rain
+   ───────────────────────────────────────────────────────────────── */
+let heroC, heroCtx, heroW, heroH;
+function drawHero() {
+  const ctx = heroCtx, W = heroW, H = heroH;
+  ctx.clearRect(0, 0, W, H);
+  const cx = W * 0.5;
+  const bW = H * 0.5, bH = H * 0.42, bTop = H * 0.44;
+  drawCloud(ctx, cx, H * 0.17, Math.min(W * 0.5, H * 1.1), H * 0.2);
+  drawRainDrops(ctx, cx, bTop, bW * 1.6, 12, 0.8);
+  drawBucket(ctx, cx, bTop, bW, bH, 0.32, 'rgba(59,130,246,0.4)', '#d4770a');
+  /* $5 price tag */
+  ctx.save();
+  const tagX = cx + bW / 2 + 20, tagY = bTop + bH * 0.32;
+  ctx.fillStyle = '#fff8ed'; ctx.strokeStyle = '#d4900a'; ctx.lineWidth = 1.5;
+  roundRect(ctx, tagX, tagY - 17, 74, 34, 4); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#7b3f00'; ctx.font = 'bold 17px Georgia,serif'; ctx.textAlign = 'center';
+  ctx.fillText('$5', tagX + 37, tagY + 2);
+  ctx.font = '10px Georgia,serif'; ctx.fillStyle = '#999';
+  ctx.fillText('one time', tagX + 37, tagY + 15);
+  ctx.strokeStyle = '#d4900a'; ctx.lineWidth = 1; ctx.setLineDash([3, 2]);
+  ctx.beginPath(); ctx.moveTo(cx + bW / 2, tagY); ctx.lineTo(tagX, tagY); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+  /* caption */
+  ctx.fillStyle = '#3b82f6'; ctx.font = 'italic 12px Georgia,serif'; ctx.textAlign = 'center';
+  ctx.fillText('free input, every time it rains', cx, H * 0.95);
+}
+function heroResize() {
+  heroC = document.getElementById('hero');
+  heroC.width = heroC.parentElement.clientWidth;
+  heroC.height = Math.max(190, Math.round(heroC.width * 0.32));
+  heroW = heroC.width; heroH = heroC.height;
+  heroCtx = heroC.getContext('2d');
+  drawHero();
+}
+
+window.addEventListener('resize', () => { heroResize(); b1resize(); b2resize(); resize(); });
+heroResize(); b1resize(); b2resize(); resize();
 </script>
   <script src="nav.js"></script>
 </body>
