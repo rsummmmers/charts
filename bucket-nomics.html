@@ -641,9 +641,7 @@ let b2c, b2ctx, b2W, b2H;
 const SYSTEMS = [
   { name: 'Reusable\nbag',   upfront: 2,     annualPaid: 0,   fuelAlt: 'Single-use\nbags',      fuelCost: 12,   fuelRise: 0.03, color: '#6b7280', icon: 'bag',   natural: false },
   { name: '$5 bucket',       upfront: 5,     annualPaid: 0,   fuelAlt: 'Municipal\nwater',      fuelCost: 20,   fuelRise: 0.05, color: '#3b82f6', icon: 'rain',  natural: true  },
-  { name: 'Coffee\nmug',     upfront: 18,    annualPaid: 0,   fuelAlt: 'Disposable\ncups',      fuelCost: 90,   fuelRise: 0.03, color: '#8b5cf6', icon: 'mug',   natural: false },
   { name: 'Apple\ntree',     upfront: 40,    annualPaid: 5,   fuelAlt: 'Store-bought\napples',  fuelCost: 120,  fuelRise: 0.03, color: '#b91c1c', icon: 'apple', natural: true  },
-  { name: 'Pocket\nforest',  upfront: 2000,  annualPaid: 50,  fuelAlt: 'Landscaping\n+ inputs', fuelCost: 1200, fuelRise: 0.03, color: '#1a6b3c', icon: 'forest', natural: true },
   { name: 'Solar\npanel',    upfront: 12000, annualPaid: 20,  fuelAlt: 'Grid\nelectricity',     fuelCost: 900,  fuelRise: 0.04, color: '#d97706', icon: 'sun',   natural: true  },
   { name: 'Wind\nturbine',   upfront: 30000, annualPaid: 100, fuelAlt: 'Grid\nelectricity',     fuelCost: 2000, fuelRise: 0.04, color: '#6366f1', icon: 'wind',  natural: true  },
 ];
@@ -651,7 +649,7 @@ const SYSTEMS = [
 const B2_STEPS = [
   {
     label: "Step 1 of 3 — The pattern",
-    lesson: "<strong>Different objects. One structure.</strong> Each is bought once, then used again and again in place of something you'd otherwise keep buying. A reusable bag, a $5 bucket, a coffee mug, an apple tree, a pocket forest, a solar panel, a wind turbine — from a couple of dollars to tens of thousands. The shape is identical at every scale: one upfront cost, then near-zero marginal cost.",
+    lesson: "<strong>Different objects. One structure.</strong> Each is bought once, then used again and again in place of something you'd otherwise keep buying. A reusable bag, a $5 bucket, an apple tree, a solar panel, a wind turbine — from a couple of dollars to tens of thousands. The shape is identical at every scale: one upfront cost, then near-zero marginal cost.",
     phase: 'grid'
   },
   {
@@ -661,7 +659,7 @@ const B2_STEPS = [
   },
   {
     label: "Step 3 of 3 — Natural vs. man-made",
-    lesson: "<strong>Bought-once is necessary, but not the whole story — the input has to be free.</strong> The <span style='color:#1a6b3c;font-weight:bold'>green</span> items capture a free <em>natural</em> flow: rain, sun, wind, an apple tree's photosynthesis. The <span style='color:#5c6570;font-weight:bold'>grey</span> ones (bag, mug) are man-made and just save you from buying disposables — real savings, but no free natural input. And it can blur: a battery is man-made and stores grid power you pay for — unless it's charged by your own solar, in which case the stored input is free again. Bucket-nomics is sharpest where the vessel is cheap and the input is a free, renewable, natural flow.",
+    lesson: "<strong>Bought-once is necessary, but not the whole story — the input has to be free.</strong> The <span style='color:#1a6b3c;font-weight:bold'>green</span> items capture a free <em>natural</em> flow: rain, sun, wind, an apple tree's photosynthesis. The <span style='color:#5c6570;font-weight:bold'>grey</span> one (the reusable bag) is man-made and just saves you from buying disposables — real savings, but no free natural input. And it can blur: a battery is man-made and stores grid power you pay for — unless it's charged by your own solar, in which case the stored input is free again. Bucket-nomics is sharpest where the vessel is cheap and the input is a free, renewable, natural flow.",
     phase: 'caveat'
   }
 ];
