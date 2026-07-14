@@ -15,7 +15,18 @@
     nav a { color: #888; text-decoration: none; }
     nav a:hover { color: #1a1a1a; }
 
-    .step-controls { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .section-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #aaa;
+      margin-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    .section-rule { border: none; border-top: 2px solid #1a1a1a; margin-bottom: 1.2rem; }
+    .section-intro { font-size: 0.86rem; color: #555; line-height: 1.72; margin-bottom: 1.2rem; max-width: 680px; }
+
+    .step-controls { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; }
     .step-btn { padding: 0.45rem 1.1rem; border: 1.5px solid #1a1a1a; background: #faf8f5; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-radius: 4px; }
     .step-btn:hover { background: #1a1a1a; color: white; }
     .step-btn:disabled { opacity: 0.35; cursor: default; }
@@ -26,11 +37,11 @@
 
     .lesson { padding: 1rem 1.2rem; border-left: 4px solid #1a5c3a; background: #f0f9f4; font-size: 0.87rem; line-height: 1.7; color: #333; margin-bottom: 1.5rem; }
     .lesson strong { color: #1a1a1a; }
+    .lesson-amber { border-left-color: #92600a; background: #fdf6e3; }
 
     .legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1.2rem; font-size: 0.8rem; }
     .li { display: flex; align-items: center; gap: 0.4rem; }
     .ls { width: 24px; height: 3px; flex-shrink: 0; border-radius: 2px; }
-    .ls-dash { height: 0; border-top: 3px dashed; }
 
     .context { border-top: 2px solid #1a1a1a; padding-top: 1.5rem; margin-top: 1rem; }
     .context h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 1rem; font-weight: normal; }
@@ -53,10 +64,43 @@
 
   <header>
     <h1>Bucket-nomics</h1>
-    <p class="subtitle">Upfront investment in a living system vs. buying inputs indefinitely at historical commodity prices.</p>
+    <p class="subtitle">Buy the vessel once. The input is free.</p>
   </header>
 
-  <p class="intro">The standard economic model for evaluating a rain catchment system, a food forest, or a restored wetland asks: does the value of what it produces — priced at current commodity rates — exceed the upfront cost, within a short enough window? This frame uses historical market prices (backward-looking) to evaluate systems that produce compounding forward value. It systematically undervalues living systems and overvalues continued commodity dependence.</p>
+  <p class="intro">Some infrastructure works by capturing a free, ongoing input — rain, sunlight, wind, ecosystem services. You buy the vessel once. After that, the input just arrives. The economy has trouble pricing this because it is used to valuing things by what they cost to operate, not what they cost to own. When the operating cost is zero, the standard frame produces the wrong answer.</p>
+
+  <!-- ── Chart 1: The Bucket ────────────────────────────────────────── -->
+  <div class="section-label">Part 1 — The bucket</div>
+  <hr class="section-rule">
+  <p class="section-intro">The clearest version: a bucket and rain. One purchase. Then the rain just falls. The question the standard economic frame asks — "does the value of what the bucket catches justify its price at current water rates?" — is the wrong question. The right question is: what does it cost to never buy a bucket?</p>
+
+  <div class="step-controls">
+    <button class="step-btn" id="b1-prev" onclick="b1Step(-1)">← Back</button>
+    <button class="step-btn" id="b1-next" onclick="b1Step(1)">Next →</button>
+    <button class="step-btn" onclick="b1step=0;b1render()">Reset</button>
+    <span class="step-indicator" id="b1-label">Step 1 of 5</span>
+  </div>
+  <div class="viz-wrap"><canvas id="c1"></canvas></div>
+  <div class="lesson" id="b1-lesson">Loading...</div>
+
+  <!-- ── Chart 2: The Pattern ───────────────────────────────────────── -->
+  <div class="section-label">Part 2 — The pattern</div>
+  <hr class="section-rule">
+  <p class="section-intro">The bucket isn't special. The same structure appears across solar panels, wind turbines, cisterns, aquifers, and living systems. In each case: one upfront cost, then a free and ongoing input — sunlight, wind, rain, groundwater, ecological services. The alternative in each case is to keep purchasing the input, at a price that rises over time.</p>
+
+  <div class="step-controls">
+    <button class="step-btn" id="b2-prev" onclick="b2Step(-1)">← Back</button>
+    <button class="step-btn" id="b2-next" onclick="b2Step(1)">Next →</button>
+    <button class="step-btn" onclick="b2step=0;b2render()">Reset</button>
+    <span class="step-indicator" id="b2-label">Step 1 of 3</span>
+  </div>
+  <div class="viz-wrap"><canvas id="c2"></canvas></div>
+  <div class="lesson lesson-amber" id="b2-lesson">Loading...</div>
+
+  <!-- ── Chart 3: Detailed Analysis (existing) ─────────────────────── -->
+  <div class="section-label" style="margin-top:3rem">Part 3 — The detailed analysis</div>
+  <hr class="section-rule">
+  <p class="section-intro">The same insight, worked through with actual numbers: rain catchment system vs. buying municipal water indefinitely. The standard frame prices the system against backward-looking commodity rates. The full accounting includes everything the commodity price doesn't see.</p>
 
   <div class="step-controls">
     <button class="step-btn" id="btn-prev" onclick="changeStep(-1)">← Back</button>
@@ -64,11 +108,11 @@
     <button class="step-btn" onclick="step=0;render()">Reset</button>
     <span class="step-indicator" id="step-label">Step 1 of 6</span>
   </div>
-
   <div class="legend" id="legend"></div>
   <div class="viz-wrap"><canvas id="canvas"></canvas></div>
   <div class="lesson" id="lesson">Loading...</div>
 
+  <!-- ── Context ────────────────────────────────────────────────────── -->
   <div class="context">
     <h2>The pricing problem</h2>
     <div class="ctx-grid">
@@ -91,358 +135,924 @@
     </div>
   </div>
 
-  <script>
-  // Illustrative numbers: rain catchment system for a home garden
-  // Upfront: $800 (rain barrel + simple rain garden installation)
-  // Ongoing system cost: ~$10/yr maintenance
-  // Municipal water savings: $15/mo = $180/yr, rising 5%/yr
-  // Full system outputs (additional value not in water price):
-  //   - water quality premium: +$50/yr (better for garden, no treatment needed)
-  //   - cooling/evapotranspiration: $60/yr energy equivalent
-  //   - soil building: $40/yr (reduced amendments needed)
-  //   - pollinator / habitat: $30/yr proxy
-  //   - flood mitigation: $40/yr (reduced runoff, reduced risk)
-  // Total full value yr 1: $400/yr, growing as system matures (+4% compounding)
-  // Commodity alternative: $180/yr rising 5%/yr (water only)
+<script>
+/* ─────────────────────────────────────────────────────────────────
+   CHART 1 — The Bucket
+   ───────────────────────────────────────────────────────────────── */
+
+let b1step = 0;
+let b1c, b1ctx, b1W, b1H;
+
+const B1_STEPS = [
+  {
+    label: "Step 1 of 5 — The bucket",
+    lesson: "<strong>One purchase.</strong> You buy a bucket. This is a capital cost — a one-time payment for infrastructure you now own. The bucket itself does nothing yet. But you own it.",
+    phase: 'bucket'
+  },
+  {
+    label: "Step 2 of 5 — The rain",
+    lesson: "<strong>Then it rains.</strong> The rain isn't something you bought. It arrives on its own. The bucket captures it. The input cost this year: zero. Same next year. Same the year after.",
+    phase: 'rain1'
+  },
+  {
+    label: "Step 3 of 5 — The timeline",
+    lesson: "<strong>Year after year, same bucket. Same rain.</strong> The purchase price is fixed and receding into the past. The water keeps arriving for free. The cumulative value captured keeps growing. The cost line barely moves after the first year.",
+    phase: 'timeline'
+  },
+  {
+    label: "Step 4 of 5 — The alternative",
+    lesson: "<strong>The alternative: keep buying water.</strong> No upfront cost. But you pay every time — and the price rises every year. The spend is invisible because it's small each time. Over twenty years it adds up to far more than the bucket ever cost.",
+    phase: 'comparison'
+  },
+  {
+    label: "Step 5 of 5 — What the standard model misses",
+    lesson: "<strong>The standard economic frame asks the wrong question.</strong> It asks: does the value of what the bucket catches, priced at today's water rates, justify its upfront cost within a short payback window? But this frames a capital asset as if it were a recurring purchase. The bucket doesn't depreciate the way a machine does — it doesn't wear out, it doesn't need fuel, and the input it captures doesn't cost anything. The right question is: what does it cost to never stop buying water?",
+    phase: 'insight'
+  }
+];
+
+function b1Step(dir) {
+  b1step = Math.max(0, Math.min(B1_STEPS.length - 1, b1step + dir));
+  b1render();
+}
+
+function b1render() {
+  const s = B1_STEPS[b1step];
+  document.getElementById('b1-label').textContent = s.label;
+  document.getElementById('b1-lesson').innerHTML = s.lesson;
+  document.getElementById('b1-prev').disabled = b1step === 0;
+  document.getElementById('b1-next').disabled = b1step === B1_STEPS.length - 1;
+  b1draw(s.phase);
+}
+
+function drawBucket(ctx, cx, bTop, bW, bH, fillFrac, fillColor) {
+  /* Trapezoidal bucket: wider at top, narrower at bottom */
+  const bBot = bTop + bH;
+  const bTopL = cx - bW / 2, bTopR = cx + bW / 2;
+  const narrowing = bW * 0.12;
+  const bBotL = bTopL + narrowing, bBotR = bTopR - narrowing;
+
+  /* Fill level */
+  const fillH = bH * Math.max(0, Math.min(1, fillFrac));
+  const fillTop = bBot - fillH;
+  /* Interpolate width at fill level */
+  const fillFrac2 = fillH / bH;
+  const fillTopL = bBotL + (bTopL - bBotL) * fillFrac2;
+  const fillTopR = bBotR + (bTopR - bBotR) * fillFrac2;
+
+  if (fillFrac > 0) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(bBotL, bBot);
+    ctx.lineTo(fillTopL, fillTop);
+    ctx.lineTo(fillTopR, fillTop);
+    ctx.lineTo(bBotR, bBot);
+    ctx.closePath();
+    ctx.fillStyle = fillColor || 'rgba(59,130,246,0.35)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* Bucket outline */
+  ctx.save();
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(bTopL, bTop);
+  ctx.lineTo(bBotL, bBot);
+  ctx.lineTo(bBotR, bBot);
+  ctx.lineTo(bTopR, bTop);
+  ctx.stroke();
+  /* Top rim */
+  ctx.beginPath();
+  ctx.moveTo(bTopL - 4, bTop);
+  ctx.lineTo(bTopR + 4, bTop);
+  ctx.stroke();
+  /* Handle arc */
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.arc(cx, bTop - 12, bW * 0.3, Math.PI, 0, false);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawRainDrops(ctx, cx, bTop, bW, count, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = '#3b82f6';
+  const spread = bW * 0.7;
+  for (let i = 0; i < count; i++) {
+    const seed = i * 137.5;
+    const x = cx - spread/2 + ((seed % spread));
+    const dropY = bTop - 20 - (i * 18 % 60);
+    ctx.beginPath();
+    ctx.ellipse(x, dropY, 3, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    /* Little line above */
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x, dropY - 7);
+    ctx.lineTo(x, dropY - 14);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function b1draw(phase) {
+  const c = b1c;
+  const cx2 = b1ctx;
+  cx2.clearRect(0, 0, b1W, b1H);
+  cx2.fillStyle = '#f8f8f4';
+  cx2.fillRect(0, 0, b1W, b1H);
 
   const YEARS = 20;
-  const UPFRONT = 800;
-  const MAINT = 10;
-  const WATER_YR1 = 180;
-  const WATER_RISE = 0.05;
-  const FULL_YR1 = 400;
-  const FULL_GROW = 0.04;
-  const SYSTEM_MATURE_BONUS = 80; // additional value after yr 3 as system establishes
+  const bucketCost = 5;
+  const annualBuy = 180;
+  const buyRise = 0.05;
 
-  function cumulativeCommodity(yr) {
-    let total = 0;
-    for (let y = 1; y <= yr; y++) total += WATER_YR1 * Math.pow(1 + WATER_RISE, y - 1);
-    return total;
-  }
+  if (phase === 'bucket') {
+    /* Just the bucket, empty, with price tag */
+    const cx = b1W * 0.35, bTop = b1H * 0.22, bW = b1W * 0.25, bH = b1H * 0.5;
+    drawBucket(cx2, cx, bTop, bW, bH, 0);
 
-  function cumulativeSystemCost(yr) {
-    return UPFRONT + MAINT * yr;
-  }
+    /* Price tag */
+    cx2.save();
+    const tagX = cx + bW/2 + 20, tagY = bTop + bH * 0.3;
+    cx2.fillStyle = '#fff8ed';
+    cx2.strokeStyle = '#d4900a';
+    cx2.lineWidth = 1.5;
+    roundRect(cx2, tagX, tagY - 18, 90, 36, 4);
+    cx2.fill(); cx2.stroke();
+    cx2.fillStyle = '#7b3f00';
+    cx2.font = 'bold 14px Georgia,serif';
+    cx2.textAlign = 'center';
+    cx2.fillText('$5', tagX + 45, tagY + 5);
+    cx2.font = '10px Georgia,serif';
+    cx2.fillStyle = '#888';
+    cx2.fillText('one time', tagX + 45, tagY + 18);
+    /* String to bucket */
+    cx2.strokeStyle = '#d4900a';
+    cx2.lineWidth = 1;
+    cx2.setLineDash([3, 2]);
+    cx2.beginPath();
+    cx2.moveTo(cx + bW/2, bTop + bH * 0.3);
+    cx2.lineTo(tagX, tagY);
+    cx2.stroke();
+    cx2.setLineDash([]);
 
-  function cumulativeSystemValue_commodity(yr) {
-    // Backward-looking: only counts water savings at commodity price
-    let total = 0;
-    for (let y = 1; y <= yr; y++) total += WATER_YR1 * Math.pow(1 + WATER_RISE, y - 1);
-    return total;
-  }
+    /* Label */
+    cx2.font = '13px Georgia,serif';
+    cx2.fillStyle = '#444';
+    cx2.textAlign = 'center';
+    cx2.fillText('The bucket', cx, bTop + bH + 28);
+    cx2.font = '11px Georgia,serif';
+    cx2.fillStyle = '#888';
+    cx2.fillText('empty. waiting.', cx, bTop + bH + 44);
+    cx2.restore();
 
-  function cumulativeSystemValue_full(yr) {
-    // Forward-looking: full system output
-    let total = 0;
-    for (let y = 1; y <= yr; y++) {
-      const base = FULL_YR1 * Math.pow(1 + FULL_GROW, y - 1);
-      const mature = y >= 4 ? SYSTEM_MATURE_BONUS * (1 - Math.exp(-(y - 3) * 0.3)) : 0;
-      total += base + mature;
-    }
-    return total;
-  }
+  } else if (phase === 'rain1') {
+    /* Bucket with rain falling in */
+    const cx = b1W * 0.35, bTop = b1H * 0.25, bW = b1W * 0.25, bH = b1H * 0.48;
+    drawBucket(cx2, cx, bTop, bW, bH, 0.28);
+    drawRainDrops(cx2, cx, bTop, bW, 8, 0.85);
 
-  // Pre-compute data
-  const data = [];
-  for (let y = 0; y <= YEARS; y++) {
-    data.push({
-      y,
-      commodity:    cumulativeCommodity(y),
-      systemCost:   cumulativeSystemCost(y),
-      valBackward:  cumulativeSystemValue_commodity(y),
-      valFull:      cumulativeSystemValue_full(y),
-    });
-  }
+    /* Cloud */
+    drawCloud(cx2, cx, bTop - 60, 60, 22);
 
-  const STEPS = [
-    {
-      label: "Step 1 of 6 — The commodity option",
-      lesson: "<strong>Option A: keep buying water at current prices.</strong> No upfront cost. Pay per unit, every year. Municipal water prices have risen 50–70% in the past decade in many US cities and are expected to keep rising as infrastructure ages and source water becomes scarcer. The commodity line is not flat — it steepens over time.",
-      show: ['commodity'],
-      note: null
-    },
-    {
-      label: "Step 2 of 6 — The system option (cost)",
-      lesson: "<strong>Option B: invest in a rain catchment system.</strong> ~$800 upfront for a rain barrel and a simple rain garden. ~$10/year in maintenance. After that, the marginal cost of the water and ecosystem services it produces is near zero. The cost line is high at the start and then almost flat.",
-      show: ['commodity', 'systemCost'],
-      note: null
-    },
-    {
-      label: "Step 3 of 6 — Standard payback analysis",
-      lesson: "<strong>The standard economic frame: compare system cost against commodity savings.</strong> Using current water prices as the value benchmark, the system 'pays back' around year 5–6. Standard analysis stops here — it either approves or rejects the investment based on this. But this comparison only prices the water. The system produces much more than water.",
-      show: ['commodity', 'systemCost', 'valBackward'],
-      crossover: 'backward',
-      note: 'payback'
-    },
-    {
-      label: "Step 4 of 6 — What the system actually produces",
-      lesson: "<strong>The full system value includes everything the backward-looking price misses.</strong> Better water quality (no chlorine, naturally filtered — 20–30% better plant uptake). Cooling through evapotranspiration (equivalent to $50–70/yr in energy costs). Soil building (reduced need for amendments). Pollinator habitat. Flood mitigation — reducing peak runoff reduces risk to basement, foundation, and neighboring properties. These all have real value. None appear in commodity water pricing.",
-      show: ['commodity', 'systemCost', 'valBackward', 'valFull'],
-      crossover: 'both',
-      note: null
-    },
-    {
-      label: "Step 5 of 6 — System maturation",
-      lesson: "<strong>Living systems compound.</strong> A rain garden in year one is a recently disturbed site. A rain garden in year four has established root systems that hold soil moisture, attract beneficial insects, and improve infiltration rates. The full value line grows faster than the commodity line — not because of price inflation, but because the system is becoming more productive as it matures. This is the opposite of infrastructure depreciation.",
-      show: ['commodity', 'systemCost', 'valBackward', 'valFull'],
-      crossover: 'both',
-      note: 'maturation'
-    },
-    {
-      label: "Step 6 of 6 — The backwards pricing problem",
-      lesson: "<strong>The standard model prices forward value using backward-looking data.</strong> It asks: 'what has water cost historically?' not 'what will water cost, what is water quality worth, what does flooding cost, what does losing pollinators cost?' A living system is an asset that produces compounding flows of value into the future. Pricing it against historical commodity rates is like valuing a forest by what lumber sold for in 1985. The bucket-nomics frame starts from the forward value of the system, not the backward price of the input it replaces.",
-      show: ['commodity', 'systemCost', 'valBackward', 'valFull'],
-      crossover: 'both',
-      note: 'gap'
-    }
-  ];
+    /* Input cost label */
+    cx2.save();
+    cx2.font = '12px Georgia,serif';
+    cx2.fillStyle = '#1a6b3c';
+    cx2.textAlign = 'center';
+    cx2.fillText('Input cost this year:', cx, bTop + bH + 30);
+    cx2.font = 'bold 20px Georgia,serif';
+    cx2.fillStyle = '#1a6b3c';
+    cx2.fillText('$0', cx, bTop + bH + 54);
+    cx2.font = '10px Georgia,serif';
+    cx2.fillStyle = '#888';
+    cx2.fillText('same next year. same the year after.', cx, bTop + bH + 70);
+    cx2.restore();
 
-  let step = 0;
-  let canvas, ctx, W, H;
+  } else if (phase === 'timeline') {
+    /* Bucket + timeline showing accumulating water over years */
+    const bucketCX = b1W * 0.18;
+    const bTop = b1H * 0.12, bW = b1W * 0.18, bH = b1H * 0.38;
 
-  function changeStep(dir) {
-    step = Math.max(0, Math.min(STEPS.length - 1, step + dir));
-    render();
-  }
+    /* Timeline */
+    const tlX0 = b1W * 0.32, tlX1 = b1W * 0.96;
+    const tlY = b1H * 0.72;
+    const tlW = tlX1 - tlX0;
 
-  const COLORS = {
-    commodity:   '#b91c1c',
-    systemCost:  '#1a3a6b',
-    valBackward: '#92600a',
-    valFull:     '#1a6b3c',
-  };
+    cx2.save();
+    /* Timeline axis */
+    cx2.strokeStyle = '#ccc';
+    cx2.lineWidth = 1.5;
+    cx2.beginPath();
+    cx2.moveTo(tlX0, tlY);
+    cx2.lineTo(tlX1, tlY);
+    cx2.stroke();
 
-  const LABELS = {
-    commodity:   'Commodity cost (buy water indefinitely, price rising)',
-    systemCost:  'System cost (upfront + maintenance)',
-    valBackward: 'System value — backward-looking price (water only)',
-    valFull:     'System value — full accounting (all outputs)',
-  };
-
-  function renderLegend(show) {
-    const el = document.getElementById('legend');
-    el.innerHTML = show.map(k => `
-      <div class="li">
-        <div class="ls" style="background:${COLORS[k]};${k==='valBackward'?'opacity:0.6':''}"></div>
-        <span style="color:${COLORS[k]};font-size:0.78rem">${LABELS[k]}</span>
-      </div>`).join('');
-  }
-
-  function render() {
-    const s = STEPS[step];
-    document.getElementById('step-label').textContent = s.label;
-    document.getElementById('lesson').innerHTML = s.lesson;
-    document.getElementById('btn-prev').disabled = step === 0;
-    document.getElementById('btn-next').disabled = step === STEPS.length - 1;
-    renderLegend(s.show);
-    draw(s);
-  }
-
-  function draw(s) {
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#f8f8f4';
-    ctx.fillRect(0, 0, W, H);
-
-    const padL = W * 0.10, padR = W * 0.04;
-    const padT = H * 0.08, padB = H * 0.16;
-    const chartW = W - padL - padR;
-    const chartH = H - padT - padB;
-
-    // Y-axis max: scale to full value at year 20
-    const maxY = Math.max(
-      data[YEARS].commodity,
-      data[YEARS].systemCost,
-      data[YEARS].valFull
-    ) * 1.08;
-
-    function px(yr) { return padL + (yr / YEARS) * chartW; }
-    function py(val) { return padT + chartH - (val / maxY) * chartH; }
-
-    // Grid
-    ctx.save();
-    ctx.strokeStyle = 'rgba(0,0,0,0.07)';
-    ctx.lineWidth = 1;
-    const gridVals = [500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500];
-    gridVals.forEach(v => {
-      if (v > maxY) return;
-      const y = py(v);
-      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + chartW, y); ctx.stroke();
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.font = '10px Georgia,serif';
-      ctx.textAlign = 'right';
-      ctx.fillText('$' + v.toLocaleString(), padL - 6, y + 4);
-    });
-
-    // X-axis ticks & labels
+    /* Year labels */
     [0, 5, 10, 15, 20].forEach(yr => {
-      const x = px(yr);
-      ctx.strokeStyle = 'rgba(0,0,0,0.15)';
-      ctx.beginPath(); ctx.moveTo(x, padT + chartH); ctx.lineTo(x, padT + chartH + 4); ctx.stroke();
-      ctx.fillStyle = 'rgba(0,0,0,0.45)';
-      ctx.font = '10px Georgia,serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('yr ' + yr, x, padT + chartH + 15);
+      const x = tlX0 + (yr / YEARS) * tlW;
+      cx2.strokeStyle = 'rgba(0,0,0,0.15)';
+      cx2.beginPath(); cx2.moveTo(x, tlY); cx2.lineTo(x, tlY + 5); cx2.stroke();
+      cx2.fillStyle = '#888';
+      cx2.font = '10px Georgia,serif';
+      cx2.textAlign = 'center';
+      cx2.fillText('yr ' + yr, x, tlY + 17);
     });
 
-    // Axes
-    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    /* Bucket cost line (flat after year 0) */
+    /* Scale the y-axis to the growing value line, not the (now tiny) bucket cost */
+    const maxVal = (() => { let c = 0; for (let y = 1; y <= YEARS; y++) c += annualBuy * Math.pow(1.04, y - 1); return c; })() * 1.15;
+    const yscale = (b1H * 0.55) / maxVal;
+
+    cx2.strokeStyle = '#1a3a6b';
+    cx2.lineWidth = 2;
+    cx2.setLineDash([5, 3]);
+    cx2.beginPath();
+    cx2.moveTo(tlX0, tlY - bucketCost * yscale);
+    cx2.lineTo(tlX1, tlY - bucketCost * yscale);
+    cx2.stroke();
+    cx2.setLineDash([]);
+    cx2.fillStyle = '#1a3a6b';
+    cx2.font = '10px Georgia,serif';
+    cx2.textAlign = 'left';
+    cx2.fillText('Bucket cost: $5 (flat)', tlX0 + 4, tlY - bucketCost * yscale - 6);
+
+    /* Accumulated value line (growing) */
+    cx2.strokeStyle = '#1a6b3c';
+    cx2.lineWidth = 2.5;
+    cx2.beginPath();
+    for (let yr = 0; yr <= YEARS; yr++) {
+      let cumVal = 0;
+      for (let y = 1; y <= yr; y++) cumVal += annualBuy * Math.pow(1.04, y - 1);
+      const x = tlX0 + (yr / YEARS) * tlW;
+      const y = tlY - cumVal * yscale;
+      if (yr === 0) cx2.moveTo(x, tlY);
+      else cx2.lineTo(x, y);
+    }
+    cx2.stroke();
+    cx2.fillStyle = '#1a6b3c';
+    cx2.textAlign = 'right';
+    const finalCumVal = (() => { let c = 0; for (let y = 1; y <= 20; y++) c += annualBuy * Math.pow(1.04, y - 1); return c; })();
+    cx2.fillText('Value captured: $' + Math.round(finalCumVal).toLocaleString(), tlX1 - 4, tlY - finalCumVal * yscale - 6);
+
+    /* Bucket at left side of timeline */
+    drawBucket(cx2, tlX0 - 8, bTop, bW * 0.9, bH * 0.7, 0.8);
+    drawRainDrops(cx2, tlX0 - 8, bTop, bW * 0.9, 5, 0.6);
+    drawCloud(cx2, tlX0 - 8, bTop - 38, 44, 16);
+
+    /* Year 0 marker */
+    cx2.strokeStyle = '#d4900a';
+    cx2.lineWidth = 1.5;
+    cx2.beginPath();
+    cx2.moveTo(tlX0, tlY - 4);
+    cx2.lineTo(tlX0, tlY - bucketCost * yscale - 8);
+    cx2.stroke();
+    cx2.fillStyle = '#d4900a';
+    cx2.font = 'bold 11px Georgia,serif';
+    cx2.textAlign = 'center';
+    cx2.fillText('$5', tlX0, tlY - bucketCost * yscale - 12);
+    cx2.restore();
+
+  } else if (phase === 'comparison' || phase === 'insight') {
+    /* Side-by-side: bucket vs. buying water */
+    const tlX0 = b1W * 0.06, tlX1 = b1W * 0.96;
+    const tlY = b1H * 0.82;
+    const tlW = tlX1 - tlX0;
+    const maxVal = (() => { let c = 0; for (let y = 1; y <= 20; y++) c += annualBuy * Math.pow(1 + buyRise, y - 1); return c; })() * 1.1;
+    const chartH = b1H * 0.65;
+    function pyB(v) { return tlY - (v / maxVal) * chartH; }
+    function pxB(yr) { return tlX0 + (yr / YEARS) * tlW; }
+
+    cx2.save();
+    /* Grid lines */
+    [500, 1000, 1500, 2000, 2500].forEach(v => {
+      if (v > maxVal) return;
+      cx2.strokeStyle = 'rgba(0,0,0,0.07)';
+      cx2.lineWidth = 1;
+      cx2.beginPath(); cx2.moveTo(tlX0, pyB(v)); cx2.lineTo(tlX1, pyB(v)); cx2.stroke();
+      cx2.fillStyle = 'rgba(0,0,0,0.35)';
+      cx2.font = '10px Georgia,serif';
+      cx2.textAlign = 'right';
+      cx2.fillText('$' + v.toLocaleString(), tlX0 - 4, pyB(v) + 4);
+    });
+
+    /* X-axis */
+    cx2.strokeStyle = 'rgba(0,0,0,0.2)';
+    cx2.lineWidth = 1.5;
+    cx2.beginPath(); cx2.moveTo(tlX0, tlY); cx2.lineTo(tlX1, tlY); cx2.stroke();
+    [0, 5, 10, 15, 20].forEach(yr => {
+      const x = pxB(yr);
+      cx2.strokeStyle = 'rgba(0,0,0,0.12)';
+      cx2.beginPath(); cx2.moveTo(x, tlY); cx2.lineTo(x, tlY + 4); cx2.stroke();
+      cx2.fillStyle = '#888';
+      cx2.font = '10px Georgia,serif';
+      cx2.textAlign = 'center';
+      cx2.fillText('yr ' + yr, x, tlY + 15);
+    });
+
+    /* Line: keep buying water */
+    cx2.strokeStyle = '#b91c1c';
+    cx2.lineWidth = 2.5;
+    cx2.beginPath();
+    let cumBuy = 0;
+    for (let yr = 0; yr <= YEARS; yr++) {
+      if (yr > 0) cumBuy += annualBuy * Math.pow(1 + buyRise, yr - 1);
+      const x = pxB(yr), y = pyB(cumBuy);
+      if (yr === 0) cx2.moveTo(x, y); else cx2.lineTo(x, y);
+    }
+    cx2.stroke();
+    cx2.fillStyle = '#b91c1c';
+    cx2.textAlign = 'left';
+    cx2.font = '10px Georgia,serif';
+    cx2.fillText('Keep buying water (price rising 5%/yr)', pxB(3), pyB(cumBuy) - 10);
+    cx2.fillText('Total at yr 20: $' + Math.round(cumBuy).toLocaleString(), pxB(14), pyB(cumBuy) + 14);
+
+    /* Line: bucket cost (flat after year 0) */
+    cx2.strokeStyle = '#1a3a6b';
+    cx2.lineWidth = 2.5;
+    cx2.setLineDash([6, 3]);
+    cx2.beginPath();
+    cx2.moveTo(pxB(0), pyB(bucketCost));
+    cx2.lineTo(pxB(YEARS), pyB(bucketCost));
+    cx2.stroke();
+    cx2.setLineDash([]);
+    cx2.fillStyle = '#1a3a6b';
+    cx2.textAlign = 'left';
+    cx2.fillText('Buy the bucket ($5, one time)', pxB(1), pyB(bucketCost) - 8);
+
+    /* Year 0 purchase spike */
+    cx2.strokeStyle = '#d4900a';
+    cx2.lineWidth = 2;
+    cx2.beginPath();
+    cx2.moveTo(pxB(0), tlY);
+    cx2.lineTo(pxB(0), pyB(bucketCost));
+    cx2.stroke();
+    cx2.fillStyle = '#d4900a';
+    cx2.font = 'bold 11px Georgia,serif';
+    cx2.textAlign = 'center';
+    cx2.fillText('$5', pxB(0), pyB(bucketCost) - 8);
+
+    /* Rain cloud above timeline */
+    drawCloud(cx2, pxB(10), b1H * 0.06, 48, 18);
+    cx2.font = '10px Georgia,serif';
+    cx2.fillStyle = '#3b82f6';
+    cx2.textAlign = 'center';
+    cx2.fillText('free input, every year', pxB(10), b1H * 0.06 + 30);
+
+    /* Gap annotation at year 20 */
+    if (phase === 'insight') {
+      const gapTop = pyB(cumBuy);
+      const gapBot = pyB(bucketCost);
+      const gX = pxB(19.2);
+      cx2.strokeStyle = 'rgba(185,28,28,0.35)';
+      cx2.lineWidth = 1;
+      cx2.beginPath(); cx2.moveTo(gX, gapTop); cx2.lineTo(gX, gapBot); cx2.stroke();
+      cx2.fillStyle = '#b91c1c';
+      cx2.font = 'bold 10px Georgia,serif';
+      cx2.textAlign = 'right';
+      cx2.fillText('$' + Math.round(cumBuy - bucketCost).toLocaleString() + ' more', gX - 4, (gapTop + gapBot) / 2 + 4);
+      cx2.font = '10px Georgia,serif';
+      cx2.fillText('spent buying water', gX - 4, (gapTop + gapBot) / 2 + 16);
+      cx2.fillText('vs. owning the bucket', gX - 4, (gapTop + gapBot) / 2 + 28);
+    }
+
+    cx2.restore();
+  }
+}
+
+function drawCloud(ctx, cx, cy, w, h) {
+  ctx.save();
+  ctx.fillStyle = '#dbeafe';
+  ctx.strokeStyle = '#93c5fd';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, h * 0.7, Math.PI, 0, false);
+  ctx.arc(cx + w * 0.25, cy - h * 0.1, h * 0.55, Math.PI * 0.8, 0.2 * Math.PI, false);
+  ctx.arc(cx - w * 0.2, cy + h * 0.1, h * 0.45, Math.PI * 1.1, 0.1 * Math.PI, false);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+function b1resize() {
+  b1c = document.getElementById('c1');
+  b1c.width = b1c.parentElement.clientWidth;
+  b1c.height = Math.round(b1c.width * 0.52);
+  b1W = b1c.width; b1H = b1c.height;
+  b1ctx = b1c.getContext('2d');
+  b1render();
+}
+
+
+/* ─────────────────────────────────────────────────────────────────
+   CHART 2 — The Pattern
+   ───────────────────────────────────────────────────────────────── */
+
+let b2step = 0;
+let b2c, b2ctx, b2W, b2H;
+
+const SYSTEMS = [
+  { name: 'Rain barrel\n/ cistern',  input: 'Rain',             upfront: 800,   annualFree: 180, annualPaid: 0,   fuelAlt: 'Municipal water',    fuelCost: 180,   fuelRise: 0.05, color: '#3b82f6', icon: 'rain'   },
+  { name: 'Solar\npanel',            input: 'Sunlight',         upfront: 12000, annualFree: 900, annualPaid: 20,  fuelAlt: 'Grid electricity',   fuelCost: 900,   fuelRise: 0.04, color: '#d97706', icon: 'sun'    },
+  { name: 'Wind\nturbine',           input: 'Wind',             upfront: 30000, annualFree: 2000,annualPaid: 100, fuelAlt: 'Grid electricity',   fuelCost: 2000,  fuelRise: 0.04, color: '#6366f1', icon: 'wind'   },
+  { name: 'Aquifer\n/ well',         input: 'Groundwater*',     upfront: 8000,  annualFree: 400, annualPaid: 50,  fuelAlt: 'Municipal water',    fuelCost: 400,   fuelRise: 0.05, color: '#0891b2', icon: 'aquifer'},
+  { name: 'Pocket\nforest',          input: 'Ecosystem\nservices', upfront: 2000, annualFree: 600, annualPaid: 50, fuelAlt: 'Landscaping\n+ inputs', fuelCost: 1200, fuelRise: 0.03, color: '#1a6b3c', icon: 'forest' },
+];
+
+const B2_STEPS = [
+  {
+    label: "Step 1 of 3 — The structure",
+    lesson: "<strong>Five different systems. One structure.</strong> Each requires a one-time capital investment. Each captures a free, ongoing input — rain, sunlight, wind, groundwater, ecosystem services. After the upfront cost, the marginal cost of the input is near zero. This is the same logic as the bucket, applied at different scales.",
+    phase: 'grid'
+  },
+  {
+    label: "Step 2 of 3 — The 20-year comparison",
+    lesson: "<strong>The alternative to each system is buying the input indefinitely.</strong> Grid electricity, municipal water, purchased fertilizer and landscaping services — all have prices that rise over time. The 20-year cumulative cost of buying the input almost always exceeds the upfront cost of owning the vessel that captures it for free. The longer the horizon, the more obvious this is.",
+    phase: 'bars'
+  },
+  {
+    label: "Step 3 of 3 — What the standard model misses",
+    lesson: "<strong>*The aquifer caveat.</strong> Groundwater is free in the sense that it falls as rain and is stored in the ground — but aquifer drawdown means many regions are spending a finite stored resource. This is the difference between a stock and a flow. Rain is a renewable flow. Fossil groundwater is a stock being drawn down. The bucket-nomics frame works cleanly for renewable inputs. For fossil stocks — including oil, gas, and many aquifers — the 'free input' assumption depends on how long the stock lasts. Living systems (forests, wetlands, healthy soil) produce flows, not stocks. That's part of what makes them different.",
+    phase: 'caveat'
+  }
+];
+
+function b2Step(dir) {
+  b2step = Math.max(0, Math.min(B2_STEPS.length - 1, b2step + dir));
+  b2render();
+}
+
+function b2render() {
+  const s = B2_STEPS[b2step];
+  document.getElementById('b2-label').textContent = s.label;
+  document.getElementById('b2-lesson').innerHTML = s.lesson;
+  document.getElementById('b2-prev').disabled = b2step === 0;
+  document.getElementById('b2-next').disabled = b2step === B2_STEPS.length - 1;
+  b2draw(s.phase);
+}
+
+function drawMiniIcon(ctx, type, cx, cy, size, color) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 1.8;
+
+  if (type === 'rain') {
+    /* Cloud + drops */
+    ctx.fillStyle = '#dbeafe'; ctx.strokeStyle = '#93c5fd';
+    ctx.beginPath(); ctx.arc(cx, cy - size*0.15, size*0.35, Math.PI, 0); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
+    [-size*0.2, 0, size*0.2].forEach((dx, i) => {
+      ctx.beginPath();
+      ctx.ellipse(cx + dx, cy + size*0.25 + i*size*0.05, size*0.07, size*0.12, 0, 0, Math.PI*2);
+      ctx.fill();
+    });
+  } else if (type === 'sun') {
+    ctx.beginPath(); ctx.arc(cx, cy, size*0.25, 0, Math.PI*2); ctx.fill();
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a)*size*0.32, cy + Math.sin(a)*size*0.32);
+      ctx.lineTo(cx + Math.cos(a)*size*0.45, cy + Math.sin(a)*size*0.45);
+      ctx.stroke();
+    }
+  } else if (type === 'wind') {
+    /* Curved wind lines */
+    [0, size*0.18, size*0.36].forEach((dy, i) => {
+      ctx.beginPath();
+      ctx.moveTo(cx - size*0.4 + i*size*0.05, cy - size*0.2 + dy);
+      ctx.bezierCurveTo(
+        cx - size*0.1, cy - size*0.3 + dy,
+        cx + size*0.2, cy - size*0.1 + dy,
+        cx + size*0.35, cy - size*0.05 + dy
+      );
+      ctx.stroke();
+    });
+  } else if (type === 'aquifer') {
+    /* Wavy water layers underground */
+    ctx.strokeStyle = '#0891b2';
+    for (let row = 0; row < 3; row++) {
+      const ry = cy - size*0.2 + row * size*0.18;
+      ctx.beginPath();
+      for (let x = cx - size*0.4; x <= cx + size*0.4; x += 2) {
+        const y = ry + Math.sin((x - cx) * 0.25) * size * 0.05;
+        if (x === cx - size*0.4) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    /* Ground line */
+    ctx.strokeStyle = '#92600a';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + chartH);
-    ctx.lineTo(padL + chartW, padT + chartH);
+    ctx.moveTo(cx - size*0.45, cy - size*0.32);
+    ctx.lineTo(cx + size*0.45, cy - size*0.32);
     ctx.stroke();
-    ctx.restore();
+  } else if (type === 'forest') {
+    /* Simple tree */
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - size*0.4);
+    ctx.lineTo(cx - size*0.35, cy + size*0.1);
+    ctx.lineTo(cx + size*0.35, cy + size*0.1);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - size*0.55);
+    ctx.lineTo(cx - size*0.25, cy - size*0.1);
+    ctx.lineTo(cx + size*0.25, cy - size*0.1);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#7b3f00'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + size*0.1); ctx.lineTo(cx, cy + size*0.38);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
 
-    // Y-axis label
-    ctx.save();
-    ctx.translate(14, padT + chartH / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.font = '10px Georgia,serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('cumulative value / cost ($)', 0, 0);
-    ctx.restore();
+function b2draw(phase) {
+  b2ctx.clearRect(0, 0, b2W, b2H);
+  b2ctx.fillStyle = '#f8f8f4';
+  b2ctx.fillRect(0, 0, b2W, b2H);
 
-    // X-axis label
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.font = '10px Georgia,serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('years', padL + chartW / 2, H - 6);
+  if (phase === 'grid') {
+    /* Grid of 5 systems showing structure */
+    const cols = 5;
+    const colW = b2W / cols;
+    const iconSize = Math.min(colW * 0.38, b2H * 0.2);
+    const rowTop = b2H * 0.08;
 
-    function drawLine(key, dashPattern, alpha = 1) {
-      ctx.save();
-      ctx.strokeStyle = COLORS[key];
-      ctx.lineWidth = 2.2;
-      ctx.globalAlpha = alpha;
-      if (dashPattern) ctx.setLineDash(dashPattern);
-      ctx.beginPath();
-      data.forEach((d, i) => {
-        const x = px(d.y), y = py(d[key]);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    SYSTEMS.forEach((sys, i) => {
+      const cx = colW * (i + 0.5);
+      const cy = rowTop + b2H * 0.2;
+
+      /* Icon */
+      drawMiniIcon(b2ctx, sys.icon, cx, cy, iconSize, sys.color);
+
+      /* Name */
+      b2ctx.save();
+      b2ctx.fillStyle = '#1a1a1a';
+      b2ctx.font = `${Math.min(11, colW * 0.13)}px Georgia,serif`;
+      b2ctx.textAlign = 'center';
+      const lines = sys.name.split('\n');
+      lines.forEach((ln, li) => {
+        b2ctx.fillText(ln, cx, cy + iconSize * 0.7 + 14 + li * 14);
       });
-      ctx.stroke();
-      ctx.restore();
-    }
 
-    // Draw lines based on what's shown
-    if (s.show.includes('commodity'))   drawLine('commodity');
-    if (s.show.includes('systemCost'))  drawLine('systemCost', [6, 4]);
-    if (s.show.includes('valBackward')) drawLine('valBackward', [3, 3], 0.65);
-    if (s.show.includes('valFull'))     drawLine('valFull');
+      /* Input label */
+      const inputY = cy + iconSize * 0.7 + 14 + (lines.length) * 14 + 10;
+      b2ctx.font = `bold ${Math.min(10, colW * 0.11)}px Georgia,serif`;
+      b2ctx.fillStyle = sys.color;
+      b2ctx.fillText('Input:', cx, inputY);
+      const inputLines = sys.input.split('\n');
+      inputLines.forEach((ln, li) => {
+        b2ctx.font = `${Math.min(10, colW * 0.11)}px Georgia,serif`;
+        b2ctx.fillStyle = sys.color;
+        b2ctx.fillText(ln, cx, inputY + 12 + li * 11);
+      });
 
-    // Crossover annotations
-    if (s.note === 'payback' || s.crossover === 'backward' || s.crossover === 'both') {
-      // Find approximate crossover: systemCost vs valBackward
-      let xYear = null;
-      for (let i = 1; i < data.length; i++) {
-        if (data[i].valBackward >= data[i].systemCost) { xYear = i; break; }
+      /* Free badge */
+      const freeY = inputY + 12 + inputLines.length * 11 + 14;
+      b2ctx.fillStyle = '#f0f9f4';
+      b2ctx.strokeStyle = '#1a6b3c';
+      b2ctx.lineWidth = 1;
+      roundRect(b2ctx, cx - colW*0.28, freeY - 12, colW*0.56, 20, 4);
+      b2ctx.fill(); b2ctx.stroke();
+      b2ctx.fillStyle = '#1a6b3c';
+      b2ctx.font = `bold ${Math.min(10, colW*0.1)}px Georgia,serif`;
+      b2ctx.fillText(sys.icon === 'aquifer' ? 'free*' : 'free', cx, freeY + 3);
+
+      /* Upfront cost */
+      b2ctx.fillStyle = '#7b3f00';
+      b2ctx.font = `${Math.min(10, colW*0.1)}px Georgia,serif`;
+      b2ctx.fillText('Cost: $' + sys.upfront.toLocaleString(), cx, freeY + 22);
+      b2ctx.restore();
+    });
+
+    /* Row labels */
+    b2ctx.save();
+    b2ctx.font = '10px Georgia,serif';
+    b2ctx.fillStyle = '#aaa';
+    b2ctx.textAlign = 'left';
+    b2ctx.fillText('one-time purchase ↓', 8, rowTop + 10);
+    b2ctx.restore();
+
+  } else if (phase === 'bars' || phase === 'caveat') {
+    /* Bar chart: 20-yr total cost — own system vs. buy input */
+    const YEARS = 20;
+    const maxBarH = b2H * 0.55;
+    const barW = (b2W * 0.88) / (SYSTEMS.length * 2 + SYSTEMS.length * 0.5);
+    const gap = barW * 0.5;
+    const groupW = barW * 2 + gap;
+    const startX = b2W * 0.07;
+    const baseY = b2H * 0.82;
+
+    /* Find max value */
+    let maxVal = 0;
+    SYSTEMS.forEach(sys => {
+      let cumFuel = 0;
+      for (let y = 1; y <= YEARS; y++) cumFuel += sys.fuelCost * Math.pow(1 + sys.fuelRise, y - 1);
+      const ownCost = sys.upfront + sys.annualPaid * YEARS;
+      maxVal = Math.max(maxVal, cumFuel, ownCost);
+    });
+    maxVal *= 1.12;
+
+    function barH(v) { return (v / maxVal) * maxBarH; }
+
+    SYSTEMS.forEach((sys, i) => {
+      const gx = startX + i * (groupW + barW * 0.4);
+
+      let cumFuel = 0;
+      for (let y = 1; y <= YEARS; y++) cumFuel += sys.fuelCost * Math.pow(1 + sys.fuelRise, y - 1);
+      const ownCost = sys.upfront + sys.annualPaid * YEARS;
+
+      /* Own system bar */
+      const ownH = barH(ownCost);
+      b2ctx.save();
+      b2ctx.fillStyle = sys.color;
+      b2ctx.globalAlpha = 0.85;
+      b2ctx.fillRect(gx, baseY - ownH, barW, ownH);
+      b2ctx.globalAlpha = 1;
+      b2ctx.strokeStyle = sys.color;
+      b2ctx.lineWidth = 1;
+      b2ctx.strokeRect(gx, baseY - ownH, barW, ownH);
+
+      /* Buy input bar */
+      const fuelH = barH(cumFuel);
+      b2ctx.fillStyle = '#e5e5e5';
+      b2ctx.fillRect(gx + barW + gap, baseY - fuelH, barW, fuelH);
+      b2ctx.strokeStyle = '#aaa';
+      b2ctx.strokeRect(gx + barW + gap, baseY - fuelH, barW, fuelH);
+
+      /* Labels above bars */
+      b2ctx.fillStyle = sys.color;
+      b2ctx.font = 'bold 9px Georgia,serif';
+      b2ctx.textAlign = 'center';
+      b2ctx.fillText('$' + Math.round(ownCost / 1000) + 'k', gx + barW / 2, baseY - ownH - 4);
+      b2ctx.fillStyle = '#888';
+      b2ctx.fillText('$' + Math.round(cumFuel / 1000) + 'k', gx + barW + gap + barW / 2, baseY - fuelH - 4);
+
+      /* System name */
+      const nameLines = sys.name.split('\n');
+      b2ctx.fillStyle = '#444';
+      b2ctx.font = '9px Georgia,serif';
+      nameLines.forEach((ln, li) => {
+        b2ctx.fillText(ln, gx + barW + gap / 2, baseY + 12 + li * 10);
+      });
+
+      /* Aquifer asterisk if caveat phase */
+      if (phase === 'caveat' && sys.icon === 'aquifer') {
+        b2ctx.fillStyle = '#b91c1c';
+        b2ctx.font = 'bold 14px Georgia,serif';
+        b2ctx.fillText('*', gx + barW / 2, baseY - ownH - 18);
       }
-      if (xYear && s.show.includes('valBackward')) {
-        const x = px(xYear), y = py(data[xYear].valBackward);
-        ctx.save();
-        ctx.fillStyle = '#92600a';
-        ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
-        ctx.font = '11px Georgia,serif';
-        ctx.textAlign = 'left';
-        ctx.fillText('payback yr ~' + xYear, x + 8, y - 6);
-        ctx.fillStyle = 'rgba(146,96,10,0.15)';
-        ctx.font = '10px Georgia,serif';
-        ctx.fillText('(standard analysis stops here)', x + 8, y + 8);
-        ctx.restore();
-      }
-    }
 
-    if (s.crossover === 'both' && s.show.includes('valFull')) {
-      // Full value crossover
-      let xYear2 = null;
-      for (let i = 1; i < data.length; i++) {
-        if (data[i].valFull >= data[i].systemCost) { xYear2 = i; break; }
-      }
-      if (xYear2) {
-        const x = px(xYear2), y = py(data[xYear2].valFull);
-        ctx.save();
-        ctx.fillStyle = '#1a6b3c';
-        ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
-        ctx.font = '11px Georgia,serif';
-        ctx.textAlign = 'left';
-        ctx.fillText('full value crossover yr ~' + xYear2, x + 8, y - 6);
-        ctx.restore();
-      }
-    }
+      b2ctx.restore();
+    });
 
-    if (s.note === 'maturation') {
-      // Mark where system maturation bonus kicks in (year 4)
-      const x = px(4);
-      ctx.save();
-      ctx.strokeStyle = 'rgba(26,107,60,0.4)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 3]);
-      ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + chartH); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = '#1a6b3c';
-      ctx.font = '10px Georgia,serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('system matures', x, padT - 4);
-      ctx.restore();
-    }
+    /* Legend */
+    b2ctx.save();
+    const legY = b2H * 0.06;
+    b2ctx.fillStyle = '#444'; b2ctx.fillRect(startX, legY, 12, 12);
+    b2ctx.fillStyle = '#444'; b2ctx.font = '10px Georgia,serif'; b2ctx.textAlign = 'left';
+    b2ctx.fillText('own the system (upfront + maintenance × 20 yr)', startX + 16, legY + 10);
+    b2ctx.fillStyle = '#e5e5e5'; b2ctx.fillRect(startX, legY + 18, 12, 12);
+    b2ctx.strokeStyle = '#aaa'; b2ctx.lineWidth = 1; b2ctx.strokeRect(startX, legY + 18, 12, 12);
+    b2ctx.fillStyle = '#888'; b2ctx.fillText('keep buying the input (20 yr, rising price)', startX + 16, legY + 28);
 
-    if (s.note === 'gap') {
-      // Shade gap between full value and backward value at year 20
-      ctx.save();
-      ctx.fillStyle = 'rgba(26,107,60,0.08)';
-      ctx.beginPath();
-      ctx.moveTo(px(0), py(0));
-      data.forEach(d => ctx.lineTo(px(d.y), py(d.valFull)));
-      data.slice().reverse().forEach(d => ctx.lineTo(px(d.y), py(d.valBackward)));
-      ctx.closePath();
-      ctx.fill();
+    /* Y-axis ticks */
+    b2ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+    b2ctx.lineWidth = 1;
+    [10000, 20000, 30000, 40000].forEach(v => {
+      if (v > maxVal) return;
+      const y = baseY - barH(v);
+      b2ctx.beginPath(); b2ctx.moveTo(startX - 4, y); b2ctx.lineTo(b2W * 0.96, y); b2ctx.stroke();
+      b2ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      b2ctx.font = '9px Georgia,serif';
+      b2ctx.textAlign = 'right';
+      b2ctx.fillText('$' + (v/1000) + 'k', startX - 6, y + 4);
+    });
 
-      // Gap annotation at year 18
-      const yr = 18;
-      const yFull = py(data[yr].valFull);
-      const yBack = py(data[yr].valBackward);
-      const xG = px(yr);
-      ctx.strokeStyle = 'rgba(26,107,60,0.5)';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(xG + 6, yBack); ctx.lineTo(xG + 6, yFull); ctx.stroke();
-      ctx.fillStyle = '#1a6b3c';
-      ctx.font = 'bold 10px Georgia,serif';
-      ctx.textAlign = 'left';
-      ctx.fillText('value the', xG + 10, (yFull + yBack) / 2 - 6);
-      ctx.fillText('backward price', xG + 10, (yFull + yBack) / 2 + 6);
-      ctx.fillText("doesn't see", xG + 10, (yFull + yBack) / 2 + 18);
-      ctx.restore();
-    }
+    b2ctx.restore();
+  }
+}
 
-    // End-of-line labels (year 20)
-    const labelYr = YEARS;
-    const lx = px(labelYr) + 6;
-    ctx.font = '10px Georgia,serif';
-    if (s.show.includes('commodity')) {
-      ctx.fillStyle = COLORS.commodity;
-      ctx.textAlign = 'left';
-      ctx.fillText('$' + Math.round(data[labelYr].commodity).toLocaleString(), lx, py(data[labelYr].commodity) + 4);
-    }
-    if (s.show.includes('valFull')) {
-      ctx.fillStyle = COLORS.valFull;
-      ctx.textAlign = 'left';
-      ctx.fillText('$' + Math.round(data[labelYr].valFull).toLocaleString(), lx, py(data[labelYr].valFull) + 4);
+function b2resize() {
+  b2c = document.getElementById('c2');
+  b2c.width = b2c.parentElement.clientWidth;
+  b2c.height = Math.round(b2c.width * 0.54);
+  b2W = b2c.width; b2H = b2c.height;
+  b2ctx = b2c.getContext('2d');
+  b2render();
+}
+
+
+/* ─────────────────────────────────────────────────────────────────
+   CHART 3 — Detailed Analysis (existing)
+   ───────────────────────────────────────────────────────────────── */
+
+const YEARS = 20;
+const UPFRONT = 800;
+const MAINT = 10;
+const WATER_YR1 = 180;
+const WATER_RISE = 0.05;
+const FULL_YR1 = 400;
+const FULL_GROW = 0.04;
+const SYSTEM_MATURE_BONUS = 80;
+
+function cumulativeCommodity(yr) {
+  let total = 0;
+  for (let y = 1; y <= yr; y++) total += WATER_YR1 * Math.pow(1 + WATER_RISE, y - 1);
+  return total;
+}
+function cumulativeSystemCost(yr) { return UPFRONT + MAINT * yr; }
+function cumulativeSystemValue_commodity(yr) {
+  let total = 0;
+  for (let y = 1; y <= yr; y++) total += WATER_YR1 * Math.pow(1 + WATER_RISE, y - 1);
+  return total;
+}
+function cumulativeSystemValue_full(yr) {
+  let total = 0;
+  for (let y = 1; y <= yr; y++) {
+    const base = FULL_YR1 * Math.pow(1 + FULL_GROW, y - 1);
+    const mature = y >= 4 ? SYSTEM_MATURE_BONUS * (1 - Math.exp(-(y - 3) * 0.3)) : 0;
+    total += base + mature;
+  }
+  return total;
+}
+
+const data = [];
+for (let y = 0; y <= YEARS; y++) {
+  data.push({
+    y,
+    commodity:    cumulativeCommodity(y),
+    systemCost:   cumulativeSystemCost(y),
+    valBackward:  cumulativeSystemValue_commodity(y),
+    valFull:      cumulativeSystemValue_full(y),
+  });
+}
+
+const STEPS = [
+  { label:"Step 1 of 6 — The commodity option", lesson:"<strong>Option A: keep buying water at current prices.</strong> No upfront cost. Pay per unit, every year. Municipal water prices have risen 50–70% in the past decade in many US cities and are expected to keep rising as infrastructure ages and source water becomes scarcer. The commodity line is not flat — it steepens over time.", show:['commodity'], note:null },
+  { label:"Step 2 of 6 — The system option (cost)", lesson:"<strong>Option B: invest in a rain catchment system.</strong> ~$800 upfront for a rain barrel and a simple rain garden. ~$10/year in maintenance. After that, the marginal cost of the water and ecosystem services it produces is near zero. The cost line is high at the start and then almost flat.", show:['commodity','systemCost'], note:null },
+  { label:"Step 3 of 6 — Standard payback analysis", lesson:"<strong>The standard economic frame: compare system cost against commodity savings.</strong> Using current water prices as the value benchmark, the system 'pays back' around year 5–6. Standard analysis stops here — it either approves or rejects the investment based on this. But this comparison only prices the water. The system produces much more than water.", show:['commodity','systemCost','valBackward'], crossover:'backward', note:'payback' },
+  { label:"Step 4 of 6 — What the system actually produces", lesson:"<strong>The full system value includes everything the backward-looking price misses.</strong> Better water quality (no chlorine, naturally filtered — 20–30% better plant uptake). Cooling through evapotranspiration (equivalent to $50–70/yr in energy costs). Soil building (reduced need for amendments). Pollinator habitat. Flood mitigation — reducing peak runoff reduces risk to basement, foundation, and neighboring properties. These all have real value. None appear in commodity water pricing.", show:['commodity','systemCost','valBackward','valFull'], crossover:'both', note:null },
+  { label:"Step 5 of 6 — System maturation", lesson:"<strong>Living systems compound.</strong> A rain garden in year one is a recently disturbed site. A rain garden in year four has established root systems that hold soil moisture, attract beneficial insects, and improve infiltration rates. The full value line grows faster than the commodity line — not because of price inflation, but because the system is becoming more productive as it matures. This is the opposite of infrastructure depreciation.", show:['commodity','systemCost','valBackward','valFull'], crossover:'both', note:'maturation' },
+  { label:"Step 6 of 6 — The backwards pricing problem", lesson:"<strong>The standard model prices forward value using backward-looking data.</strong> It asks: 'what has water cost historically?' not 'what will water cost, what is water quality worth, what does flooding cost, what does losing pollinators cost?' A living system is an asset that produces compounding flows of value into the future. Pricing it against historical commodity rates is like valuing a forest by what lumber sold for in 1985. The bucket-nomics frame starts from the forward value of the system, not the backward price of the input it replaces.", show:['commodity','systemCost','valBackward','valFull'], crossover:'both', note:'gap' }
+];
+
+let step = 0;
+let canvas, ctx, W, H;
+
+function changeStep(dir) {
+  step = Math.max(0, Math.min(STEPS.length - 1, step + dir));
+  render();
+}
+
+const COLORS = {
+  commodity:'#b91c1c', systemCost:'#1a3a6b', valBackward:'#92600a', valFull:'#1a6b3c',
+};
+const LABELS = {
+  commodity:'Commodity cost (buy water indefinitely, price rising)',
+  systemCost:'System cost (upfront + maintenance)',
+  valBackward:'System value — backward-looking price (water only)',
+  valFull:'System value — full accounting (all outputs)',
+};
+
+function renderLegend(show) {
+  const el = document.getElementById('legend');
+  el.innerHTML = show.map(k => `<div class="li"><div class="ls" style="background:${COLORS[k]};${k==='valBackward'?'opacity:0.6':''}"></div><span style="color:${COLORS[k]};font-size:0.78rem">${LABELS[k]}</span></div>`).join('');
+}
+
+function render() {
+  const s = STEPS[step];
+  document.getElementById('step-label').textContent = s.label;
+  document.getElementById('lesson').innerHTML = s.lesson;
+  document.getElementById('btn-prev').disabled = step === 0;
+  document.getElementById('btn-next').disabled = step === STEPS.length - 1;
+  renderLegend(s.show);
+  draw(s);
+}
+
+function draw(s) {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#f8f8f4'; ctx.fillRect(0, 0, W, H);
+  const padL=W*0.10,padR=W*0.04,padT=H*0.08,padB=H*0.16;
+  const chartW=W-padL-padR,chartH=H-padT-padB;
+  const maxY=Math.max(data[YEARS].commodity,data[YEARS].systemCost,data[YEARS].valFull)*1.08;
+  function px(yr){return padL+(yr/YEARS)*chartW;}
+  function py(val){return padT+chartH-(val/maxY)*chartH;}
+  ctx.save();
+  ctx.strokeStyle='rgba(0,0,0,0.07)'; ctx.lineWidth=1;
+  [500,1000,1500,2000,2500,3000,3500,4000,4500].forEach(v=>{
+    if(v>maxY)return;
+    const y=py(v);
+    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+chartW,y);ctx.stroke();
+    ctx.fillStyle='rgba(0,0,0,0.35)';ctx.font='10px Georgia,serif';ctx.textAlign='right';
+    ctx.fillText('$'+v.toLocaleString(),padL-6,y+4);
+  });
+  [0,5,10,15,20].forEach(yr=>{
+    const x=px(yr);
+    ctx.strokeStyle='rgba(0,0,0,0.15)';
+    ctx.beginPath();ctx.moveTo(x,padT+chartH);ctx.lineTo(x,padT+chartH+4);ctx.stroke();
+    ctx.fillStyle='rgba(0,0,0,0.45)';ctx.font='10px Georgia,serif';ctx.textAlign='center';
+    ctx.fillText('yr '+yr,x,padT+chartH+15);
+  });
+  ctx.strokeStyle='rgba(0,0,0,0.25)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(padL,padT);ctx.lineTo(padL,padT+chartH);ctx.lineTo(padL+chartW,padT+chartH);ctx.stroke();
+  ctx.restore();
+  ctx.save();ctx.translate(14,padT+chartH/2);ctx.rotate(-Math.PI/2);
+  ctx.fillStyle='rgba(0,0,0,0.4)';ctx.font='10px Georgia,serif';ctx.textAlign='center';
+  ctx.fillText('cumulative value / cost ($)',0,0);ctx.restore();
+  ctx.fillStyle='rgba(0,0,0,0.4)';ctx.font='10px Georgia,serif';ctx.textAlign='center';
+  ctx.fillText('years',padL+chartW/2,H-6);
+  function drawLine(key,dashPattern,alpha=1){
+    ctx.save();ctx.strokeStyle=COLORS[key];ctx.lineWidth=2.2;ctx.globalAlpha=alpha;
+    if(dashPattern)ctx.setLineDash(dashPattern);
+    ctx.beginPath();
+    data.forEach((d,i)=>{const x=px(d.y),y=py(d[key]);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
+    ctx.stroke();ctx.restore();
+  }
+  if(s.show.includes('commodity'))   drawLine('commodity');
+  if(s.show.includes('systemCost'))  drawLine('systemCost',[6,4]);
+  if(s.show.includes('valBackward')) drawLine('valBackward',[3,3],0.65);
+  if(s.show.includes('valFull'))     drawLine('valFull');
+  if(s.note==='payback'||s.crossover==='backward'||s.crossover==='both'){
+    let xYear=null;
+    for(let i=1;i<data.length;i++){if(data[i].valBackward>=data[i].systemCost){xYear=i;break;}}
+    if(xYear&&s.show.includes('valBackward')){
+      const x=px(xYear),y=py(data[xYear].valBackward);
+      ctx.save();ctx.fillStyle='#92600a';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();
+      ctx.font='11px Georgia,serif';ctx.textAlign='left';
+      ctx.fillText('payback yr ~'+xYear,x+8,y-6);
+      ctx.fillStyle='rgba(146,96,10,0.15)';ctx.font='10px Georgia,serif';
+      ctx.fillText('(standard analysis stops here)',x+8,y+8);ctx.restore();
     }
   }
-
-  function resize() {
-    canvas = document.getElementById('canvas');
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = Math.round(canvas.width * 0.56);
-    W = canvas.width;
-    H = canvas.height;
-    ctx = canvas.getContext('2d');
-    render();
+  if(s.crossover==='both'&&s.show.includes('valFull')){
+    let xYear2=null;
+    for(let i=1;i<data.length;i++){if(data[i].valFull>=data[i].systemCost){xYear2=i;break;}}
+    if(xYear2){
+      const x=px(xYear2),y=py(data[xYear2].valFull);
+      ctx.save();ctx.fillStyle='#1a6b3c';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();
+      ctx.font='11px Georgia,serif';ctx.textAlign='left';
+      ctx.fillText('full value crossover yr ~'+xYear2,x+8,y-6);ctx.restore();
+    }
   }
+  if(s.note==='maturation'){
+    const x=px(4);
+    ctx.save();ctx.strokeStyle='rgba(26,107,60,0.4)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(x,padT);ctx.lineTo(x,padT+chartH);ctx.stroke();
+    ctx.setLineDash([]);ctx.fillStyle='#1a6b3c';ctx.font='10px Georgia,serif';ctx.textAlign='center';
+    ctx.fillText('system matures',x,padT-4);ctx.restore();
+  }
+  if(s.note==='gap'){
+    ctx.save();ctx.fillStyle='rgba(26,107,60,0.08)';ctx.beginPath();ctx.moveTo(px(0),py(0));
+    data.forEach(d=>ctx.lineTo(px(d.y),py(d.valFull)));
+    data.slice().reverse().forEach(d=>ctx.lineTo(px(d.y),py(d.valBackward)));
+    ctx.closePath();ctx.fill();
+    const yr=18;const yFull=py(data[yr].valFull);const yBack=py(data[yr].valBackward);const xG=px(yr);
+    ctx.strokeStyle='rgba(26,107,60,0.5)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(xG+6,yBack);ctx.lineTo(xG+6,yFull);ctx.stroke();
+    ctx.fillStyle='#1a6b3c';ctx.font='bold 10px Georgia,serif';ctx.textAlign='left';
+    ctx.fillText('value the',xG+10,(yFull+yBack)/2-6);
+    ctx.fillText('backward price',xG+10,(yFull+yBack)/2+6);
+    ctx.fillText("doesn't see",xG+10,(yFull+yBack)/2+18);ctx.restore();
+  }
+  const lx=px(YEARS)+6;ctx.font='10px Georgia,serif';
+  if(s.show.includes('commodity')){ctx.fillStyle=COLORS.commodity;ctx.textAlign='left';ctx.fillText('$'+Math.round(data[YEARS].commodity).toLocaleString(),lx,py(data[YEARS].commodity)+4);}
+  if(s.show.includes('valFull')){ctx.fillStyle=COLORS.valFull;ctx.textAlign='left';ctx.fillText('$'+Math.round(data[YEARS].valFull).toLocaleString(),lx,py(data[YEARS].valFull)+4);}
+}
 
-  window.addEventListener('resize', resize);
-  resize();
-  </script>
+function resize() {
+  canvas=document.getElementById('canvas');
+  canvas.width=canvas.parentElement.clientWidth;
+  canvas.height=Math.round(canvas.width*0.56);
+  W=canvas.width;H=canvas.height;ctx=canvas.getContext('2d');render();
+}
+
+window.addEventListener('resize', () => { b1resize(); b2resize(); resize(); });
+b1resize(); b2resize(); resize();
+</script>
   <script src="nav.js"></script>
 </body>
 </html>
